@@ -10,6 +10,7 @@ const guard = document.querySelector("#auth-guard");
 const status = document.querySelector("#page-status");
 let user;
 let profile;
+let supportsCoverPath = true;
 
 function notify(message) {
   status.textContent = message;
@@ -49,10 +50,76 @@ async function setAvatar(element, record) {
 
 async function setCover(record) {
   const cover = document.querySelector("#profile-cover");
+  if (!supportsCoverPath) {
+    cover.style.backgroundImage = "";
+    return;
+  }
   const url = await mediaUrl(record.cover_path);
   cover.style.backgroundImage = url
     ? `linear-gradient(120deg, rgba(23, 63, 53, .18), rgba(23, 63, 53, .08)), url("${url}")`
     : "";
+}
+
+function defaultProfileRecord() {
+  const fallbackName =
+    user.user_metadata?.name ||
+    user.user_metadata?.display_name ||
+    user.email?.split("@")[0] ||
+    "Pessoa ConectaTech";
+  return {
+    id: user.id,
+    username: `user_${user.id.replaceAll("-", "").slice(0, 12)}`,
+    display_name: fallbackName.slice(0, 80),
+    bio: "",
+    city: "",
+    avatar_path: null,
+    cover_path: null,
+    is_public: false,
+  };
+}
+
+async function createMissingProfile() {
+  const fallback = defaultProfileRecord();
+  const { data, error } = await supabase
+    .from("profiles")
+    .insert({
+      id: fallback.id,
+      username: fallback.username,
+      display_name: fallback.display_name,
+      full_name: fallback.display_name,
+      bio: fallback.bio,
+      city: fallback.city,
+      is_public: fallback.is_public,
+    })
+    .select("id,username,display_name,bio,city,avatar_path,is_public")
+    .single();
+
+  if (error) throw error;
+  return { ...data, cover_path: null };
+}
+
+async function loadProfileRecord() {
+  const withCover = await supabase
+    .from("profiles")
+    .select("id,username,display_name,bio,city,avatar_path,cover_path,is_public")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!withCover.error) {
+    return withCover.data || (await createMissingProfile());
+  }
+
+  supportsCoverPath = false;
+  const withoutCover = await supabase
+    .from("profiles")
+    .select("id,username,display_name,bio,city,avatar_path,is_public")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (withoutCover.error) throw withoutCover.error;
+  return withoutCover.data
+    ? { ...withoutCover.data, cover_path: null }
+    : await createMissingProfile();
 }
 
 async function render(record) {
@@ -167,13 +234,12 @@ async function initialize() {
     return;
   }
 
-  const { data: record, error } = await supabase
-    .from("profiles")
-    .select("id,username,display_name,bio,city,avatar_path,cover_path,is_public")
-    .eq("id", user.id)
-    .single();
-
-  if (error) {
+  try {
+    const record = await loadProfileRecord();
+    workspace.hidden = false;
+    document.querySelector("#account-state").textContent = "Conta conectada";
+    await Promise.all([render(record), loadProgress(), loadSavedLessons()]);
+  } catch (error) {
     guard.hidden = false;
     guard.querySelector("h2").textContent =
       "Nao foi possivel carregar seu perfil";
@@ -183,10 +249,6 @@ async function initialize() {
       "Perfil indisponivel";
     return;
   }
-
-  workspace.hidden = false;
-  document.querySelector("#account-state").textContent = "Conta conectada";
-  await Promise.all([render(record), loadProgress(), loadSavedLessons()]);
 }
 
 async function uploadProfileMedia(file, name) {
@@ -230,21 +292,27 @@ document
         "avatar",
       );
       const coverPath = await uploadProfileMedia(
-        document.querySelector("#profile-cover-file").files[0],
+        supportsCoverPath
+          ? document.querySelector("#profile-cover-file").files[0]
+          : null,
         "cover",
       );
       if (avatarPath) update.avatar_path = avatarPath;
-      if (coverPath) update.cover_path = coverPath;
+      if (coverPath && supportsCoverPath) update.cover_path = coverPath;
 
       const { data, error } = await supabase
         .from("profiles")
         .update(update)
         .eq("id", user.id)
-        .select("id,username,display_name,bio,city,avatar_path,cover_path,is_public")
+        .select(
+          supportsCoverPath
+            ? "id,username,display_name,bio,city,avatar_path,cover_path,is_public"
+            : "id,username,display_name,bio,city,avatar_path,is_public",
+        )
         .single();
       if (error) throw error;
       await supabase.auth.updateUser({ data: { name: update.display_name } });
-      await render(data);
+      await render({ ...data, cover_path: data.cover_path || profile.cover_path });
       localStorage.removeItem("conectatech-mini-profile");
       saveState.textContent = "Alteracoes salvas.";
     } catch (error) {
