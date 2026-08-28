@@ -79,6 +79,37 @@ function renderAudit(items = []) {
     .join("");
 }
 
+async function hasAdminAccess(userId) {
+  const access = await supabase.rpc("is_admin");
+  if (!access.error && access.data) return true;
+
+  const role = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (!role.error && role.data?.role === "admin") return true;
+
+  const profile = await supabase
+    .from("profiles")
+    .select("role,is_active")
+    .eq("id", userId)
+    .maybeSingle();
+  if (
+    !profile.error &&
+    profile.data?.role === "admin" &&
+    profile.data?.is_active !== false
+  ) {
+    return true;
+  }
+
+  if (access.error) throw access.error;
+  if (role.error) throw role.error;
+  if (profile.error) throw profile.error;
+  return false;
+}
+
 async function refreshAdminData() {
   const [trackResult, lessonResult, opportunityResult, auditResult] =
     await Promise.all([
@@ -177,9 +208,8 @@ async function initialize() {
   const { data } = await supabase.auth.getUser();
   if (!data.user) throw new Error("Entre na conta de administrador.");
 
-  const access = await supabase.rpc("is_admin");
-  if (access.error) throw access.error;
-  if (!access.data) throw new Error("Esta conta nao possui acesso administrativo.");
+  const access = await hasAdminAccess(data.user.id);
+  if (!access) throw new Error("Esta conta nao possui acesso administrativo.");
 
   document.querySelector("#admin-status").textContent =
     "Administrador conectado";

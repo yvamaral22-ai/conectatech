@@ -7,6 +7,19 @@ create table if not exists public.user_roles (
   created_at timestamptz not null default now()
 );
 
+alter table public.profiles
+add column if not exists role text not null default 'member';
+
+alter table public.profiles
+add column if not exists is_active boolean not null default true;
+
+alter table public.profiles
+drop constraint if exists profiles_role_check;
+
+alter table public.profiles
+add constraint profiles_role_check
+check (role in ('admin', 'member'));
+
 alter table public.user_roles enable row level security;
 grant select on public.user_roles to authenticated;
 
