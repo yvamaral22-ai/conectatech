@@ -1,5 +1,15 @@
 # Plano de validação
 
+## Checklist acadêmico da experiência prática
+
+- [x] Definição clara do problema e mapeamento assertivo do público-alvo afetado pelas desigualdades digitais.
+- [x] Apresentação estruturada da solução tecnológica e formulação de uma proposta de valor diferencial.
+- [x] Aplicação detalhada dos princípios de inclusão e acessibilidade digital, contemplando as diretrizes WCAG.
+- [x] Estabelecimento de métricas lógicas para avaliar a projeção de impacto social esperado.
+- [x] Definição consistente dos parâmetros organizacionais de sustentabilidade financeira e ambiental do projeto.
+- [x] Consolidação de todas as partes do Canvas no relatório/resumo executivo.
+- [x] Criação finalizada de uma postagem persuasiva voltada para a rede corporativa LinkedIn.
+
 ## Checklist manual do protótipo
 
 - [ ] Navegar por toda a página usando apenas Tab, Shift+Tab, Enter, Espaço e Esc.
@@ -8,7 +18,10 @@
 - [ ] Verificar contraste normal e modo de alto contraste.
 - [ ] Confirmar hierarquia de títulos, regiões e nomes acessíveis no leitor de tela.
 - [ ] Alternar filtros e confirmar atualização compreensível dos cartões.
+- [ ] Preencher o diagnóstico inicial e confirmar recomendação de trilha.
+- [ ] Abrir uma aula, responder o exercício e confirmar mensagem de correção.
 - [ ] Iniciar uma trilha, recarregar e confirmar persistência do progresso.
+- [ ] Enviar feedback da aula e confirmar mensagem de registro local.
 - [ ] Instalar a PWA, abrir uma vez online e recarregar sem rede.
 - [ ] Confirmar aviso offline e acesso ao conteúdo previamente armazenado.
 - [ ] Ativar preferência de movimento reduzido no sistema.

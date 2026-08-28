@@ -1,0 +1,412 @@
+.diagnostic,
+.feedback,
+.account {
+  background: #fff;
+}
+
+.diagnostic-form,
+.feedback-form,
+.auth-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 26px;
+  box-shadow: 0 6px 0 rgba(23, 63, 53, .06);
+}
+
+.diagnostic-form label,
+.feedback-form label,
+.lesson-question label,
+.auth-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 700;
+}
+
+.diagnostic-form select,
+.feedback-form select,
+.feedback-form textarea,
+.auth-form input {
+  width: 100%;
+  border: 1px solid #738980;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.diagnostic-form fieldset,
+.lesson-question fieldset {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 0;
+}
+
+.diagnostic-form fieldset {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.diagnostic-form legend,
+.lesson-question legend {
+  font-weight: 800;
+  padding: 0 6px;
+}
+
+.diagnostic-form fieldset label,
+.lesson-question label {
+  font-weight: 600;
+}
+
+.diagnostic-form .button,
+.feedback-form .button,
+.auth-form .button {
+  justify-self: start;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: 1.3fr .7fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.account-shell {
+  display: grid;
+  grid-template-columns: minmax(260px, .78fr) minmax(0, 1.22fr);
+  gap: 22px;
+  align-items: stretch;
+}
+
+.profile-panel,
+.auth-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 0 rgba(23, 63, 53, .06);
+}
+
+.profile-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  background: var(--ink);
+  color: #fff;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-panel::after {
+  content: "";
+  position: absolute;
+  right: -52px;
+  bottom: -58px;
+  width: 160px;
+  height: 160px;
+  border: 26px solid rgba(242, 181, 68, .2);
+  border-radius: 50%;
+}
+
+.profile-avatar {
+  width: 74px;
+  height: 74px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  background: var(--gold);
+  color: var(--ink);
+  font: 800 1.35rem 'Manrope', sans-serif;
+}
+
+.profile-panel h2 {
+  font-size: 1.65rem;
+}
+
+.profile-panel p {
+  color: #d9e6e2;
+  margin: 0;
+}
+
+.profile-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 8px 0 0;
+}
+
+.profile-metrics div {
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.profile-metrics dt {
+  color: #d9e6e2;
+  font-size: .76rem;
+  font-weight: 700;
+}
+
+.profile-metrics dd {
+  margin: 4px 0 0;
+  color: var(--gold);
+  font: 800 1.35rem 'Manrope', sans-serif;
+}
+
+.auth-panel {
+  display: grid;
+  gap: 18px;
+  background: #fff;
+  padding: 28px;
+}
+
+.auth-copy h2 {
+  font-size: clamp(1.7rem, 2.5vw, 2.45rem);
+}
+
+.auth-copy p:not(.eyebrow),
+.connection-note {
+  color: var(--ink-2);
+}
+
+.auth-switch {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(100%, 360px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 4px;
+  background: #f6fbf4;
+}
+
+.auth-mode {
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.auth-mode.active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.connection-note {
+  margin: 0;
+  font-weight: 700;
+}
+
+.auth-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.account-status {
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 26px;
+  box-shadow: var(--shadow);
+}
+
+.account-status p {
+  color: #d9e6e2;
+}
+
+.account-status .text-link {
+  color: #fff;
+}
+
+.site-header,
+.hero-art,
+.stats,
+.button,
+.icon-button,
+.menu-button,
+.filter,
+.tag,
+.course-icon {
+  user-select: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+input,
+textarea,
+select,
+.lesson-panel p,
+.lesson-panel li,
+.section-heading p,
+.lead {
+  user-select: text;
+}
+
+.header-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.auth-chip,
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 11px;
+  background: #fff;
+  color: var(--ink-2);
+  font-size: .82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.profile-panel .status-badge {
+  justify-self: start;
+}
+
+.status-badge {
+  border-color: rgba(255, 255, 255, .28);
+  background: rgba(255, 255, 255, .11);
+  color: #fff;
+}
+
+.is-authenticated .auth-chip {
+  border-color: #b9ddc2;
+  background: #e8f7ec;
+  color: #174b35;
+}
+
+.account {
+  background: linear-gradient(180deg, #fff 0%, #f6fbf4 100%);
+}
+
+.auth-form {
+  align-content: start;
+}
+
+.auth-form input {
+  min-height: 48px;
+}
+
+.account-status {
+  position: relative;
+  overflow: hidden;
+}
+
+.account-status::after {
+  content: "";
+  position: absolute;
+  inset: auto -38px -46px auto;
+  width: 130px;
+  height: 130px;
+  border: 22px solid rgba(242, 181, 68, .22);
+  border-radius: 50%;
+}
+
+.account-status h3,
+.account-status p,
+.account-status button,
+.account-status span {
+  position: relative;
+  z-index: 1;
+}
+
+.stats strong {
+  letter-spacing: 0;
+}
+
+.result-message {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--ink-2);
+  font-weight: 700;
+}
+
+.lesson {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 5vw;
+  align-items: start;
+  background: #f7efd9;
+}
+
+.lesson-copy p:not(.eyebrow) {
+  color: var(--ink-2);
+}
+
+.lesson-panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+.lesson-panel ul {
+  padding-left: 22px;
+}
+
+.lesson-question {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.feedback-form {
+  grid-template-columns: 1fr 1fr;
+}
+
+.feedback-form label:last-of-type {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 950px) {
+  .lesson,
+  .account-shell,
+  .account-grid,
+  .diagnostic-form,
+  .auth-form,
+  .feedback-form {
+    grid-template-columns: 1fr;
+  }
+
+  .diagnostic-form fieldset {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-chip {
+    max-width: 165px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 650px) {
+  .header-actions {
+    gap: 6px;
+  }
+
+  .auth-chip {
+    display: none;
+  }
+
+  #login-link,
+  #progress-link {
+    min-height: 38px;
+    padding: 7px 11px;
+  }
+}
