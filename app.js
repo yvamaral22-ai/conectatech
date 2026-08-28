@@ -77,7 +77,7 @@ function updateProgress() {
   document.querySelector('#user-progress-stat').textContent = currentUser ? `${percent}%` : '—';
   document.querySelector('#user-progress-caption').textContent = currentUser ? `${state.completed.length} de ${courses.length} trilhas` : 'Entre para visualizar';
   document.querySelector('#hero-session-label').textContent = currentUser ? 'Progresso sincronizado' : 'Modo visitante';
-  document.querySelector('#progress-storage-copy').textContent = currentUser ? 'Seu progresso é carregado da sua conta e sincronizado com segurança no Supabase.' : 'No modo visitante, o progresso fica somente neste aparelho. Entre para sincronizá-lo com sua conta.';
+  document.querySelector('#progress-storage-copy').textContent = currentUser ? 'Seu progresso é carregado e sincronizado com segurança na sua conta.' : 'No modo visitante, o progresso fica somente neste aparelho. Entre para sincronizá-lo com sua conta.';
 }
 
 async function loadPlatformMetrics() {
@@ -92,7 +92,7 @@ async function loadPlatformMetrics() {
 }
 
 async function loadCatalog() {
-  if (!supabase) throw new Error('Supabase não configurado.');
+  if (!supabase) throw new Error('Serviço temporariamente indisponível.');
   const {data, error} = await supabase.from('courses').select('id,icon,title,level,description,duration_minutes,position,lessons(count)').order('position');
   if (error) throw error;
   courses = data.map(course => ({...course, lessons:course.lessons?.[0]?.count || 0, time:`${course.duration_minutes}min`}));
@@ -110,7 +110,7 @@ function safeExternalUrl(value) { try { const url = new URL(value); return url.p
 
 async function loadOpportunities() {
   const list = document.querySelector('#opportunity-list');
-  if (!supabase) { list.innerHTML = '<p class="empty-state">Banco de oportunidades indisponível.</p>'; return; }
+  if (!supabase) { list.innerHTML = '<p class="empty-state">Oportunidades temporariamente indisponíveis.</p>'; return; }
   const {data, error} = await supabase.from('opportunities').select('id,kind,title,organization,source_url,description,closes_at,verified_at').order('verified_at', {ascending:false});
   if (error || !data?.length) { list.innerHTML = '<p class="empty-state">Nenhuma oportunidade verificada e vigente está publicada agora.</p>'; return; }
   list.innerHTML = data.map(item => `<article><span class="tag">${escapeHtml(item.kind)}</span><div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.organization)} • ${escapeHtml(item.description)}${item.closes_at ? ` • Até ${new Date(item.closes_at).toLocaleDateString('pt-BR')}` : ''}</p></div><a href="${safeExternalUrl(item.source_url)}" target="_blank" rel="noopener noreferrer">Fonte oficial →</a></article>`).join('');
@@ -158,7 +158,7 @@ document.querySelector('#dialog form').addEventListener('submit', async event =>
 let activeLesson;
 async function openLesson(lessonId) {
   try {
-    if (!supabase) throw new Error('Supabase não configurado');
+    if (!supabase) throw new Error('Serviço temporariamente indisponível');
     const {data:lesson, error} = await supabase.from('lessons').select('id,course_id,title,summary,content,question,answer,options').eq('id', lessonId).single();
     if (error) throw error;
     activeLesson = {...lesson, courseId:lesson.course_id};
@@ -169,7 +169,7 @@ async function openLesson(lessonId) {
     document.querySelector('#lesson-options').innerHTML = activeLesson.options.map((option, index) => `<label class="lesson-option"><input type="radio" name="answer" value="${option}" ${index === 0 ? 'required' : ''}> <span>${option}</span></label>`).join('');
     document.querySelector('#exercise-result').textContent = '';
     document.querySelector('#lesson-dialog').showModal();
-  } catch (_) { openDialog('Aula indisponível', 'Não foi possível carregar esta aula publicada do banco de dados. Tente novamente quando estiver online.'); }
+  } catch (_) { openDialog('Aula indisponível', 'Não foi possível carregar esta aula. Tente novamente quando estiver online.'); }
 }
 
 document.querySelector('#exercise-form').addEventListener('submit', event => {
