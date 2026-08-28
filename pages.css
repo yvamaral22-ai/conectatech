@@ -1,5 +1,13 @@
 .app-page {
-  background: #f4f1e8;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(242, 181, 68, 0.16), transparent 24%),
+    radial-gradient(
+      circle at 92% 32%,
+      rgba(104, 181, 153, 0.14),
+      transparent 25%
+    ),
+    #f4f1e8;
+  background-attachment: fixed;
 }
 .app-page [hidden] {
   display: none !important;
@@ -94,6 +102,13 @@
   border-radius: 24px;
   box-shadow: 0 12px 35px rgba(26, 60, 50, 0.08);
   scroll-margin-top: 104px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.settings-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 48px rgba(26, 60, 50, 0.12);
 }
 .settings-card h2,
 .auth-guard h2 {
@@ -321,6 +336,13 @@
   background: #fff;
   border: 1px solid var(--line);
   box-shadow: 0 12px 35px rgba(26, 60, 50, 0.08);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.feature-panel:hover {
+  transform: translateY(-7px) rotateX(1deg);
+  box-shadow: 0 24px 55px rgba(26, 60, 50, 0.15);
 }
 .feature-panel > span {
   display: grid;
@@ -354,6 +376,11 @@
   border-radius: 22px;
   color: #fff;
   background: var(--ink);
+  box-shadow: 0 14px 30px rgba(16, 44, 37, 0.18);
+  transition: transform 0.25s ease;
+}
+.metrics-board article:hover {
+  transform: translateY(-5px);
 }
 .metrics-board strong,
 .metrics-board span {
@@ -437,6 +464,127 @@
   padding: 12px 14px;
   background: #fff;
 }
+dialog form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 750;
+}
+dialog form input,
+dialog form textarea,
+dialog form select {
+  width: 100%;
+  border: 1px solid #82958e;
+  border-radius: 11px;
+  padding: 12px 14px;
+  background: #fff;
+  color: var(--ink);
+}
+dialog form textarea {
+  min-height: 110px;
+}
+.resume-shell {
+  width: min(1420px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 60px 0 100px;
+}
+.resume-builder {
+  display: grid;
+  grid-template-columns: minmax(420px, 0.85fr) minmax(520px, 1.15fr);
+  gap: 28px;
+  align-items: start;
+}
+.resume-controls {
+  padding: 30px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 12px 35px rgba(26, 60, 50, 0.08);
+}
+.template-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 26px;
+}
+.template-choice {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 750;
+  cursor: pointer;
+}
+.template-choice.active {
+  background: var(--ink);
+  color: #fff;
+}
+.resume-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.resume-preview-wrap {
+  position: sticky;
+  top: 100px;
+}
+.preview-label {
+  margin: 0 0 10px;
+  font-weight: 800;
+  color: var(--ink-2);
+}
+.resume-preview {
+  min-height: 850px;
+  padding: 58px;
+  background: #fff;
+  color: #17211e;
+  box-shadow: 0 18px 50px rgba(20, 45, 38, 0.16);
+  white-space: pre-line;
+}
+.resume-preview header {
+  padding-bottom: 25px;
+  border-bottom: 3px solid #173f35;
+}
+.resume-preview h2 {
+  margin: 0;
+  font:
+    800 2.5rem "Manrope",
+    sans-serif;
+}
+.resume-preview h3 {
+  margin: 28px 0 8px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #173f35;
+}
+.resume-preview p {
+  margin: 0;
+}
+.template-classic {
+  font-family: Georgia, serif;
+  border-top: 12px solid #173f35;
+}
+.template-classic h2 {
+  font-family: Georgia, serif;
+  text-align: center;
+}
+.template-classic header p {
+  text-align: center;
+}
+.template-minimal {
+  padding: 72px;
+}
+.template-minimal header {
+  border: 0;
+}
+.template-minimal h3 {
+  color: #6b746f;
+  border-bottom: 1px solid #ccd3cf;
+  padding-bottom: 5px;
+}
 @media (max-width: 850px) {
   .profile-workspace {
     grid-template-columns: 1fr;
@@ -450,6 +598,28 @@
   .professional-grid,
   .metrics-board {
     grid-template-columns: 1fr 1fr;
+  }
+  .resume-builder {
+    grid-template-columns: 1fr;
+  }
+  .resume-preview-wrap {
+    position: static;
+  }
+}
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #resume-preview,
+  #resume-preview * {
+    visibility: visible !important;
+  }
+  #resume-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    min-height: 100%;
+    box-shadow: none;
   }
 }
 @media (max-width: 620px) {

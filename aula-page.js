@@ -31,20 +31,27 @@ async function initialize() {
       result.textContent = "Entre na sua conta para salvar o progresso.";
       return;
     }
+    const track = await supabase
+      .from("tracks")
+      .select("slug")
+      .eq("id", lesson.track_id)
+      .single();
+    if (track.error || !track.data?.slug) {
+      result.textContent = "Não foi possível identificar esta trilha.";
+      return;
+    }
     const now = new Date().toISOString();
-    const saved = await supabase
-      .from("course_progress")
-      .upsert(
-        {
-          user_id: data.user.id,
-          course_id: lesson.tracks.slug,
-          completed_at: now,
-          updated_at: now,
-        },
-        { onConflict: "user_id,course_id" },
-      );
+    const saved = await supabase.from("course_progress").upsert(
+      {
+        user_id: data.user.id,
+        course_id: track.data.slug,
+        completed_at: now,
+        updated_at: now,
+      },
+      { onConflict: "user_id,course_id" },
+    );
     result.textContent = saved.error
-      ? "Não foi possível salvar agora."
+      ? `Não foi possível salvar agora: ${saved.error.message}`
       : "Aula concluída. Seu progresso foi atualizado!";
   });
 }

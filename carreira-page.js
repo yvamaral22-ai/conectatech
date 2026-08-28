@@ -4,7 +4,7 @@ const status = document.querySelector("#page-status");
 document.querySelectorAll(".resource-action").forEach((button) =>
   button.addEventListener("click", () => {
     if (button.dataset.feature === "currículo")
-      document.querySelector("#career-dialog").showModal();
+      window.location.href = "/curriculo.html";
     else if (button.dataset.feature === "portfólio")
       document.querySelector("#portfolio-dialog").showModal();
     else {
@@ -31,17 +31,16 @@ document
   .querySelector("#career-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     const message = document.querySelector("#career-message");
     try {
       const user = await requireUser();
-      const values = Object.fromEntries(new FormData(event.currentTarget));
-      const { error } = await supabase
-        .from("career_profiles")
-        .upsert({
-          user_id: user.id,
-          ...values,
-          updated_at: new Date().toISOString(),
-        });
+      const values = Object.fromEntries(new FormData(form));
+      const { error } = await supabase.from("career_profiles").upsert({
+        user_id: user.id,
+        ...values,
+        updated_at: new Date().toISOString(),
+      });
       if (error) throw error;
       message.textContent = "Informações profissionais salvas.";
     } catch (error) {
@@ -52,16 +51,17 @@ document
   .querySelector("#portfolio-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     const message = document.querySelector("#portfolio-message");
     try {
       const user = await requireUser();
-      const values = Object.fromEntries(new FormData(event.currentTarget));
+      const values = Object.fromEntries(new FormData(form));
       const { error } = await supabase
         .from("portfolio_projects")
         .insert({ user_id: user.id, ...values });
       if (error) throw error;
       message.textContent = "Projeto adicionado ao portfólio.";
-      event.currentTarget.reset();
+      form.reset();
     } catch (error) {
       message.textContent = error.message;
     }

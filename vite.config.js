@@ -23,6 +23,7 @@ export default defineConfig({
         impacto: resolve(import.meta.dirname, "impacto.html"),
         aula: resolve(import.meta.dirname, "aula.html"),
         admin: resolve(import.meta.dirname, "admin.html"),
+        curriculo: resolve(import.meta.dirname, "curriculo.html"),
       },
     },
   },
