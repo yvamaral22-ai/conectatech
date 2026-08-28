@@ -24,6 +24,7 @@ export default defineConfig({
         aula: resolve(import.meta.dirname, "aula.html"),
         admin: resolve(import.meta.dirname, "admin.html"),
         curriculo: resolve(import.meta.dirname, "curriculo.html"),
+        portfolio: resolve(import.meta.dirname, "portfolio.html"),
       },
     },
   },

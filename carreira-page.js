@@ -6,7 +6,7 @@ document.querySelectorAll(".resource-action").forEach((button) =>
     if (button.dataset.feature === "currículo")
       window.location.href = "/curriculo.html";
     else if (button.dataset.feature === "portfólio")
-      document.querySelector("#portfolio-dialog").showModal();
+      window.location.href = "/portfolio.html";
     else {
       status.textContent =
         "Consulte as trilhas de processos seletivos para iniciar sua preparação.";
