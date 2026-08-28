@@ -57,10 +57,7 @@ async function render(record) {
 async function loadProgress() {
   const [{ data: progress }, { count }] = await Promise.all([
     supabase.from("course_progress").select("course_id"),
-    supabase
-      .from("courses")
-      .select("id", { count: "exact", head: true })
-      .eq("published", true),
+    supabase.from("tracks").select("id", { count: "exact", head: true }),
   ]);
   const completed = progress?.length || 0;
   document.querySelector("#completed-count").textContent = completed;

@@ -19,9 +19,12 @@ document
     event.preventDefault();
     const message = document.querySelector("#admin-message");
     const values = Object.fromEntries(new FormData(event.currentTarget));
-    values.published = values.published === "on";
-    values.verified_at = new Date().toISOString();
-    values.closes_at = values.closes_at || null;
+    values.status = values.published === "on" ? "published" : "draft";
+    values.url = values.source_url;
+    delete values.published;
+    delete values.source_url;
+    delete values.kind;
+    delete values.closes_at;
     const { error } = await supabase.from("opportunities").insert(values);
     message.textContent = error
       ? error.message

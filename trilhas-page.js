@@ -18,7 +18,7 @@ function render(filter = "todas") {
   grid.innerHTML = visible
     .map(
       (course) =>
-        `<article class="course-card"><span class="course-icon" aria-hidden="true">${escapeHtml(course.icon)}</span><p class="card-kicker">${escapeHtml(course.level)}</p><h2>${escapeHtml(course.title)}</h2><p>${escapeHtml(course.description)}</p><div class="course-meta"><span>${course.lessons?.[0]?.count || 0} aulas</span><span>${course.duration_minutes} min</span></div><button class="text-link course-start" data-course="${course.id}" type="button">${completed.includes(course.id) ? "Revisar trilha" : "Começar trilha"} →</button></article>`,
+        `<article class="course-card"><span class="course-icon" aria-hidden="true">${escapeHtml(course.icon)}</span><p class="card-kicker">${escapeHtml(course.level)}</p><h2>${escapeHtml(course.title)}</h2><p>${escapeHtml(course.description)}</p><div class="course-meta"><span>Conteúdo prático</span><span>${course.estimated_minutes} min</span></div><button class="text-link course-start" data-track="${course.id}" type="button">${completed.includes(course.slug) ? "Revisar trilha" : "Começar trilha"} →</button></article>`,
     )
     .join("");
 }
@@ -27,11 +27,11 @@ async function initialize() {
   if (!supabase) throw new Error("Serviço indisponível.");
   const [{ data, error }, session] = await Promise.all([
     supabase
-      .from("courses")
+      .from("tracks")
       .select(
-        "id,icon,title,level,description,duration_minutes,position,lessons(count)",
+        "id,slug,icon,title,level,description,estimated_minutes,sort_order",
       )
-      .order("position"),
+      .order("sort_order"),
     supabase.auth.getUser(),
   ]);
   if (error) throw error;
@@ -60,8 +60,8 @@ grid.addEventListener("click", async (event) => {
   const { data } = await supabase
     .from("lessons")
     .select("id")
-    .eq("course_id", button.dataset.course)
-    .order("position")
+    .eq("track_id", button.dataset.track)
+    .order("sort_order")
     .limit(1)
     .maybeSingle();
   if (data)

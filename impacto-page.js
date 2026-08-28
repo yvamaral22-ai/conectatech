@@ -2,7 +2,10 @@ import { supabase } from "./data-client.js";
 import "./page-shell.js";
 async function initialize() {
   if (!supabase) throw new Error();
-  const { data, error } = await supabase.rpc("platform_metrics");
+  const [{ data, error }, tracks] = await Promise.all([
+    supabase.rpc("platform_metrics"),
+    supabase.from("tracks").select("id", { count: "exact", head: true }),
+  ]);
   if (error) throw error;
   const metrics = Array.isArray(data) ? data[0] : data;
   document.querySelector("#registered-stat").textContent = Number(
@@ -12,10 +15,9 @@ async function initialize() {
     metrics.active_learners || 0,
   ).toLocaleString("pt-BR");
   document.querySelector("#courses-stat").textContent = Number(
-    metrics.available_courses || 0,
+    tracks.count || 0,
   ).toLocaleString("pt-BR");
-  document.querySelector("#completion-stat").textContent =
-    `${Number(metrics.completion_rate || 0)}%`;
+  document.querySelector("#completion-stat").textContent = "Em evolução";
   document.querySelector("#metrics-status").textContent =
     "Indicadores atualizados";
 }

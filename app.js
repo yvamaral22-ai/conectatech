@@ -151,7 +151,10 @@ function updateProgress() {
 
 async function loadPlatformMetrics() {
   if (!supabase) return;
-  const { data, error } = await supabase.rpc("platform_metrics");
+  const [{ data, error }, tracks] = await Promise.all([
+    supabase.rpc("platform_metrics"),
+    supabase.from("tracks").select("id", { count: "exact", head: true }),
+  ]);
   if (error || !data?.length) return;
   const metrics = data[0];
   document.querySelector("#registered-stat").textContent = Number(
@@ -161,25 +164,24 @@ async function loadPlatformMetrics() {
     metrics.active_learners,
   ).toLocaleString("pt-BR");
   document.querySelector("#courses-stat").textContent = Number(
-    metrics.available_courses,
+    tracks.count || 0,
   ).toLocaleString("pt-BR");
-  document.querySelector("#completion-rate-stat").textContent =
-    `${Number(metrics.completion_rate).toLocaleString("pt-BR")}%`;
+  document.querySelector("#completion-rate-stat").textContent = "Em evolução";
 }
 
 async function loadCatalog() {
   if (!supabase) throw new Error("Serviço temporariamente indisponível.");
   const { data, error } = await supabase
-    .from("courses")
-    .select(
-      "id,icon,title,level,description,duration_minutes,position,lessons(count)",
-    )
-    .order("position");
+    .from("tracks")
+    .select("id,slug,icon,title,level,description,estimated_minutes,sort_order")
+    .order("sort_order");
   if (error) throw error;
-  courses = data.map((course) => ({
-    ...course,
-    lessons: course.lessons?.[0]?.count || 0,
-    time: `${course.duration_minutes}min`,
+  courses = data.map((track) => ({
+    ...track,
+    id: track.slug,
+    trackId: track.id,
+    lessons: 1,
+    time: `${track.estimated_minutes}min`,
   }));
   localStorage.setItem(catalogCacheKey, JSON.stringify(courses));
   renderCourses();
@@ -223,10 +225,8 @@ async function loadOpportunities() {
   }
   const { data, error } = await supabase
     .from("opportunities")
-    .select(
-      "id,kind,title,organization,source_url,description,closes_at,verified_at",
-    )
-    .order("verified_at", { ascending: false });
+    .select("id,title,organization,url,description,status,created_at")
+    .order("created_at", { ascending: false });
   if (error || !data?.length) {
     list.innerHTML =
       '<p class="empty-state">Nenhuma oportunidade verificada e vigente está publicada agora.</p>';
@@ -235,7 +235,7 @@ async function loadOpportunities() {
   list.innerHTML = data
     .map(
       (item) =>
-        `<article><span class="tag">${escapeHtml(item.kind)}</span><div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.organization)} • ${escapeHtml(item.description)}${item.closes_at ? ` • Até ${new Date(item.closes_at).toLocaleDateString("pt-BR")}` : ""}</p></div><a href="${safeExternalUrl(item.source_url)}" target="_blank" rel="noopener noreferrer">Fonte oficial →</a></article>`,
+        `<article><span class="tag">Oportunidade</span><div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.organization)} • ${escapeHtml(item.description)}</p></div><a href="${safeExternalUrl(item.url)}" target="_blank" rel="noopener noreferrer">Fonte oficial →</a></article>`,
     )
     .join("");
 }
@@ -269,10 +269,18 @@ document.querySelectorAll(".filter").forEach((button) =>
   }),
 );
 
-grid.addEventListener("click", (event) => {
+grid.addEventListener("click", async (event) => {
   const button = event.target.closest(".course-action");
   if (!button) return;
-  openLesson(`${button.dataset.course}-1`);
+  const course = courses.find((item) => item.id === button.dataset.course);
+  const { data } = await supabase
+    .from("lessons")
+    .select("id")
+    .eq("track_id", course.trackId)
+    .order("sort_order")
+    .limit(1)
+    .maybeSingle();
+  if (data) location.href = `/aula.html?id=${encodeURIComponent(data.id)}`;
 });
 
 document

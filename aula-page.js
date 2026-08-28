@@ -1,60 +1,54 @@
 import { supabase } from "./data-client.js";
-import { escapeHtml } from "./page-shell.js";
+import "./page-shell.js";
+
 const lessonId = new URLSearchParams(location.search).get("id");
-let lesson;
+
 async function initialize() {
   if (!lessonId || !supabase) throw new Error();
-  const { data, error } = await supabase
+  const { data: lesson, error } = await supabase
     .from("lessons")
     .select(
-      "id,course_id,title,summary,content,question,answer,options,courses(title)",
+      "id,track_id,title,summary,body,estimated_minutes,tracks(title,slug)",
     )
     .eq("id", lessonId)
     .single();
   if (error) throw error;
-  lesson = data;
   document.title = `${lesson.title} — ConectaTech`;
   document.querySelector("#course-label").textContent =
-    lesson.courses?.title || "Trilha";
+    lesson.tracks?.title || "Trilha";
   document.querySelector("#lesson-title").textContent = lesson.title;
   document.querySelector("#lesson-summary").textContent = lesson.summary;
-  document.querySelector("#lesson-content").textContent = lesson.content;
-  document.querySelector("#lesson-question").textContent = lesson.question;
-  document.querySelector("#lesson-options").innerHTML = lesson.options
-    .map(
-      (option) =>
-        `<label class="lesson-option"><input type="radio" name="answer" value="${escapeHtml(option)}" required><span>${escapeHtml(option)}</span></label>`,
-    )
-    .join("");
-  document.querySelector("#exercise-form").hidden = false;
-}
-document
-  .querySelector("#exercise-form")
-  .addEventListener("submit", async (event) => {
+  document.querySelector("#lesson-content").textContent = lesson.body;
+  const exercise = document.querySelector("#exercise-form");
+  exercise.innerHTML =
+    '<p>Terminou a leitura e a atividade proposta no conteúdo?</p><p id="exercise-result" role="status"></p><button class="button" type="submit">Concluir aula</button>';
+  exercise.hidden = false;
+  exercise.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const answer = new FormData(event.currentTarget).get("answer");
     const result = document.querySelector("#exercise-result");
-    if (answer !== lesson.answer) {
-      result.textContent = "Ainda não. Revise o conteúdo e tente novamente.";
-      result.className = "answer-wrong";
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      result.textContent = "Entre na sua conta para salvar o progresso.";
       return;
     }
-    result.textContent = "Resposta correta! Seu progresso foi salvo.";
-    result.className = "answer-correct";
-    const { data } = await supabase.auth.getUser();
-    if (data.user)
-      await supabase
-        .from("course_progress")
-        .upsert(
-          {
-            user_id: data.user.id,
-            course_id: lesson.course_id,
-            completed_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id,course_id" },
-        );
+    const now = new Date().toISOString();
+    const saved = await supabase
+      .from("course_progress")
+      .upsert(
+        {
+          user_id: data.user.id,
+          course_id: lesson.tracks.slug,
+          completed_at: now,
+          updated_at: now,
+        },
+        { onConflict: "user_id,course_id" },
+      );
+    result.textContent = saved.error
+      ? "Não foi possível salvar agora."
+      : "Aula concluída. Seu progresso foi atualizado!";
   });
+}
+
 initialize().catch(() => {
   document.querySelector("#lesson-title").textContent = "Aula não encontrada";
   document.querySelector("#lesson-summary").textContent =
