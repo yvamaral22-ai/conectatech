@@ -111,13 +111,11 @@ document
     saveState.textContent = "Salvando…";
     try {
       const form = new FormData(event.currentTarget);
-      const displayName = String(form.get("display_name")).trim();
-      const username = String(form.get("username")).trim().toLowerCase();
       const update = {
-        display_name: displayName || profile.display_name,
-        username: username || profile.username,
-        bio: String(form.get("bio")).trim() || profile.bio || "",
-        city: String(form.get("city")).trim() || profile.city || "",
+        display_name: String(form.get("display_name")).trim(),
+        username: String(form.get("username")).trim().toLowerCase(),
+        bio: String(form.get("bio")).trim(),
+        city: String(form.get("city")).trim(),
         is_public: document.querySelector("#profile-public").checked,
         updated_at: new Date().toISOString(),
       };

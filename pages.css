@@ -1,9 +1,6 @@
 .app-page {
   background: #f4f1e8;
 }
-.app-page [hidden] {
-  display: none !important;
-}
 .account-shell {
   width: min(1240px, calc(100% - 40px));
   margin: 0 auto;
