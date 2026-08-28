@@ -7,6 +7,30 @@ create table if not exists public.profiles (
   avatar_path text, is_public boolean not null default false,
   created_at timestamptz not null default now(), updated_at timestamptz not null default now()
 );
+
+-- Compatibilidade com versões anteriores da tabela de perfis.
+-- As colunas são acrescentadas sem apagar ou substituir dados existentes.
+alter table public.profiles add column if not exists username text;
+alter table public.profiles add column if not exists display_name text;
+alter table public.profiles add column if not exists bio text not null default '';
+alter table public.profiles add column if not exists city text not null default '';
+alter table public.profiles add column if not exists avatar_path text;
+alter table public.profiles add column if not exists is_public boolean not null default false;
+alter table public.profiles add column if not exists created_at timestamptz not null default now();
+alter table public.profiles add column if not exists updated_at timestamptz not null default now();
+
+update public.profiles
+set username = 'user_' || substring(replace(id::text, '-', '') from 1 for 12)
+where username is null or btrim(username) = '';
+
+update public.profiles
+set display_name = 'Pessoa ConectaTech'
+where display_name is null or btrim(display_name) = '';
+
+alter table public.profiles alter column username set not null;
+alter table public.profiles alter column display_name set not null;
+create unique index if not exists profiles_username_unique on public.profiles (username);
+
 alter table public.profiles enable row level security;
 revoke all on public.profiles from anon, authenticated;
 grant select on public.profiles to anon, authenticated;

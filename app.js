@@ -398,6 +398,49 @@ document
 let registerMode = false;
 const authDialog = document.querySelector("#auth-dialog");
 const accountButton = document.querySelector("#account-button");
+
+async function renderHeaderAccount(
+  user = currentUser,
+  profile = currentProfile,
+) {
+  accountButton.replaceChildren();
+  if (!user) {
+    accountButton.classList.remove("account-button-profile");
+    const label = document.createElement("span");
+    label.className = "account-button-label";
+    label.textContent = "Entrar";
+    accountButton.append(label);
+    return;
+  }
+  const displayName =
+    profile?.display_name ||
+    user.user_metadata?.name ||
+    user.name ||
+    user.email?.split("@")[0] ||
+    "Minha conta";
+  const avatar = document.createElement("span");
+  avatar.className = "account-mini-avatar";
+  const avatarUrl = profile?.avatar_path
+    ? await profileAvatarUrl(profile.avatar_path)
+    : null;
+  if (avatarUrl) {
+    const image = document.createElement("img");
+    image.src = avatarUrl;
+    image.alt = "";
+    avatar.append(image);
+  } else avatar.textContent = displayName.slice(0, 2).toUpperCase();
+  const copy = document.createElement("span");
+  copy.className = "account-mini-copy";
+  const name = document.createElement("strong");
+  name.textContent = displayName.split(" ")[0];
+  const detail = document.createElement("small");
+  detail.textContent = profile?.username
+    ? `@${profile.username}`
+    : "Minha conta";
+  copy.append(name, detail);
+  accountButton.classList.add("account-button-profile");
+  accountButton.append(avatar, copy);
+}
 function setAuthMode(register) {
   registerMode = register;
   document.querySelector("#auth-title").textContent = register
@@ -459,7 +502,7 @@ document
         if (!result.session && registerMode) {
           authDialog.close();
           accountButton.dataset.authenticated = "false";
-          accountButton.textContent = "Entrar";
+          await renderHeaderAccount(null);
           document.querySelector("#offline-status").textContent =
             "Confira seu e-mail para confirmar a conta e depois entre.";
           document.querySelector("#offline-status").style.display = "block";
@@ -474,12 +517,8 @@ document
         user = result.user;
       }
       currentUser = user;
-      accountButton.textContent = (
-        user.user_metadata?.name ||
-        user.name ||
-        user.email
-      ).split(" ")[0];
       accountButton.dataset.authenticated = "true";
+      await renderHeaderAccount(user);
       authDialog.close();
       await loadUserProgress();
       await loadMyProfile();
@@ -526,6 +565,7 @@ async function loadMyProfile() {
   if (error) return;
   currentProfile = data;
   await renderProfile(data);
+  await renderHeaderAccount(currentUser, data);
 }
 
 document
@@ -535,11 +575,13 @@ document
     const message = document.querySelector("#profile-message");
     try {
       const form = new FormData(event.currentTarget);
+      const displayName = String(form.get("display_name")).trim();
+      const username = String(form.get("username")).trim().toLowerCase();
       const update = {
-        display_name: String(form.get("display_name")).trim(),
-        username: String(form.get("username")).trim().toLowerCase(),
-        bio: String(form.get("bio")).trim(),
-        city: String(form.get("city")).trim(),
+        display_name: displayName || currentProfile.display_name,
+        username: username || currentProfile.username,
+        bio: String(form.get("bio")).trim() || currentProfile.bio || "",
+        city: String(form.get("city")).trim() || currentProfile.city || "",
         is_public: form.get("is_public") === "on",
         updated_at: new Date().toISOString(),
       };
@@ -568,6 +610,7 @@ document
       await supabase.auth.updateUser({ data: { name: update.display_name } });
       currentProfile = data;
       await renderProfile(data);
+      await renderHeaderAccount(currentUser, data);
       document.querySelector("#profile-dialog").close();
     } catch (error) {
       message.textContent =
@@ -608,7 +651,7 @@ document.querySelector("#logout-button").addEventListener("click", async () => {
   currentProfile = null;
   state = readProgressState();
   accountButton.dataset.authenticated = "false";
-  accountButton.textContent = "Entrar";
+  await renderHeaderAccount(null);
   updateProgress();
   renderCourses(document.querySelector(".filter.active").dataset.filter);
   document.querySelector("#profile-name").textContent = "Seu perfil";
@@ -723,7 +766,7 @@ document
       });
       localStorage.removeItem("conectatech-state");
       accountButton.dataset.authenticated = "false";
-      accountButton.textContent = "Entrar";
+      await renderHeaderAccount(null);
       privacyDialog.close();
       location.reload();
     } catch (error) {
@@ -829,12 +872,8 @@ async function initializeFromServer() {
     if (user) {
       currentUser = user;
       await syncInitialConsents(user);
-      accountButton.textContent = (
-        user.user_metadata?.name ||
-        user.name ||
-        user.email
-      ).split(" ")[0];
       accountButton.dataset.authenticated = "true";
+      await renderHeaderAccount(user);
       await loadUserProgress();
       await loadMyProfile();
     }

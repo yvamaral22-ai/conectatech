@@ -56,7 +56,7 @@
           ◐
         </button>
         <button class="button button-small" id="account-button" type="button">
-          Entrar
+          <span class="account-button-label">Entrar</span>
         </button>
       </div>
     </header>
@@ -599,14 +599,12 @@
           name="display_name"
           minlength="2"
           maxlength="80"
-          required
         /><label for="profile-username-edit">Nome de usuário</label
         ><input
           id="profile-username-edit"
           name="username"
           pattern="[a-z0-9_]{3,30}"
           maxlength="30"
-          required
           aria-describedby="username-help"
         /><small id="username-help"
           >Use de 3 a 30 letras minúsculas, números ou _.</small
