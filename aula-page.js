@@ -3,6 +3,44 @@ import "./page-shell.js";
 
 const lessonId = new URLSearchParams(location.search).get("id");
 
+async function currentUser() {
+  const { data } = await supabase.auth.getUser();
+  return data.user;
+}
+
+async function saveLessonProgress(user, lesson) {
+  const now = new Date().toISOString();
+  const lessonProgress = await supabase.from("lesson_progress").upsert(
+    {
+      user_id: user.id,
+      lesson_id: lesson.id,
+      status: "completed",
+      score: 100,
+      completed_at: now,
+      updated_at: now,
+    },
+    { onConflict: "user_id,lesson_id" },
+  );
+  if (lessonProgress.error) throw lessonProgress.error;
+
+  const track = await supabase
+    .from("tracks")
+    .select("slug")
+    .eq("id", lesson.track_id)
+    .single();
+  if (!track.error && track.data?.slug) {
+    await supabase.from("course_progress").upsert(
+      {
+        user_id: user.id,
+        course_id: track.data.slug,
+        completed_at: now,
+        updated_at: now,
+      },
+      { onConflict: "user_id,course_id" },
+    );
+  }
+}
+
 async function initialize() {
   if (!lessonId || !supabase) throw new Error();
   const { data: lesson, error } = await supabase
@@ -13,51 +51,69 @@ async function initialize() {
     .eq("id", lessonId)
     .single();
   if (error) throw error;
-  document.title = `${lesson.title} — ConectaTech`;
+
+  document.title = `${lesson.title} - ConectaTech`;
   document.querySelector("#course-label").textContent =
     lesson.tracks?.title || "Trilha";
   document.querySelector("#lesson-title").textContent = lesson.title;
   document.querySelector("#lesson-summary").textContent = lesson.summary;
   document.querySelector("#lesson-content").textContent = lesson.body;
+
+  const article = document.querySelector(".lesson-page");
+  const actions = document.createElement("div");
+  actions.className = "lesson-actions";
+  actions.innerHTML =
+    '<button class="button button-secondary" id="save-lesson-button" type="button">Salvar conteudo</button><p id="save-lesson-result" role="status"></p>';
+  document.querySelector("#lesson-content").before(actions);
+
+  document
+    .querySelector("#save-lesson-button")
+    .addEventListener("click", async () => {
+      const result = document.querySelector("#save-lesson-result");
+      try {
+        const user = await currentUser();
+        if (!user) {
+          result.textContent = "Entre na sua conta para salvar esta aula.";
+          return;
+        }
+        const saved = await supabase.from("saved_lessons").upsert(
+          {
+            user_id: user.id,
+            lesson_id: lesson.id,
+          },
+          { onConflict: "user_id,lesson_id" },
+        );
+        if (saved.error) throw saved.error;
+        result.textContent = "Conteudo salvo no seu perfil.";
+      } catch (error) {
+        result.textContent = `Nao foi possivel salvar: ${error.message}`;
+      }
+    });
+
   const exercise = document.querySelector("#exercise-form");
   exercise.innerHTML =
-    '<p>Terminou a leitura e a atividade proposta no conteúdo?</p><p id="exercise-result" role="status"></p><button class="button" type="submit">Concluir aula</button>';
+    '<p>Terminou a leitura e a atividade proposta no conteudo?</p><p id="exercise-result" role="status"></p><button class="button" type="submit">Concluir aula</button>';
   exercise.hidden = false;
   exercise.addEventListener("submit", async (event) => {
     event.preventDefault();
     const result = document.querySelector("#exercise-result");
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) {
-      result.textContent = "Entre na sua conta para salvar o progresso.";
-      return;
+    try {
+      const user = await currentUser();
+      if (!user) {
+        result.textContent = "Entre na sua conta para salvar o progresso.";
+        return;
+      }
+      await saveLessonProgress(user, lesson);
+      result.textContent = "Aula concluida. Seu progresso foi atualizado!";
+    } catch (error) {
+      result.textContent = `Nao foi possivel salvar agora: ${error.message}`;
     }
-    const track = await supabase
-      .from("tracks")
-      .select("slug")
-      .eq("id", lesson.track_id)
-      .single();
-    if (track.error || !track.data?.slug) {
-      result.textContent = "Não foi possível identificar esta trilha.";
-      return;
-    }
-    const now = new Date().toISOString();
-    const saved = await supabase.from("course_progress").upsert(
-      {
-        user_id: data.user.id,
-        course_id: track.data.slug,
-        completed_at: now,
-        updated_at: now,
-      },
-      { onConflict: "user_id,course_id" },
-    );
-    result.textContent = saved.error
-      ? `Não foi possível salvar agora: ${saved.error.message}`
-      : "Aula concluída. Seu progresso foi atualizado!";
   });
+  article.classList.add("lesson-ready");
 }
 
 initialize().catch(() => {
-  document.querySelector("#lesson-title").textContent = "Aula não encontrada";
+  document.querySelector("#lesson-title").textContent = "Aula nao encontrada";
   document.querySelector("#lesson-summary").textContent =
-    "Volte ao catálogo e escolha uma aula disponível.";
+    "Volte ao catalogo e escolha uma aula disponivel.";
 });

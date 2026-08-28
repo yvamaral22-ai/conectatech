@@ -2,72 +2,256 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#173f35" />
+    <meta
+      name="description"
+      content="Painel administrativo da ConectaTech para gerir trilhas, aulas e oportunidades."
+    />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/modern.css" />
     <link rel="stylesheet" href="/pages.css" />
-    <title>Administração — ConectaTech</title>
+    <title>Administracao - ConectaTech</title>
   </head>
   <body class="app-page">
+    <a class="skip-link" href="#conteudo">Pular para o conteudo</a>
     <header class="site-header">
-      <a class="brand" href="/"
-        ><span>Conecta<span>Tech</span></span></a
-      >
-      <nav><a href="/">Início</a><a href="/perfil.html">Perfil</a></nav>
+      <a class="brand" href="/" aria-label="ConectaTech, pagina inicial">
+        <img src="/assets/icon.svg" width="38" height="38" alt="" />
+        <span>Conecta<span>Tech</span></span>
+      </a>
+      <nav id="main-nav" aria-label="Navegacao principal">
+        <a href="/">Inicio</a>
+        <a href="/trilhas.html">Trilhas</a>
+        <a href="/oportunidades.html">Oportunidades</a>
+        <a href="/perfil.html">Perfil</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-small" href="/perfil.html">Minha conta</a>
+      </div>
     </header>
-    <main class="account-shell">
+
+    <main class="account-shell" id="conteudo">
       <header class="page-heading">
         <div>
           <p class="eyebrow">Acesso restrito</p>
-          <h1>Administração</h1>
+          <h1>Administracao</h1>
           <p>
-            Publique oportunidades verificadas sem editar diretamente o banco.
+            Gerencie o catalogo de aprendizagem e as oportunidades exibidas no
+            site sem editar arquivos manualmente.
           </p>
         </div>
-        <span class="account-state" id="admin-status">Verificando acesso…</span>
+        <span class="account-state" id="admin-status">Verificando acesso...</span>
       </header>
-      <section class="settings-card" id="admin-content" hidden>
-        <h2>Nova oportunidade</h2>
-        <form id="opportunity-form" class="settings-form">
-          <div class="form-grid">
-            <label
-              >Tipo<select name="kind">
-                <option value="curso">Curso</option>
-                <option value="vaga">Vaga</option>
-                <option value="bolsa">Bolsa</option>
-              </select></label
-            ><label>Título<input name="title" required maxlength="160" /></label
-            ><label
-              >Organização<input
-                name="organization"
-                required
-                maxlength="160" /></label
-            ><label
-              >Fonte oficial<input
-                name="source_url"
-                type="url"
-                required /></label
-            ><label class="form-wide"
-              >Descrição<textarea
-                name="description"
-                required
-                maxlength="1000"
-              ></textarea></label
-            ><label
-              >Encerramento<input name="closes_at" type="datetime-local"
-            /></label>
-          </div>
-          <label class="privacy-option"
-            ><input name="published" type="checkbox" /><span
-              ><strong>Publicar agora</strong></span
-            ></label
-          >
-          <p id="admin-message" role="status"></p>
-          <button class="button" type="submit">Salvar oportunidade</button>
-        </form>
+
+      <section class="auth-guard" id="admin-denied" hidden>
+        <div>
+          <p class="eyebrow">Acesso protegido</p>
+          <h2>Conta sem permissao administrativa</h2>
+          <p id="admin-denied-message">
+            Entre com uma conta marcada como admin no Supabase.
+          </p>
+        </div>
+        <a class="button" href="/?entrar=1">Entrar</a>
       </section>
+
+      <div class="admin-workspace" id="admin-content" hidden>
+        <section class="admin-overview" aria-label="Resumo administrativo">
+          <article>
+            <strong id="tracks-count">0</strong>
+            <span>Trilhas</span>
+          </article>
+          <article>
+            <strong id="lessons-count">0</strong>
+            <span>Aulas</span>
+          </article>
+          <article>
+            <strong id="opportunities-count">0</strong>
+            <span>Oportunidades</span>
+          </article>
+        </section>
+
+        <section class="settings-card" aria-labelledby="track-title">
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">Catalogo</p>
+              <h2 id="track-title">Nova trilha</h2>
+            </div>
+            <span class="save-state" id="track-message" role="status"></span>
+          </div>
+          <form id="track-form" class="settings-form">
+            <div class="form-grid">
+              <label>
+                Titulo
+                <input name="title" required maxlength="160" />
+              </label>
+              <label>
+                Slug
+                <input name="slug" maxlength="90" placeholder="gerado automaticamente" />
+              </label>
+              <label>
+                Nivel
+                <select name="level">
+                  <option value="iniciante">Iniciante</option>
+                  <option value="intermediario">Intermediario</option>
+                </select>
+              </label>
+              <label>
+                Icone
+                <input name="icon" maxlength="8" placeholder="Ex.: <> ou #"/>
+              </label>
+              <label>
+                Minutos estimados
+                <input name="estimated_minutes" type="number" min="0" value="30" />
+              </label>
+              <label>
+                Ordem
+                <input name="sort_order" type="number" min="0" value="1" />
+              </label>
+              <label class="form-wide">
+                Descricao
+                <textarea name="description" required maxlength="600" rows="4"></textarea>
+              </label>
+            </div>
+            <label class="privacy-option">
+              <input name="published" type="checkbox" checked />
+              <span><strong>Publicar trilha</strong></span>
+            </label>
+            <button class="button" type="submit">Salvar trilha</button>
+          </form>
+        </section>
+
+        <section class="settings-card" aria-labelledby="lesson-admin-title">
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">Aulas</p>
+              <h2 id="lesson-admin-title">Nova aula</h2>
+            </div>
+            <span class="save-state" id="lesson-message" role="status"></span>
+          </div>
+          <form id="lesson-form" class="settings-form">
+            <div class="form-grid">
+              <label>
+                Trilha
+                <select name="track_id" id="lesson-track" required></select>
+              </label>
+              <label>
+                Titulo
+                <input name="title" required maxlength="160" />
+              </label>
+              <label>
+                Slug
+                <input name="slug" maxlength="90" placeholder="gerado automaticamente" />
+              </label>
+              <label>
+                Minutos estimados
+                <input name="estimated_minutes" type="number" min="0" value="15" />
+              </label>
+              <label>
+                Ordem
+                <input name="sort_order" type="number" min="0" value="1" />
+              </label>
+              <label class="form-wide">
+                Resumo
+                <textarea name="summary" maxlength="500" rows="3"></textarea>
+              </label>
+              <label class="form-wide">
+                Conteudo da aula
+                <textarea name="body" required rows="8"></textarea>
+              </label>
+              <label class="form-wide">
+                Transcricao ou apoio textual
+                <textarea name="transcript" rows="4"></textarea>
+              </label>
+            </div>
+            <label class="privacy-option">
+              <input name="published" type="checkbox" checked />
+              <span><strong>Publicar aula</strong></span>
+            </label>
+            <button class="button" type="submit">Salvar aula</button>
+          </form>
+        </section>
+
+        <section class="settings-card" aria-labelledby="opportunity-title">
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">Oportunidades</p>
+              <h2 id="opportunity-title">Nova oportunidade</h2>
+            </div>
+            <span class="save-state" id="opportunity-message" role="status"></span>
+          </div>
+          <form id="opportunity-form" class="settings-form">
+            <div class="form-grid">
+              <label>
+                Tipo
+                <select name="type">
+                  <option value="curso">Curso</option>
+                  <option value="vaga">Vaga</option>
+                  <option value="bolsa">Bolsa</option>
+                </select>
+              </label>
+              <label>
+                Titulo
+                <input name="title" required maxlength="160" />
+              </label>
+              <label>
+                Organizacao
+                <input name="organization" required maxlength="160" />
+              </label>
+              <label>
+                Local
+                <input name="location" maxlength="120" placeholder="Remoto, Brasil ou cidade" />
+              </label>
+              <label>
+                Prazo
+                <input name="deadline" type="date" />
+              </label>
+              <label>
+                Fonte oficial
+                <input name="url" type="url" required />
+              </label>
+              <label class="form-wide">
+                Descricao
+                <textarea name="description" required maxlength="1000" rows="4"></textarea>
+              </label>
+            </div>
+            <label class="privacy-option">
+              <input name="published" type="checkbox" checked />
+              <span><strong>Publicar oportunidade</strong></span>
+            </label>
+            <button class="button" type="submit">Salvar oportunidade</button>
+          </form>
+        </section>
+
+        <section class="settings-card" aria-labelledby="content-list-title">
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">Publicacao</p>
+              <h2 id="content-list-title">Conteudos cadastrados</h2>
+            </div>
+            <button class="button button-secondary" id="refresh-admin" type="button">
+              Atualizar
+            </button>
+          </div>
+          <div class="admin-lists">
+            <div>
+              <h3>Trilhas</h3>
+              <div class="admin-list" id="tracks-list"></div>
+            </div>
+            <div>
+              <h3>Aulas</h3>
+              <div class="admin-list" id="lessons-list"></div>
+            </div>
+            <div>
+              <h3>Oportunidades</h3>
+              <div class="admin-list" id="opportunities-list"></div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
+
     <script type="module" src="/admin-page.js"></script>
   </body>
 </html>

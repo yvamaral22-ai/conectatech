@@ -4,13 +4,12 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase =
   supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+
 const workspace = document.querySelector("#profile-workspace");
 const guard = document.querySelector("#auth-guard");
 const status = document.querySelector("#page-status");
 let user;
 let profile;
-
-document.querySelector("#account-email")?.closest("label")?.remove();
 
 function notify(message) {
   status.textContent = message;
@@ -20,11 +19,20 @@ function notify(message) {
 
 function escapeHtml(value = "") {
   const node = document.createElement("span");
-  node.textContent = value;
+  node.textContent = String(value);
   return node.innerHTML;
 }
 
-async function avatarUrl(path) {
+function formatDate(value) {
+  if (!value) return "Data nao registrada";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+async function mediaUrl(path) {
   if (!path) return null;
   const { data, error } = await supabase.storage
     .from("avatars")
@@ -33,10 +41,18 @@ async function avatarUrl(path) {
 }
 
 async function setAvatar(element, record) {
-  const url = await avatarUrl(record.avatar_path);
+  const url = await mediaUrl(record.avatar_path);
   element.innerHTML = url
     ? `<img src="${url}" alt="" />`
     : escapeHtml(record.display_name.slice(0, 2).toUpperCase());
+}
+
+async function setCover(record) {
+  const cover = document.querySelector("#profile-cover");
+  const url = await mediaUrl(record.cover_path);
+  cover.style.backgroundImage = url
+    ? `linear-gradient(120deg, rgba(23, 63, 53, .18), rgba(23, 63, 53, .08)), url("${url}")`
+    : "";
 }
 
 async function render(record) {
@@ -44,63 +60,150 @@ async function render(record) {
   document.querySelector("#summary-name").textContent = record.display_name;
   document.querySelector("#summary-username").textContent =
     `@${record.username}`;
+  document.querySelector("#hero-profile-name").textContent =
+    record.display_name;
+  document.querySelector("#hero-profile-detail").textContent = record.is_public
+    ? `@${record.username} aparece em buscas publicas.`
+    : "Seu perfil esta privado.";
   document.querySelector("#profile-display-name").value = record.display_name;
   document.querySelector("#profile-username").value = record.username;
   document.querySelector("#profile-bio").value = record.bio || "";
   document.querySelector("#profile-city").value = record.city || "";
   document.querySelector("#profile-public").checked = record.is_public;
-  const accountEmail = document.querySelector("#account-email");
-  if (accountEmail) accountEmail.value = "";
   await Promise.all([
     setAvatar(document.querySelector("#summary-avatar"), record),
     setAvatar(document.querySelector("#form-avatar"), record),
+    setCover(record),
   ]);
 }
 
+function lessonCard(item, dateLabel) {
+  const lesson = item.lessons || {};
+  const track = lesson.tracks || {};
+  return `<article class="learning-item"><div><strong>${escapeHtml(
+    lesson.title || "Aula",
+  )}</strong><span>${escapeHtml(track.title || "Trilha")}</span><small>${escapeHtml(
+    dateLabel,
+  )}</small></div><a class="text-link" href="/aula.html?id=${encodeURIComponent(
+    item.lesson_id,
+  )}">Abrir</a></article>`;
+}
+
 async function loadProgress() {
-  const [{ data: progress }, { count }] = await Promise.all([
-    supabase.from("course_progress").select("course_id"),
-    supabase.from("tracks").select("id", { count: "exact", head: true }),
+  const history = document.querySelector("#history-list");
+  const [{ data: progress, error }, { count }] = await Promise.all([
+    supabase
+      .from("lesson_progress")
+      .select(
+        "lesson_id,status,score,started_at,completed_at,updated_at,lessons(title,slug,tracks(title,slug))",
+      )
+      .order("updated_at", { ascending: false }),
+    supabase
+      .from("lessons")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "published"),
   ]);
-  const completed = progress?.length || 0;
-  document.querySelector("#completed-count").textContent = completed;
+
+  if (error) {
+    history.innerHTML =
+      '<p class="empty-state">Historico indisponivel. Confira a migracao de progresso.</p>';
+    return;
+  }
+
+  const completed = (progress || []).filter(
+    (item) => item.status === "completed",
+  );
+  document.querySelector("#completed-count").textContent = completed.length;
   document.querySelector("#progress-percent").textContent =
-    `${count ? Math.round((completed / count) * 100) : 0}%`;
+    `${count ? Math.round((completed.length / count) * 100) : 0}%`;
+
+  history.innerHTML = progress?.length
+    ? progress
+        .map((item) =>
+          lessonCard(
+            item,
+            `${item.status === "completed" ? "Concluida" : "Iniciada"} em ${formatDate(
+              item.completed_at || item.updated_at || item.started_at,
+            )}`,
+          ),
+        )
+        .join("")
+    : '<p class="empty-state">Nenhuma aula concluida ainda.</p>';
+}
+
+async function loadSavedLessons() {
+  const target = document.querySelector("#saved-list");
+  const { data, error } = await supabase
+    .from("saved_lessons")
+    .select("lesson_id,created_at,lessons(title,slug,tracks(title,slug))")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    target.innerHTML =
+      '<p class="empty-state">Salvos indisponiveis. Rode a migracao da experiencia do perfil.</p>';
+    return;
+  }
+
+  target.innerHTML = data?.length
+    ? data
+        .map((item) => lessonCard(item, `Salvo em ${formatDate(item.created_at)}`))
+        .join("")
+    : '<p class="empty-state">Nenhum conteudo salvo ainda.</p>';
 }
 
 async function initialize() {
   if (!supabase) {
     guard.hidden = false;
     document.querySelector("#account-state").textContent =
-      "Serviço indisponível";
+      "Servico indisponivel";
     return;
   }
+
   const { data } = await supabase.auth.getUser();
   user = data.user;
   if (!user) {
     guard.hidden = false;
-    document.querySelector("#account-state").textContent =
-      "Sessão não iniciada";
+    document.querySelector("#account-state").textContent = "Sessao nao iniciada";
     return;
   }
+
   const { data: record, error } = await supabase
     .from("profiles")
-    .select("id,username,display_name,bio,city,avatar_path,is_public")
+    .select("id,username,display_name,bio,city,avatar_path,cover_path,is_public")
     .eq("id", user.id)
     .single();
+
   if (error) {
     guard.hidden = false;
     guard.querySelector("h2").textContent =
-      "Não foi possível carregar seu perfil";
-    guard.querySelector("p:last-child").textContent =
+      "Nao foi possivel carregar seu perfil";
+    guard.querySelector("p").textContent =
       "Confirme se a estrutura de perfis foi instalada no projeto.";
     document.querySelector("#account-state").textContent =
-      "Perfil indisponível";
+      "Perfil indisponivel";
     return;
   }
+
   workspace.hidden = false;
   document.querySelector("#account-state").textContent = "Conta conectada";
-  await Promise.all([render(record), loadProgress()]);
+  await Promise.all([render(record), loadProgress(), loadSavedLessons()]);
+}
+
+async function uploadProfileMedia(file, name) {
+  if (!file) return null;
+  if (
+    file.size > 2097152 ||
+    !["image/jpeg", "image/png", "image/webp"].includes(file.type)
+  ) {
+    throw new Error("Use uma imagem JPG, PNG ou WebP, com ate 2 MB.");
+  }
+  const extension = file.type.split("/")[1].replace("jpeg", "jpg");
+  const path = `${user.id}/${name}.${extension}`;
+  const { error } = await supabase.storage
+    .from("avatars")
+    .upload(path, file, { upsert: true, contentType: file.type });
+  if (error) throw error;
+  return path;
 }
 
 document
@@ -108,7 +211,7 @@ document
   .addEventListener("submit", async (event) => {
     event.preventDefault();
     const saveState = document.querySelector("#save-state");
-    saveState.textContent = "Salvando…";
+    saveState.textContent = "Salvando...";
     try {
       const form = new FormData(event.currentTarget);
       const displayName = String(form.get("display_name")).trim();
@@ -121,35 +224,33 @@ document
         is_public: document.querySelector("#profile-public").checked,
         updated_at: new Date().toISOString(),
       };
-      const file = document.querySelector("#profile-avatar-file").files[0];
-      if (file) {
-        if (
-          file.size > 2097152 ||
-          !["image/jpeg", "image/png", "image/webp"].includes(file.type)
-        )
-          throw new Error("Use uma imagem JPG, PNG ou WebP, com até 2 MB.");
-        const extension = file.type.split("/")[1].replace("jpeg", "jpg");
-        const path = `${user.id}/avatar.${extension}`;
-        const { error } = await supabase.storage
-          .from("avatars")
-          .upload(path, file, { upsert: true, contentType: file.type });
-        if (error) throw error;
-        update.avatar_path = path;
-      }
+
+      const avatarPath = await uploadProfileMedia(
+        document.querySelector("#profile-avatar-file").files[0],
+        "avatar",
+      );
+      const coverPath = await uploadProfileMedia(
+        document.querySelector("#profile-cover-file").files[0],
+        "cover",
+      );
+      if (avatarPath) update.avatar_path = avatarPath;
+      if (coverPath) update.cover_path = coverPath;
+
       const { data, error } = await supabase
         .from("profiles")
         .update(update)
         .eq("id", user.id)
-        .select("id,username,display_name,bio,city,avatar_path,is_public")
+        .select("id,username,display_name,bio,city,avatar_path,cover_path,is_public")
         .single();
       if (error) throw error;
       await supabase.auth.updateUser({ data: { name: update.display_name } });
       await render(data);
-      saveState.textContent = "Alterações salvas.";
+      localStorage.removeItem("conectatech-mini-profile");
+      saveState.textContent = "Alteracoes salvas.";
     } catch (error) {
       saveState.textContent =
         error.code === "23505"
-          ? "Esse nome de usuário já está em uso."
+          ? "Esse nome de usuario ja esta em uso."
           : error.message;
     }
   });
@@ -168,7 +269,7 @@ document
     const { error } = await supabase.auth.updateUser({ password });
     message.textContent = error
       ? error.message
-      : "Senha alterada com segurança.";
+      : "Senha alterada com seguranca.";
     if (!error) event.currentTarget.reset();
   });
 
@@ -182,7 +283,7 @@ document.querySelector("#change-email").addEventListener("click", async () => {
   const { error } = await supabase.auth.updateUser({ email });
   message.textContent = error
     ? error.message
-    : "Confirme a alteração pelos links enviados aos endereços de e-mail.";
+    : "Confirme a alteracao pelos links enviados aos enderecos de e-mail.";
 });
 
 document
@@ -194,7 +295,7 @@ document
       .querySelector("#profile-search")
       .value.trim()
       .toLowerCase();
-    target.innerHTML = '<p class="empty-state">Buscando perfil…</p>';
+    target.innerHTML = '<p class="empty-state">Buscando perfil...</p>';
     const { data, error } = await supabase
       .from("profiles")
       .select("username,display_name,bio,city,avatar_path")
@@ -203,16 +304,17 @@ document
       .maybeSingle();
     if (error || !data) {
       target.innerHTML =
-        '<p class="empty-state">Perfil público não encontrado.</p>';
+        '<p class="empty-state">Perfil publico nao encontrado.</p>';
       return;
     }
-    const image = await avatarUrl(data.avatar_path);
+    const image = await mediaUrl(data.avatar_path);
     target.innerHTML = `<article class="public-profile-result"><div class="avatar avatar-large">${image ? `<img src="${image}" alt="" />` : escapeHtml(data.display_name.slice(0, 2).toUpperCase())}</div><div><h3>${escapeHtml(data.display_name)}</h3><p>@${escapeHtml(data.username)}</p><p>${escapeHtml(data.bio || "")}</p><p>${escapeHtml(data.city || "")}</p></div></article>`;
   });
 
 document.querySelector("#logout-button").addEventListener("click", async () => {
   if (!window.confirm("Deseja sair da sua conta?")) return;
   await supabase.auth.signOut();
+  localStorage.removeItem("conectatech-mini-profile");
   window.location.href = "/";
 });
 
@@ -222,4 +324,4 @@ menuButton.addEventListener("click", () => {
   menuButton.setAttribute("aria-expanded", String(open));
 });
 
-initialize().catch(() => notify("Não foi possível carregar a área pessoal."));
+initialize().catch(() => notify("Nao foi possivel carregar a area pessoal."));
