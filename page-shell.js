@@ -27,8 +27,19 @@ async function hydrateMiniProfile() {
     '.header-actions a[href="/perfil.html"]',
   );
   if (!entry || !supabase) return;
+  const cacheKey = "conectatech-mini-profile";
+  const render = (snapshot) => {
+    entry.classList.add("account-button-profile");
+    entry.innerHTML = `<span class="account-mini-avatar">${snapshot.imageUrl ? `<img src="${snapshot.imageUrl}" alt="">` : escapeHtml(snapshot.initials)}</span><span class="account-mini-copy"><strong>${escapeHtml(snapshot.name)}</strong><small>${snapshot.username ? `@${escapeHtml(snapshot.username)}` : "Minha conta"}</small></span>`;
+  };
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey));
+    if (cached) render(cached);
+  } catch {}
   const { data } = await supabase.auth.getUser();
   if (!data.user) {
+    localStorage.removeItem(cacheKey);
+    entry.classList.remove("account-button-profile");
     entry.textContent = "Entrar";
     entry.href = "/?entrar=1";
     return;
@@ -50,7 +61,13 @@ async function hydrateMiniProfile() {
         .from("avatars")
         .createSignedUrl(profile.avatar_path, 3600)
     ).data?.signedUrl;
-  entry.classList.add("account-button-profile");
-  entry.innerHTML = `<span class="account-mini-avatar">${imageUrl ? `<img src="${imageUrl}" alt="">` : escapeHtml(name.slice(0, 2).toUpperCase())}</span><span class="account-mini-copy"><strong>${escapeHtml(name.split(" ")[0])}</strong><small>${profile?.username ? `@${escapeHtml(profile.username)}` : "Minha conta"}</small></span>`;
+  const snapshot = {
+    name: name.split(" ")[0],
+    username: profile?.username || "",
+    initials: name.slice(0, 2).toUpperCase(),
+    imageUrl: imageUrl || "",
+  };
+  localStorage.setItem(cacheKey, JSON.stringify(snapshot));
+  render(snapshot);
 }
 hydrateMiniProfile();

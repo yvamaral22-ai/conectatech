@@ -426,11 +426,15 @@ img,
 }
 
 .account-button-profile {
+  width: 172px;
   min-width: 0;
   padding: 5px 12px 5px 6px;
   gap: 9px;
   border-radius: 16px;
   text-align: left;
+}
+.header-actions a[href="/perfil.html"] {
+  min-width: 172px;
 }
 .account-mini-avatar {
   width: 34px;

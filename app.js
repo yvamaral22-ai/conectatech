@@ -413,6 +413,7 @@ async function renderHeaderAccount(
 ) {
   accountButton.replaceChildren();
   if (!user) {
+    localStorage.removeItem("conectatech-mini-profile");
     accountButton.classList.remove("account-button-profile");
     const label = document.createElement("span");
     label.className = "account-button-label";
@@ -448,7 +449,25 @@ async function renderHeaderAccount(
   copy.append(name, detail);
   accountButton.classList.add("account-button-profile");
   accountButton.append(avatar, copy);
+  localStorage.setItem(
+    "conectatech-mini-profile",
+    JSON.stringify({
+      name: displayName.split(" ")[0],
+      username: profile?.username || "",
+      initials: displayName.slice(0, 2).toUpperCase(),
+      imageUrl: avatarUrl || "",
+    }),
+  );
 }
+
+try {
+  const cached = JSON.parse(localStorage.getItem("conectatech-mini-profile"));
+  if (cached) {
+    accountButton.dataset.authenticated = "true";
+    accountButton.classList.add("account-button-profile");
+    accountButton.innerHTML = `<span class="account-mini-avatar">${cached.imageUrl ? `<img src="${cached.imageUrl}" alt="">` : escapeHtml(cached.initials)}</span><span class="account-mini-copy"><strong>${escapeHtml(cached.name)}</strong><small>${cached.username ? `@${escapeHtml(cached.username)}` : "Minha conta"}</small></span>`;
+  }
+} catch {}
 function setAuthMode(register) {
   registerMode = register;
   document.querySelector("#auth-title").textContent = register
@@ -907,6 +926,9 @@ async function initializeFromServer() {
       await renderHeaderAccount(user);
       await loadUserProgress();
       await loadMyProfile();
+    } else {
+      accountButton.dataset.authenticated = "false";
+      await renderHeaderAccount(null);
     }
   } catch (_) {
     /* O uso sem conta permanece disponível. */
