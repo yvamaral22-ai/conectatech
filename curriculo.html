@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#173f35" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/pages.css" />
+    <title>Currículo — ConectaTech</title>
+  </head>
+  <body class="app-page">
+    <header class="site-header">
+      <a class="brand" href="/"
+        ><span>Conecta<span>Tech</span></span></a
+      >
+      <nav>
+        <a href="/trilhas.html">Trilhas</a
+        ><a href="/carreira.html" aria-current="page">Carreira</a
+        ><a href="/oportunidades.html">Oportunidades</a
+        ><a href="/perfil.html">Perfil</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-small" href="/perfil.html">Minha conta</a>
+      </div>
+    </header>
+    <main class="resume-shell">
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">Carreira</p>
+          <h1>Gerador de currículo</h1>
+          <p>
+            Preencha manualmente ou carregue as informações salvas na sua conta.
+            Escolha um modelo e veja o resultado em tempo real.
+          </p>
+        </div>
+      </header>
+      <div class="resume-builder">
+        <section class="resume-controls">
+          <div class="template-picker">
+            <button
+              class="template-choice active"
+              data-template="modern"
+              type="button"
+            >
+              Moderno</button
+            ><button
+              class="template-choice"
+              data-template="classic"
+              type="button"
+            >
+              Clássico</button
+            ><button
+              class="template-choice"
+              data-template="minimal"
+              type="button"
+            >
+              Minimalista
+            </button>
+          </div>
+          <form id="resume-form" class="settings-form">
+            <div class="form-grid">
+              <label>Nome completo<input name="name" maxlength="100" /></label
+              ><label>E-mail<input name="email" type="email" /></label
+              ><label>Telefone<input name="phone" maxlength="30" /></label
+              ><label>Cidade<input name="city" maxlength="80" /></label
+              ><label class="form-wide"
+                >Objetivo profissional<textarea
+                  name="objective"
+                  maxlength="500"
+                ></textarea></label
+              ><label class="form-wide"
+                >Formação<textarea
+                  name="education"
+                  maxlength="2000"
+                  placeholder="Curso, instituição e período"
+                ></textarea></label
+              ><label class="form-wide"
+                >Experiências<textarea
+                  name="experience"
+                  maxlength="4000"
+                  placeholder="Cargo, organização, período e principais atividades"
+                ></textarea></label
+              ><label class="form-wide"
+                >Competências<textarea
+                  name="skills"
+                  maxlength="1000"
+                  placeholder="Separe as competências por vírgulas"
+                ></textarea>
+              </label>
+            </div>
+            <div class="resume-actions">
+              <button
+                class="button button-secondary"
+                id="load-account"
+                type="button"
+              >
+                Preencher com minha conta</button
+              ><button class="button" id="save-resume" type="button">
+                Salvar informações</button
+              ><button class="text-link" id="download-resume" type="button">
+                Baixar modelo HTML</button
+              ><button class="text-link" id="print-resume" type="button">
+                Salvar como PDF
+              </button>
+            </div>
+            <p id="resume-message" role="status"></p>
+          </form>
+        </section>
+        <aside class="resume-preview-wrap">
+          <p class="preview-label">Pré-visualização</p>
+          <article class="resume-preview template-modern" id="resume-preview">
+            <header>
+              <h2 data-output="name">Seu nome</h2>
+              <p>
+                <span data-output="email">seu@email.com</span> ·
+                <span data-output="phone">Telefone</span> ·
+                <span data-output="city">Cidade</span>
+              </p>
+            </header>
+            <section>
+              <h3>Objetivo profissional</h3>
+              <p data-output="objective">Descreva seu objetivo profissional.</p>
+            </section>
+            <section>
+              <h3>Formação</h3>
+              <p data-output="education">Inclua sua formação.</p>
+            </section>
+            <section>
+              <h3>Experiências</h3>
+              <p data-output="experience">Inclua suas experiências.</p>
+            </section>
+            <section>
+              <h3>Competências</h3>
+              <p data-output="skills">Inclua suas principais competências.</p>
+            </section>
+          </article>
+        </aside>
+      </div>
+    </main>
+    <script type="module" src="/curriculo-page.js"></script>
+  </body>
+</html>

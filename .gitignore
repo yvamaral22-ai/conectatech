@@ -1,0 +1,14 @@
+data/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+*-current.png
+*-fixed*.png
+.vercel/
+
+.vercel

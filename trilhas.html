@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#173f35" />
+    <meta
+      name="description"
+      content="Trilhas gratuitas de aprendizagem da ConectaTech."
+    />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/pages.css" />
+    <title>Trilhas — ConectaTech</title>
+  </head>
+  <body class="app-page">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="ConectaTech, página inicial"
+        ><img src="/assets/icon.svg" width="38" height="38" alt="" /><span
+          >Conecta<span>Tech</span></span
+        ></a
+      ><button
+        class="menu-button"
+        type="button"
+        aria-expanded="false"
+        aria-controls="main-nav"
+      >
+        Menu
+      </button>
+      <nav id="main-nav" aria-label="Navegação principal">
+        <a href="/trilhas.html" aria-current="page">Trilhas</a
+        ><a href="/carreira.html">Carreira</a
+        ><a href="/oportunidades.html">Oportunidades</a
+        ><a href="/perfil.html">Perfil</a><a href="/impacto.html">Impacto</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-small" href="/perfil.html">Minha conta</a>
+      </div>
+    </header>
+    <main id="conteudo" class="account-shell">
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">Aprenda fazendo</p>
+          <h1>Trilhas de aprendizagem</h1>
+          <p>
+            Escolha um caminho, conclua aulas práticas e acompanhe sua evolução.
+          </p>
+        </div>
+        <span class="account-state" id="catalog-status"
+          >Carregando catálogo…</span
+        >
+      </header>
+      <section class="catalog-toolbar" aria-label="Filtros do catálogo">
+        <div class="filters" role="group" aria-label="Filtrar trilhas">
+          <button class="filter active" data-filter="todas" aria-pressed="true">
+            Todas</button
+          ><button class="filter" data-filter="iniciante" aria-pressed="false">
+            Iniciante</button
+          ><button
+            class="filter"
+            data-filter="intermediario"
+            aria-pressed="false"
+          >
+            Intermediário
+          </button>
+        </div>
+      </section>
+      <section aria-labelledby="catalog-title">
+        <h2 class="sr-only" id="catalog-title">Catálogo de trilhas</h2>
+        <div class="course-grid page-course-grid" id="course-grid">
+          <p class="empty-state">Consultando trilhas disponíveis…</p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/trilhas-page.js"></script>
+  </body>
+</html>

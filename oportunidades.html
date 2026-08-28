@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#173f35" />
+    <meta
+      name="description"
+      content="Oportunidades verificadas para a comunidade ConectaTech."
+    />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/pages.css" />
+    <title>Oportunidades — ConectaTech</title>
+  </head>
+  <body class="app-page">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <header class="site-header">
+      <a class="brand" href="/"
+        ><img src="/assets/icon.svg" width="38" height="38" alt="" /><span
+          >Conecta<span>Tech</span></span
+        ></a
+      ><button
+        class="menu-button"
+        type="button"
+        aria-expanded="false"
+        aria-controls="main-nav"
+      >
+        Menu
+      </button>
+      <nav id="main-nav" aria-label="Navegação principal">
+        <a href="/trilhas.html">Trilhas</a><a href="/carreira.html">Carreira</a
+        ><a href="/oportunidades.html" aria-current="page">Oportunidades</a
+        ><a href="/perfil.html">Perfil</a><a href="/impacto.html">Impacto</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-small" href="/perfil.html">Minha conta</a>
+      </div>
+    </header>
+    <main id="conteudo" class="account-shell">
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">Próximos passos</p>
+          <h1>Central de oportunidades</h1>
+          <p>
+            Vagas, bolsas e formações com origem identificada e período de
+            inscrição válido.
+          </p>
+        </div>
+        <span class="account-state" id="opportunity-status"
+          >Consultando fontes…</span
+        >
+      </header>
+      <section class="settings-card">
+        <div class="opportunity-list" id="opportunity-list">
+          <p class="empty-state">Carregando oportunidades verificadas…</p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/oportunidades-page.js"></script>
+  </body>
+</html>

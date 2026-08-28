@@ -1,0 +1,322 @@
+CONECTATECH — HISTÓRICO DE TRABALHO E CONTINUIDADE
+Atualizado em: 28/08/2026
+
+1. OBJETIVO DO PROJETO
+
+A ConectaTech é uma plataforma de capacitação digital, carreira e oportunidades. O protótipo inicial armazenava preferências e progresso no navegador. O projeto foi evoluído para utilizar contas, autenticação e dados reais no Supabase, com implantação na Vercel.
+
+Requisitos solicitados durante o trabalho:
+- Utilizar dados reais, sem números fictícios de usuários ou progresso.
+- Exibir o progresso do usuário conectado.
+- Conectar autenticação, consentimentos, progresso, perfis e oportunidades ao Supabase.
+- Permitir login apenas com e-mail e senha.
+- Criar perfil pessoal, foto, nome de usuário, biografia, cidade e perfil público/privado.
+- Permitir edição parcial do perfil, sem obrigar o preenchimento de todos os campos.
+- Criar páginas próprias para as principais seções.
+- Modernizar o visual com profundidade, elementos flutuantes, animações e melhor organização.
+- Corrigir sobreposição, espaçamento, seleção indevida de textos e responsividade.
+- Aplicar redação correta em português do Brasil, com acentuação, concordância e pontuação.
+- Criar mini perfil no cabeçalho após o login.
+- Criar currículo, portfólio, trilhas, aulas, oportunidades, impacto e administração.
+- Registrar todas as mudanças no GitHub para continuidade em outro computador.
+
+2. SERVIÇOS UTILIZADOS
+
+GitHub:
+https://github.com/yvamaral22-ai/conectatech
+
+Produção na Vercel:
+https://conectatech-six.vercel.app
+
+Projeto Supabase:
+Referência: oavuxlzxzowryfyhnwgn
+
+As chaves, senhas e tokens não estão registrados neste documento. As variáveis públicas ficam no arquivo .env local e nas configurações da Vercel.
+
+3. ESTRUTURA REAL IDENTIFICADA NO SUPABASE
+
+O banco criado anteriormente utiliza o seguinte modelo:
+
+tracks:
+- id
+- slug
+- icon
+- title
+- description
+- level
+- estimated_minutes
+- sort_order
+- status
+- created_at
+- updated_at
+
+lessons:
+- id UUID
+- track_id
+- slug
+- title
+- summary
+- body
+- estimated_minutes
+- sort_order
+- status
+- created_at
+- updated_at
+
+opportunities:
+- id
+- title
+- description
+- organization
+- url
+- status
+- created_at
+- updated_at
+
+Outras estruturas instaladas ou utilizadas:
+- auth.users
+- profiles
+- course_progress
+- consents
+- feedback
+- career_profiles
+- portfolio_projects
+- user_roles
+- storage bucket avatars
+
+O site foi adaptado para utilizar tracks e lessons.track_id. A migração antiga que tentava criar courses não deve ser executada novamente nesse banco.
+
+4. MIGRAÇÕES
+
+Arquivos existentes:
+- supabase/migrations/20260828120000_learning_data.sql
+- supabase/migrations/20260828143000_public_metrics.sql
+- supabase/migrations/20260828160000_database_catalog.sql
+- supabase/migrations/20260828180000_profiles.sql
+- supabase/migrations/20260828193000_product_features.sql
+
+Situação atual:
+- Estrutura de progresso, consentimentos e feedback instalada.
+- Estrutura de perfis instalada com sucesso.
+- Bucket privado de avatares e regras de acesso instalados.
+- Estrutura final de carreira, portfólio, funções e papéis instalada com sucesso.
+- O site foi alinhado ao modelo tracks/lessons já existente.
+- Não executar novamente 20260828160000_database_catalog.sql no banco atual.
+
+5. PÁGINAS IMPLEMENTADAS
+
+Página inicial:
+/
+
+Trilhas:
+/trilhas.html
+
+Aula individual:
+/aula.html?id=<uuid-da-aula>
+
+Carreira:
+/carreira.html
+
+Gerador de currículo:
+/curriculo.html
+
+Portfólio:
+/portfolio.html
+
+Oportunidades:
+/oportunidades.html
+
+Perfil:
+/perfil.html
+
+Impacto:
+/impacto.html
+
+Administração:
+/admin.html
+
+6. FUNCIONALIDADES IMPLEMENTADAS
+
+Autenticação e conta:
+- Cadastro e login por e-mail e senha.
+- Confirmação de e-mail conforme configuração do Supabase.
+- Recuperação de senha.
+- Alteração de senha.
+- Alteração de e-mail.
+- Exportação dos dados pessoais.
+- Consentimento opcional para indicadores.
+- Função de exclusão da própria conta preparada no Supabase.
+
+Perfil:
+- Nome de exibição.
+- Nome de usuário.
+- Biografia.
+- Cidade.
+- Foto JPG, PNG ou WebP de até 2 MB.
+- Perfil público ou privado.
+- Busca por perfis públicos.
+- Campos opcionais e edição parcial.
+- Mini perfil no cabeçalho.
+- Cache local da apresentação do mini perfil para evitar oscilação durante a navegação.
+
+Trilhas e aulas:
+- Catálogo carregado da tabela tracks.
+- Aulas relacionadas por lessons.track_id.
+- Página individual de aula.
+- Conclusão da aula vinculada ao slug da trilha.
+- Progresso por usuário conectado.
+- Mensagem detalhada caso o Supabase rejeite o salvamento.
+
+Currículo:
+- Página própria e organizada.
+- Preenchimento manual.
+- Preenchimento automático usando perfil e career_profiles.
+- Modelos moderno, clássico e minimalista.
+- Pré-visualização em tempo real.
+- Salvamento das informações profissionais.
+- Download em HTML.
+- Impressão e opção de salvar como PDF pelo navegador.
+
+Portfólio:
+- Página própria.
+- Contador de projetos.
+- Cadastro de projeto.
+- Edição.
+- Exclusão com confirmação.
+- Link externo validado.
+- Estado vazio orientando o usuário.
+- Dados separados por usuário através de RLS.
+
+Oportunidades:
+- Leitura da tabela opportunities existente.
+- Exibição apenas do que as políticas do Supabase autorizam.
+- Links para a fonte informada.
+
+Administração:
+- Página protegida por user_roles.
+- Verificação da função admin.
+- Cadastro de oportunidades.
+- Políticas administrativas preparadas no Supabase.
+
+Interface:
+- Navegação multipágina configurada no Vite.
+- Layout responsivo.
+- Cabeçalho consistente.
+- Página atual destacada no menu.
+- Cartões com profundidade, sombras e animações.
+- Respeito a prefers-reduced-motion.
+- Navegação por teclado e links de salto.
+- Textos revisados em português do Brasil.
+- Cache offline atualizado para as páginas principais.
+
+7. PROBLEMAS ENCONTRADOS E SOLUÇÕES
+
+- A CLI do Supabase não autenticou por erro de transporte/certificado.
+  Solução: migrações executadas pelo SQL Editor do painel.
+
+- Comandos PowerShell foram colados no SQL Editor.
+  Solução: usar Get-Content ... | Set-Clipboard somente no terminal e colar no SQL Editor apenas o SQL copiado.
+
+- profiles já existia sem is_public.
+  Solução: migração compatível, adicionando apenas colunas ausentes.
+
+- lessons já existia com id UUID e track_id obrigatório.
+  Solução: não substituir o modelo antigo; adaptar o site para tracks e lessons.track_id.
+
+- A área de perfil mostrava estados conectado e desconectado ao mesmo tempo.
+  Solução: regra .app-page [hidden] com display none.
+
+- O mini perfil oscilava entre páginas.
+  Solução: apresentação armazenada localmente e renderizada antes da validação silenciosa da sessão.
+
+- FormData falhava nos formulários de carreira.
+  Causa: event.currentTarget era consultado depois de await.
+  Solução: preservar a referência do formulário antes da operação assíncrona.
+
+- Currículo e portfólio eram formulários básicos em diálogos.
+  Solução: criação de páginas completas e responsivas.
+
+8. TESTES REALIZADOS
+
+- npm run check executado com sucesso.
+- Builds multipágina gerados pelo Vite.
+- Rotas principais testadas com HTTP 200.
+- Verificação de presença dos formulários de currículo e portfólio.
+- Verificação dos links reais entre Carreira, Currículo e Portfólio.
+- Verificação das tabelas públicas e protegidas disponíveis no Supabase.
+- Verificação de sincronização entre main e origin/main.
+
+Testes que ainda devem ser feitos com uma sessão real:
+- Concluir uma aula e confirmar o progresso no perfil.
+- Preencher currículo usando a conta e salvar.
+- Baixar HTML e salvar PDF.
+- Adicionar, editar e excluir um projeto do portfólio.
+- Alterar foto e confirmar atualização do mini perfil.
+- Testar conta administrativa após conceder a função admin.
+- Testar em celular real e leitor de tela.
+
+9. COMMITS IMPORTANTES
+
+a667136 — Completa fluxos de aprendizagem, conta, carreira e administração.
+d8ee811 — Adapta catálogo a tabelas existentes.
+912bfb2 — Usa UUIDs compatíveis nas aulas do catálogo.
+8eef49e — Alinha aplicação ao esquema existente de trilhas.
+1b589c6 — Evita oscilação do mini perfil entre páginas.
+3ff8a6a — Cria gerador profissional de currículo e corrige fluxos.
+1fdf022 — Cria página profissional de portfólio.
+71ff4db — Melhora navegação acessível da área de carreira.
+
+10. ESTADO DO GIT
+
+O trabalho está sendo enviado diretamente para:
+origin/main
+
+Quando a aba Changes do GitHub Desktop mostra “No local changes”, isso significa que as alterações já foram commitadas. Use a aba History para visualizar os commits.
+
+11. COMO CONTINUAR EM CASA SEM PERDER ALTERAÇÕES
+
+Antes de editar:
+
+git status
+git branch --show-current
+git fetch origin
+
+Se houver alterações antigas ainda não registradas em casa:
+
+git switch -c casa-trabalho-anterior
+git add -- nome-do-arquivo
+git commit -m "Preserva alterações feitas em casa"
+git push -u origin casa-trabalho-anterior
+
+Depois atualize a versão principal:
+
+git switch main
+git pull origin main
+
+Não usar git reset --hard, pois pode apagar alterações locais.
+
+O Supabase é remoto e compartilhado. As tabelas instaladas neste projeto já estarão disponíveis no computador de casa.
+
+12. PRÓXIMOS PASSOS
+
+1. Receber o e-mail da conta ConectaTech para conceder a função admin.
+2. Testar todos os fluxos autenticados indicados acima.
+3. Corrigir qualquer mensagem detalhada apresentada ao salvar progresso.
+4. Finalizar o painel administrativo com listagem, edição e exclusão.
+5. Permitir administração de trilhas e aulas conforme o modelo tracks/lessons existente.
+6. Fazer revisão visual em celular e desktop.
+7. Configurar domínio próprio quando houver um domínio disponível.
+8. Configurar monitoramento operacional usando Vercel Deployments e Supabase Logs.
+
+13. REGRA DE TRABALHO DEFINIDA
+
+Antes de começar uma nova etapa:
+- Finalizar a funcionalidade atual.
+- Executar o build.
+- Testar rotas e elementos relacionados.
+- Corrigir problemas encontrados.
+- Fazer commit e push.
+- Publicar na Vercel.
+- Informar claramente o que foi automatizado e o que depende de teste com conta real.
+
+FIM DO HISTÓRICO

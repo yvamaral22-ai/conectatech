@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#173f35" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/pages.css" />
+    <title>Meu portfólio — ConectaTech</title>
+  </head>
+  <body class="app-page">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <header class="site-header">
+      <a class="brand" href="/"
+        ><span>Conecta<span>Tech</span></span></a
+      >
+      <nav>
+        <a href="/trilhas.html">Trilhas</a
+        ><a href="/carreira.html" aria-current="page">Carreira</a
+        ><a href="/oportunidades.html">Oportunidades</a
+        ><a href="/perfil.html">Perfil</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-small" href="/perfil.html">Minha conta</a>
+      </div>
+    </header>
+    <main id="conteudo" class="account-shell">
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">Mostre o que você sabe</p>
+          <h1>Meu portfólio</h1>
+          <p>
+            Organize projetos de estudo e experiências práticas em uma
+            apresentação profissional.
+          </p>
+        </div>
+        <button class="button" id="new-project" type="button">
+          Adicionar projeto
+        </button>
+      </header>
+      <section class="portfolio-dashboard">
+        <aside class="portfolio-summary">
+          <strong id="project-count">0</strong><span>Projetos publicados</span>
+          <p>
+            Use descrições objetivas e explique sua participação em cada
+            resultado.
+          </p>
+        </aside>
+        <div class="portfolio-grid" id="portfolio-grid">
+          <p class="empty-state">Carregando seus projetos…</p>
+        </div>
+      </section>
+    </main>
+    <dialog id="project-dialog">
+      <form id="project-form">
+        <button class="dialog-close" type="button" data-close="project-dialog">
+          ×
+        </button>
+        <p class="eyebrow">Portfólio</p>
+        <h2 id="project-form-title">Novo projeto</h2>
+        <input name="id" type="hidden" /><label
+          >Título<input name="title" maxlength="120" required /></label
+        ><label
+          >Descrição<textarea
+            name="description"
+            maxlength="1000"
+            required
+          ></textarea></label
+        ><label
+          >Link do projeto<input
+            name="project_url"
+            type="url"
+            maxlength="500"
+            placeholder="https://"
+        /></label>
+        <p id="project-message" role="status"></p>
+        <button class="button" type="submit">Salvar projeto</button>
+      </form>
+    </dialog>
+    <div id="page-status" role="status" aria-live="polite"></div>
+    <script type="module" src="/portfolio-page.js"></script>
+  </body>
+</html>

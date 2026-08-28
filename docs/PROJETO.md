@@ -190,3 +190,7 @@ Páginas leves, cache, compressão, formatos eficientes e escalonamento por dema
 - Relato de barreira gera protocolo e pode ser acompanhado.
 - Painel institucional não expõe dados individuais ou pequenos grupos.
 - Auditorias automáticas não têm violações críticas e a avaliação manual cobre todos os fluxos essenciais.
+
+## 14. Estado atual do protótipo
+
+A fundação funcional já inclui servidor sem dependências externas, banco SQLite, catálogo persistido, uma aula inicial por trilha, exercícios, progresso anônimo ou associado à conta, cadastro, login, sessões em cookie `HttpOnly`, feedback com protocolo, cache offline e testes de integração. Antes de produção ainda são necessários recuperação de senha, confirmação de e-mail, consentimentos, painel editorial, conteúdo completo, proteção contra abuso, HTTPS e revisão independente de segurança e acessibilidade.
