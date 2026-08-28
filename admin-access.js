@@ -1,27 +1,42 @@
-export async function isCurrentUserAdmin(supabase, userId) {
-  if (!supabase || !userId) return false;
+export async function currentUserRole(supabase, userId) {
+  if (!supabase || !userId) return "student";
 
-  const access = await supabase.rpc("is_admin");
-  if (!access.error && access.data) return true;
+  const appRole = await supabase.rpc("current_app_role");
+  if (
+    !appRole.error &&
+    ["admin", "teacher", "student"].includes(appRole.data)
+  ) {
+    return appRole.data;
+  }
 
   const role = await supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .eq("role", "admin")
+    .in("role", ["admin", "teacher", "student"])
     .maybeSingle();
-  if (!role.error && role.data?.role === "admin") return true;
+  if (!role.error && role.data?.role) return role.data.role;
 
   const profile = await supabase
     .from("profiles")
     .select("role,is_active")
     .eq("id", userId)
     .maybeSingle();
-  return (
-    !profile.error &&
-    profile.data?.role === "admin" &&
-    profile.data?.is_active !== false
-  );
+  if (!profile.error && profile.data?.is_active !== false) {
+    return profile.data?.role === "admin" || profile.data?.role === "teacher"
+      ? profile.data.role
+      : "student";
+  }
+
+  return "student";
+}
+
+export async function isCurrentUserAdmin(supabase, userId) {
+  return (await currentUserRole(supabase, userId)) === "admin";
+}
+
+export async function canCurrentUserManageContent(supabase, userId) {
+  return ["admin", "teacher"].includes(await currentUserRole(supabase, userId));
 }
 
 export async function syncAdminNavigation(supabase, knownUser) {
@@ -36,12 +51,12 @@ export async function syncAdminNavigation(supabase, knownUser) {
     (await supabase.auth.getUser().then(({ data }) => data.user).catch(() => null));
   if (!user) return;
 
-  const isAdmin = await isCurrentUserAdmin(supabase, user.id).catch(() => false);
-  if (!isAdmin) return;
+  const role = await currentUserRole(supabase, user.id).catch(() => "student");
+  if (!["admin", "teacher"].includes(role)) return;
 
   const link = document.createElement("a");
   link.href = "/admin.html";
-  link.textContent = "Administracao";
+  link.textContent = role === "admin" ? "Administracao" : "Estudio";
   link.dataset.adminNav = "true";
   if (window.location.pathname.endsWith("/admin.html")) {
     link.setAttribute("aria-current", "page");

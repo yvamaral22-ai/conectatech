@@ -14,8 +14,8 @@ O projeto ja possui:
 - progresso, historico e conteudos salvos;
 - catalogo de trilhas e aulas vindo do banco;
 - oportunidades vindas do banco;
-- painel administrativo protegido por permissao `admin`;
-- auditoria das alteracoes feitas em trilhas, aulas e oportunidades;
+- painel protegido por permissoes `admin` e `teacher`;
+- auditoria das alteracoes feitas em trilhas, aulas, paginas, materiais e oportunidades;
 - migracoes SQL versionadas;
 - fallback local com Python/SQLite para testes.
 
@@ -23,19 +23,20 @@ O projeto ja possui:
 
 | Criterio | Decisao |
 |---|---|
-| Seguranca | Supabase Auth, RLS, permissoes por tabela e funcao `is_admin()` |
+| Seguranca | Supabase Auth, RLS, permissoes por tabela e funcoes `is_admin()` e `can_manage_content()` |
 | Gratuito | Plano gratuito do Supabase e Vercel para prototipo e piloto |
 | Escalavel | PostgreSQL, storage, build estatico e possibilidade futura de backend proprio |
 | Compativel | Funciona com Vite hoje e pode migrar para Next.js depois |
 
 ## Permissoes atuais
 
-Nesta fase existem apenas dois papeis:
+Nesta fase existem tres papeis:
 
-- `member`: usuario comum.
-- `admin`: pessoa autorizada a administrar conteudos.
+- `admin`: papel master. Administra usuarios, permissoes, conteudos, oportunidades, auditoria e configuracoes.
+- `teacher`: professor. Cria, edita e publica trilhas, aulas, paginas, materiais e oportunidades.
+- `student`: aluno. Papel padrao de qualquer usuario cadastrado, com acesso apenas ao proprio perfil, progresso, salvos e conteudos publicados.
 
-O papel `owner` nao sera usado por enquanto para reduzir complexidade. A permissao administrativa deve ser concedida no SQL Editor do Supabase.
+O papel `owner` nao sera usado por enquanto para reduzir complexidade. Permissoes podem ser concedidas pelo painel admin ou pelo SQL Editor do Supabase.
 
 ```sql
 insert into public.user_roles (user_id, role)
@@ -46,21 +47,33 @@ on conflict (user_id) do update
 set role = 'admin';
 ```
 
+Para tornar alguem professor:
+
+```sql
+insert into public.user_roles (user_id, role)
+select id, 'teacher'
+from auth.users
+where email = 'email-do-professor@exemplo.com'
+on conflict (user_id) do update
+set role = 'teacher';
+```
+
 ## Dados administraveis
 
 Ja devem ser administrados pelo painel:
 
 - trilhas;
 - aulas;
+- paginas de aula;
+- materiais de apoio;
 - oportunidades;
 - status de publicacao.
+- usuarios e permissoes, somente por `admin`.
 
 Devem ser adicionados nas proximas entregas:
 
 - edicao de registros existentes;
-- materiais das aulas;
 - exercicios;
-- usuarios e permissoes;
 - feedbacks;
 - relatos de barreira;
 - indicadores agregados;
@@ -70,7 +83,9 @@ Devem ser adicionados nas proximas entregas:
 
 | Recurso | Barreira que resolve |
 |---|---|
-| Painel admin | Evita depender de desenvolvedor para alterar conteudos. |
+| Painel admin | Da ao administrador controle da plataforma sem expor chaves secretas. |
+| Papel professor | Permite escalar producao de aulas sem liberar controle total de usuarios. |
+| Papel aluno | Protege usuarios comuns contra acesso indevido a dados e funcoes internas. |
 | Status publicado/rascunho | Permite revisar conteudo antes de exibir ao publico. |
 | Trilha e aula no banco | Permite expandir o catalogo sem recriar paginas manualmente. |
 | Perfil privado por padrao | Reduz exposicao indevida de dados pessoais. |
@@ -96,9 +111,9 @@ Esses ajustes devem ser documentados em `docs/OPERACAO.md` e nunca devem expor c
 ## Proximos passos tecnicos
 
 1. Completar edicao e arquivamento no painel admin.
-2. Criar upload e listagem de materiais por aula.
+2. Melhorar edicao visual de paginas e materiais.
 3. Criar exercicios administraveis.
-4. Criar dashboard de usuarios, progresso e feedbacks.
-5. Ampliar auditoria para materiais, exercicios, permissoes e configuracoes.
+4. Criar dashboard de progresso e feedbacks.
+5. Ampliar auditoria para permissoes e configuracoes.
 6. Criar testes de interface com navegador para login, perfil, aula e admin.
 7. Avaliar migracao para Next.js quando houver necessidade de backend proprio.

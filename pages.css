@@ -198,7 +198,7 @@
 }
 .admin-overview {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 16px;
 }
 .admin-overview article {
@@ -250,6 +250,26 @@
 .admin-item .danger {
   justify-self: start;
   color: #9d2616;
+}
+.user-admin-item {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+.user-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.user-admin-actions select {
+  min-width: 130px;
+  border: 1px solid #82958e;
+  border-radius: 11px;
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 750;
 }
 .lesson-actions {
   display: flex;

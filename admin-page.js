@@ -1,9 +1,11 @@
+import { currentUserRole, syncAdminNavigation } from "./admin-access.js";
 import { supabase } from "./data-client.js";
 
 const content = document.querySelector("#admin-content");
 const denied = document.querySelector("#admin-denied");
 let tracks = [];
 let lessons = [];
+let currentRole = "student";
 
 function escapeHtml(value = "") {
   const node = document.createElement("span");
@@ -37,6 +39,104 @@ function linesFrom(value) {
     .filter(Boolean);
 }
 
+const editorialCorrections = new Map([
+  ["acessibilidade", "acessibilidade"],
+  ["basica", "básica"],
+  ["basico", "básico"],
+  ["conteudo", "conteúdo"],
+  ["conteudos", "conteúdos"],
+  ["curriculo", "currículo"],
+  ["digitalizacao", "digitalização"],
+  ["educacao", "educação"],
+  ["informatica", "informática"],
+  ["introducao", "introdução"],
+  ["logica", "lógica"],
+  ["pagina", "página"],
+  ["paginas", "páginas"],
+  ["portfolio", "portfólio"],
+  ["programacao", "programação"],
+  ["proprio", "próprio"],
+  ["propria", "própria"],
+  ["seguranca", "segurança"],
+  ["tecnologia", "tecnologia"],
+  ["usuario", "usuário"],
+  ["usuarios", "usuários"],
+  ["video", "vídeo"],
+  ["videos", "vídeos"],
+]);
+
+const brandCorrections = new Map([
+  ["abnt2", "ABNT2"],
+  ["css", "CSS"],
+  ["github", "GitHub"],
+  ["html", "HTML"],
+  ["javascript", "JavaScript"],
+  ["lgpd", "LGPD"],
+  ["supabase", "Supabase"],
+  ["wcag", "WCAG"],
+  ["youtube", "YouTube"],
+]);
+
+function preserveInitialCase(original, corrected) {
+  return original[0] === original[0]?.toUpperCase()
+    ? corrected.charAt(0).toUpperCase() + corrected.slice(1)
+    : corrected;
+}
+
+function applyWordCorrections(value) {
+  return String(value || "").replace(/[A-Za-zÀ-ÿ0-9]+/g, (word) => {
+    const lower = word.toLowerCase();
+    if (brandCorrections.has(lower)) return brandCorrections.get(lower);
+    if (editorialCorrections.has(lower)) {
+      return preserveInitialCase(word, editorialCorrections.get(lower));
+    }
+    return word;
+  });
+}
+
+function normalizeSpacing(value, multiline = false) {
+  const text = String(value || "")
+    .replace(/\t+/g, " ")
+    .replace(/[ ]{2,}/g, " ")
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/([,.;:!?])(?=\S)/g, "$1 ");
+  return multiline
+    ? text
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .join("\n\n")
+    : text.replace(/\s+/g, " ").trim();
+}
+
+function capitalizeSentences(value) {
+  return String(value || "").replace(/(^|[.!?]\s+)([a-zà-ÿ])/g, (match, prefix, letter) =>
+    `${prefix}${letter.toUpperCase()}`,
+  );
+}
+
+function ensureFinalPunctuation(value) {
+  const text = String(value || "").trim();
+  return text && !/[.!?:;]$/.test(text) ? `${text}.` : text;
+}
+
+function formatTitle(value) {
+  return capitalizeSentences(applyWordCorrections(normalizeSpacing(value)));
+}
+
+function formatText(value, { multiline = false, finalPunctuation = true } = {}) {
+  const corrected = capitalizeSentences(
+    applyWordCorrections(normalizeSpacing(value, multiline)),
+  );
+  return finalPunctuation ? ensureFinalPunctuation(corrected) : corrected;
+}
+
+function formatObjectives(value) {
+  return linesFrom(value).map((line) =>
+    formatText(line, { finalPunctuation: false }),
+  );
+}
+
 function fileExtension(file) {
   const name = file?.name || "";
   return name.includes(".") ? name.split(".").pop().toLowerCase() : "bin";
@@ -66,6 +166,58 @@ function adminItem(table, id, title, detail, status) {
   )}</strong><span>${escapeHtml(detail || "")}</span><small>${escapeHtml(
     status,
   )}</small></div><button class="text-link danger" data-table="${table}" data-id="${id}" type="button">Excluir</button></article>`;
+}
+
+function roleLabel(role) {
+  return {
+    admin: "Administrador",
+    teacher: "Professor",
+    student: "Aluno",
+  }[role] || "Aluno";
+}
+
+function renderUsers(items = []) {
+  const section = document.querySelector("#users-admin-section");
+  const overview = document.querySelector("#users-overview");
+  if (currentRole !== "admin") {
+    section.hidden = true;
+    overview.hidden = true;
+    return;
+  }
+
+  section.hidden = false;
+  overview.hidden = false;
+  document.querySelector("#users-count").textContent = items.length;
+  const target = document.querySelector("#users-list");
+  if (!items.length) {
+    renderEmpty(target, "Nenhum usuario encontrado.");
+    return;
+  }
+
+  target.innerHTML = items
+    .map(
+      (item) =>
+        `<article class="admin-item user-admin-item"><div><strong>${escapeHtml(
+          item.display_name || item.email || "Usuario",
+        )}</strong><span>${escapeHtml(item.email || "Sem e-mail")}</span><small>${escapeHtml(
+          `${roleLabel(item.role)} - ${item.is_active ? "ativo" : "inativo"}`,
+        )}</small></div><div class="user-admin-actions"><select data-user-role="${
+          item.user_id
+        }" aria-label="Permissao"><option value="student" ${
+          item.role === "student" ? "selected" : ""
+        }>Aluno</option><option value="teacher" ${
+          item.role === "teacher" ? "selected" : ""
+        }>Professor</option><option value="admin" ${
+          item.role === "admin" ? "selected" : ""
+        }>Admin</option></select><button class="text-link" data-user-active="${
+          item.user_id
+        }" data-active="${item.is_active ? "false" : "true"}" type="button">${
+          item.is_active ? "Desativar" : "Ativar"
+        }</button><button class="text-link danger" data-user-delete="${
+          item.user_id
+        }" type="button">Remover</button></div></article>`,
+    )
+    .join("");
 }
 
 function formatDate(value) {
@@ -118,61 +270,44 @@ function renderAudit(items = []) {
 }
 
 async function hasAdminAccess(userId) {
-  const access = await supabase.rpc("is_admin");
-  if (!access.error && access.data) return true;
-
-  const role = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (!role.error && role.data?.role === "admin") return true;
-
-  const profile = await supabase
-    .from("profiles")
-    .select("role,is_active")
-    .eq("id", userId)
-    .maybeSingle();
-  if (
-    !profile.error &&
-    profile.data?.role === "admin" &&
-    profile.data?.is_active !== false
-  ) {
-    return true;
-  }
-
-  if (access.error) throw access.error;
-  if (role.error) throw role.error;
-  if (profile.error) throw profile.error;
-  return false;
+  currentRole = await currentUserRole(supabase, userId);
+  return ["admin", "teacher"].includes(currentRole);
 }
 
 async function refreshAdminData() {
-  const [trackResult, lessonResult, opportunityResult, auditResult] =
+  const [
+    trackResult,
+    lessonResult,
+    opportunityResult,
+    auditResult,
+    usersResult,
+  ] =
     await Promise.all([
-    supabase
-      .from("tracks")
-      .select("id,slug,title,level,status,sort_order")
-      .order("sort_order", { ascending: true }),
-    supabase
-      .from("lessons")
-      .select(
-        "id,title,status,sort_order,source_type,video_provider,page_count,tracks(title)",
-      )
-      .order("sort_order", { ascending: true })
-      .limit(40),
-    supabase
-      .from("opportunities")
-      .select("id,type,title,organization,status,created_at")
-      .order("created_at", { ascending: false })
-      .limit(40),
-    supabase
-      .from("audit_logs")
-      .select("id,action,table_name,record_id,record_title,created_at")
-      .order("created_at", { ascending: false })
-      .limit(20),
-  ]);
+      supabase
+        .from("tracks")
+        .select("id,slug,title,level,status,sort_order")
+        .order("sort_order", { ascending: true }),
+      supabase
+        .from("lessons")
+        .select(
+          "id,title,status,sort_order,source_type,video_provider,page_count,tracks(title)",
+        )
+        .order("sort_order", { ascending: true })
+        .limit(40),
+      supabase
+        .from("opportunities")
+        .select("id,type,title,organization,status,created_at")
+        .order("created_at", { ascending: false })
+        .limit(40),
+      supabase
+        .from("audit_logs")
+        .select("id,action,table_name,record_id,record_title,created_at")
+        .order("created_at", { ascending: false })
+        .limit(20),
+      currentRole === "admin"
+        ? supabase.rpc("admin_list_users")
+        : Promise.resolve({ data: [], error: null }),
+    ]);
 
   const error = trackResult.error || lessonResult.error || opportunityResult.error;
   if (error) throw error;
@@ -187,12 +322,18 @@ async function refreshAdminData() {
   lessons = lessonResult.data || [];
   const opportunities = opportunityResult.data || [];
   const auditItems = auditResult.error ? [] : auditResult.data || [];
+  const users = usersResult.error ? [] : usersResult.data || [];
 
   document.querySelector("#tracks-count").textContent = tracks.length;
   document.querySelector("#lessons-count").textContent = lessons.length;
   document.querySelector("#opportunities-count").textContent =
     opportunities.length;
   renderAudit(auditItems);
+  renderUsers(users);
+  document.querySelector("#users-message").textContent =
+    usersResult.error && currentRole === "admin"
+      ? "Gestao de usuarios indisponivel. Rode a migracao de papeis."
+      : "";
 
   const lessonTrack = document.querySelector("#lesson-track");
   lessonTrack.innerHTML = tracks
@@ -251,10 +392,13 @@ async function initialize() {
   if (!data.user) throw new Error("Entre na conta de administrador.");
 
   const access = await hasAdminAccess(data.user.id);
-  if (!access) throw new Error("Esta conta nao possui acesso administrativo.");
+  if (!access) throw new Error("Esta conta nao possui acesso ao painel.");
 
+  await syncAdminNavigation(supabase, data.user);
+  document.querySelector(".page-heading h1").textContent =
+    currentRole === "admin" ? "Administracao" : "Estudio de conteudo";
   document.querySelector("#admin-status").textContent =
-    "Administrador conectado";
+    currentRole === "admin" ? "Administrador conectado" : "Professor conectado";
   content.hidden = false;
   await refreshAdminData();
 }
@@ -264,7 +408,7 @@ document.querySelector("#track-form").addEventListener("submit", async (event) =
   const message = document.querySelector("#track-message");
   message.textContent = "Salvando...";
   const form = new FormData(event.currentTarget);
-  const title = String(form.get("title")).trim();
+  const title = formatTitle(form.get("title"));
   const payload = {
     title,
     slug: slugify(form.get("slug") || title),
@@ -273,7 +417,7 @@ document.querySelector("#track-form").addEventListener("submit", async (event) =
     estimated_minutes: numberValue(form.get("estimated_minutes"), 30),
     lesson_count: 0,
     sort_order: numberValue(form.get("sort_order"), 1),
-    description: String(form.get("description")).trim(),
+    description: formatText(form.get("description"), { multiline: true }),
     status: statusFrom(form),
   };
   const { error } = await supabase.from("tracks").insert(payload);
@@ -291,7 +435,7 @@ document
     const message = document.querySelector("#lesson-message");
     message.textContent = "Salvando...";
     const form = new FormData(event.currentTarget);
-    const title = String(form.get("title")).trim();
+    const title = formatTitle(form.get("title"));
     const uploadedVideo = await uploadLessonMedia(
       "videos",
       form.get("video_file"),
@@ -300,18 +444,18 @@ document
       track_id: form.get("track_id"),
       title,
       slug: slugify(form.get("slug") || title),
-      summary: String(form.get("summary") || "").trim(),
-      body: String(form.get("body")).trim(),
-      transcript: String(form.get("transcript") || "").trim(),
+      summary: formatText(form.get("summary")),
+      body: formatText(form.get("body"), { multiline: true }),
+      transcript: formatText(form.get("transcript"), { multiline: true }),
       audio_description: "",
       source_type: form.get("source_type"),
       video_provider: uploadedVideo ? "supabase_storage" : form.get("video_provider"),
       video_url: uploadedVideo || String(form.get("video_url") || "").trim() || null,
-      instructor_name: String(form.get("instructor_name") || "").trim() || null,
-      partner_name: String(form.get("partner_name") || "").trim() || null,
+      instructor_name: formatTitle(form.get("instructor_name")) || null,
+      partner_name: formatTitle(form.get("partner_name")) || null,
       content_format: form.get("content_format"),
       page_count: numberValue(form.get("page_count"), 1),
-      learning_objectives: linesFrom(form.get("learning_objectives")),
+      learning_objectives: formatObjectives(form.get("learning_objectives")),
       estimated_minutes: numberValue(form.get("estimated_minutes"), 15),
       sort_order: numberValue(form.get("sort_order"), 1),
       status: statusFrom(form),
@@ -333,8 +477,8 @@ document
     const form = new FormData(event.currentTarget);
     const payload = {
       lesson_id: form.get("lesson_id"),
-      title: String(form.get("title")).trim(),
-      body: String(form.get("body")).trim(),
+      title: formatTitle(form.get("title")),
+      body: formatText(form.get("body"), { multiline: true }),
       sort_order: numberValue(form.get("sort_order"), 1),
       estimated_minutes: numberValue(form.get("estimated_minutes"), 5),
     };
@@ -357,7 +501,7 @@ document
     const externalUrl = String(form.get("file_url") || "").trim();
     const payload = {
       lesson_id: form.get("lesson_id"),
-      title: String(form.get("title")).trim(),
+      title: formatTitle(form.get("title")),
       file_url: uploadedMaterial || externalUrl,
       file_type: String(form.get("file_type")),
       is_downloadable: true,
@@ -380,12 +524,14 @@ document
     const form = new FormData(event.currentTarget);
     const payload = {
       type: form.get("type"),
-      title: String(form.get("title")).trim(),
-      organization: String(form.get("organization")).trim(),
-      location: String(form.get("location") || "").trim(),
+      title: formatTitle(form.get("title")),
+      organization: formatTitle(form.get("organization")),
+      location: formatText(form.get("location"), {
+        finalPunctuation: false,
+      }),
       deadline: form.get("deadline") || null,
       url: String(form.get("url")).trim(),
-      description: String(form.get("description")).trim(),
+      description: formatText(form.get("description"), { multiline: true }),
       status: statusFrom(form),
     };
     const { error } = await supabase.from("opportunities").insert(payload);
@@ -403,6 +549,36 @@ document.querySelector("#refresh-admin").addEventListener("click", () => {
 });
 
 document.querySelector("#admin-content").addEventListener("click", async (event) => {
+  const activeButton = event.target.closest("[data-user-active]");
+  if (activeButton) {
+    const { error } = await supabase.rpc("admin_set_user_active", {
+      target_user_id: activeButton.dataset.userActive,
+      active: activeButton.dataset.active === "true",
+    });
+    document.querySelector("#users-message").textContent = error
+      ? error.message
+      : "Usuario atualizado.";
+    if (!error) await refreshAdminData();
+    return;
+  }
+
+  const deleteUserButton = event.target.closest("[data-user-delete]");
+  if (deleteUserButton) {
+    const confirmation = window.prompt(
+      'Digite "EXCLUIR" para remover esta conta.',
+    );
+    if (confirmation !== "EXCLUIR") return;
+    const { error } = await supabase.rpc("admin_delete_user", {
+      target_user_id: deleteUserButton.dataset.userDelete,
+      confirmation,
+    });
+    document.querySelector("#users-message").textContent = error
+      ? error.message
+      : "Usuario removido.";
+    if (!error) await refreshAdminData();
+    return;
+  }
+
   const button = event.target.closest("[data-table][data-id]");
   if (!button) return;
   if (!window.confirm("Excluir este item?")) return;
@@ -416,6 +592,21 @@ document.querySelector("#admin-content").addEventListener("click", async (event)
   }
   await refreshAdminData();
 });
+
+document
+  .querySelector("#admin-content")
+  .addEventListener("change", async (event) => {
+    const select = event.target.closest("[data-user-role]");
+    if (!select) return;
+    const { error } = await supabase.rpc("admin_set_user_role", {
+      target_user_id: select.dataset.userRole,
+      target_role: select.value,
+    });
+    document.querySelector("#users-message").textContent = error
+      ? error.message
+      : "Permissao atualizada.";
+    if (!error) await refreshAdminData();
+  });
 
 initialize().catch((error) => {
   document.querySelector("#admin-status").textContent = "Acesso negado";

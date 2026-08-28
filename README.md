@@ -13,7 +13,7 @@ Reduzir barreiras de acesso a educacao digital e oportunidades profissionais por
 - Trilhas de aprendizagem carregadas do Supabase.
 - Aulas com video, leitura em paginas, materiais, conclusao, historico e conteudos salvos.
 - Area de carreira com curriculo, portfolio e oportunidades.
-- Painel administrativo para cadastrar trilhas, aulas, paginas, materiais e oportunidades.
+- Painel administrativo para cadastrar trilhas, aulas, paginas, materiais, oportunidades e permissoes.
 - Auditoria administrativa para alteracoes em trilhas, aulas, paginas, materiais e oportunidades.
 - Persistencia local para preferências e fallback de progresso.
 - PWA com manifest, service worker, cache offline e aviso de conexao.
@@ -94,7 +94,7 @@ Execute as migracoes em `supabase/migrations` pelo SQL Editor do Supabase, na or
 Principais areas do banco:
 
 - `profiles`: perfil publico/privado do usuario.
-- `user_roles`: permissao administrativa.
+- `user_roles`: papeis `admin`, `teacher` e `student`.
 - `tracks`: trilhas.
 - `lessons`: aulas.
 - `lesson_sections`: paginas internas das aulas.
@@ -124,6 +124,19 @@ where id = (
   where email = 'seu-email@exemplo.com'
 );
 ```
+
+Para tornar uma conta professora:
+
+```sql
+insert into public.user_roles (user_id, role)
+select id, 'teacher'
+from auth.users
+where email = 'professor@exemplo.com'
+on conflict (user_id) do update
+set role = 'teacher';
+```
+
+Usuarios sem papel especial entram como `student`.
 
 ## Rastreabilidade
 

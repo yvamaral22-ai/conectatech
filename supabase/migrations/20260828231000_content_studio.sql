@@ -1,6 +1,30 @@
 -- Estudio de conteudo para administracao de aulas.
 -- Permite aulas com video proprio, YouTube, parceiro, secoes/paginas e materiais.
 
+create or replace function public.can_manage_content()
+returns boolean
+language sql
+security definer
+stable
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.user_roles
+    where user_id = (select auth.uid())
+      and role in ('admin', 'teacher')
+  )
+  or exists (
+    select 1
+    from public.profiles
+    where id = (select auth.uid())
+      and role::text in ('admin', 'teacher')
+      and coalesce(is_active, true)
+  );
+$$;
+
+grant execute on function public.can_manage_content() to authenticated;
+
 alter table public.lessons
 add column if not exists source_type text not null default 'own';
 
@@ -80,7 +104,7 @@ using (
     select 1
     from public.lessons l
     where l.id = lesson_sections.lesson_id
-      and (l.status = 'published' or (select public.is_admin()))
+      and (l.status = 'published' or (select public.can_manage_content()))
   )
 );
 
@@ -88,8 +112,8 @@ create policy "lesson_sections_manage_admin"
 on public.lesson_sections
 for all
 to authenticated
-using ((select public.is_admin()))
-with check ((select public.is_admin()));
+using ((select public.can_manage_content()))
+with check ((select public.can_manage_content()));
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
@@ -128,8 +152,8 @@ create policy "lesson_media_admin_manage"
 on storage.objects
 for all
 to authenticated
-using (bucket_id = 'lesson-media' and (select public.is_admin()))
-with check (bucket_id = 'lesson-media' and (select public.is_admin()));
+using (bucket_id = 'lesson-media' and (select public.can_manage_content()))
+with check (bucket_id = 'lesson-media' and (select public.can_manage_content()));
 
 create policy "lesson_media_read_authenticated"
 on storage.objects

@@ -26,7 +26,6 @@
         <a href="/trilhas.html">Trilhas</a>
         <a href="/oportunidades.html">Oportunidades</a>
         <a href="/perfil.html">Perfil</a>
-        <a href="/admin.html" aria-current="page">Administracao</a>
       </nav>
       <div class="header-actions">
         <a class="button button-small" href="/perfil.html">Minha conta</a>
@@ -49,9 +48,9 @@
       <section class="auth-guard" id="admin-denied" hidden>
         <div>
           <p class="eyebrow">Acesso protegido</p>
-          <h2>Conta sem permissao administrativa</h2>
+          <h2>Conta sem permissao de painel</h2>
           <p id="admin-denied-message">
-            Entre com uma conta marcada como admin no Supabase.
+            Entre com uma conta marcada como admin ou professor no Supabase.
           </p>
         </div>
         <a class="button" href="/?entrar=1">Entrar</a>
@@ -75,6 +74,28 @@
             <strong id="audit-count">0</strong>
             <span>Eventos de auditoria</span>
           </article>
+          <article id="users-overview" hidden>
+            <strong id="users-count">0</strong>
+            <span>Usuarios</span>
+          </article>
+        </section>
+
+        <section
+          class="settings-card"
+          id="users-admin-section"
+          aria-labelledby="users-admin-title"
+          hidden
+        >
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">Controle master</p>
+              <h2 id="users-admin-title">Usuarios e permissoes</h2>
+            </div>
+            <span class="save-state" id="users-message" role="status"></span>
+          </div>
+          <div class="admin-list users-list" id="users-list">
+            <p class="empty-state">Carregando usuarios...</p>
+          </div>
         </section>
 
         <section class="settings-card" aria-labelledby="track-title">

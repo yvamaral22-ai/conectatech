@@ -4,7 +4,7 @@ Este documento define como a administracao de conteudos deve funcionar na Conect
 
 ## Objetivo
 
-Transformar o painel administrativo em um ambiente parecido com um LMS moderno: o administrador cria trilhas, publica aulas, organiza paginas internas, registra a origem do video, adiciona materiais e acompanha alteracoes por auditoria.
+Transformar o painel administrativo em um ambiente parecido com um LMS moderno: administradores e professores criam trilhas, publicam aulas, organizam paginas internas, registram a origem do video, adicionam materiais e acompanham alteracoes por auditoria.
 
 ## Estrutura Recomendada
 
@@ -36,6 +36,18 @@ Uma aula so deve ser publicada quando tiver:
 - materiais com fontes confiaveis;
 - status `published`.
 
+## Padrao Editorial
+
+O painel aplica uma revisao automatica basica antes de salvar:
+
+- remove espacos duplicados;
+- ajusta espacos antes e depois de pontuacao;
+- coloca letra maiuscula no inicio de frases;
+- preserva termos tecnicos e marcas como HTML, CSS, JavaScript, GitHub, Supabase, YouTube, LGPD e WCAG;
+- corrige acentuacoes comuns do projeto, como conteúdo, currículo, informática, página, programação, segurança, usuário e vídeo.
+
+Essa revisao automatica ajuda, mas nao substitui leitura humana. Antes de publicar, revise clareza, acentuacao, pontuacao, maiusculas/minusculas e padrao ABNT2 quando o texto for usado em entregas academicas.
+
 ## Como Cadastrar Uma Aula
 
 1. Crie ou escolha uma trilha.
@@ -56,7 +68,7 @@ Videos externos podem ficar apenas como URL em `lessons.video_url`.
 
 ## Seguranca
 
-Somente usuarios com permissao `admin` podem criar, editar ou excluir conteudos. Alunos e visitantes leem apenas o que estiver publicado.
+Usuarios com permissao `admin` ou `teacher` podem criar, editar, publicar e excluir conteudos educacionais. Apenas `admin` pode administrar usuarios e permissoes. Alunos e visitantes leem apenas o que estiver publicado.
 
 ## Proximos Incrementos
 

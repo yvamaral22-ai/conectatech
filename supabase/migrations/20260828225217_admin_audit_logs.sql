@@ -45,7 +45,7 @@ create policy "audit_logs_admin_read"
 on public.audit_logs
 for select
 to authenticated
-using ((select public.is_admin()));
+using ((select public.can_manage_content()));
 
 create policy "audit_logs_no_public_write"
 on public.audit_logs
