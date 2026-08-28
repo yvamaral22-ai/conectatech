@@ -8,7 +8,7 @@ $checks = @(
     @{ Path = '/oportunidades.html'; Contains = 'Central de oportunidades' },
     @{ Path = '/perfil.html'; Contains = 'Meu perfil' },
     @{ Path = '/impacto.html'; Contains = 'Impacto da comunidade' },
-    @{ Path = '/aula.html?id=basica-1'; Contains = 'lesson-page' },
+    @{ Path = '/aula.html?id=00000000-0000-4000-8000-000000000001'; Contains = 'lesson-page' },
     @{ Path = '/admin.html'; Contains = 'Administração' },
     @{ Path = '/styles.css'; Contains = '.skip-link' },
     @{ Path = '/app.js'; Contains = 'serviceWorker' },
