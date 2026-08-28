@@ -10,6 +10,8 @@ const status = document.querySelector("#page-status");
 let user;
 let profile;
 
+document.querySelector("#account-email")?.closest("label")?.remove();
+
 function notify(message) {
   status.textContent = message;
   status.style.display = "block";
@@ -47,7 +49,8 @@ async function render(record) {
   document.querySelector("#profile-bio").value = record.bio || "";
   document.querySelector("#profile-city").value = record.city || "";
   document.querySelector("#profile-public").checked = record.is_public;
-  document.querySelector("#account-email").value = user.email || "";
+  const accountEmail = document.querySelector("#account-email");
+  if (accountEmail) accountEmail.value = "";
   await Promise.all([
     setAvatar(document.querySelector("#summary-avatar"), record),
     setAvatar(document.querySelector("#form-avatar"), record),

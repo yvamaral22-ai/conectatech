@@ -417,12 +417,14 @@ document
 let registerMode = false;
 const authDialog = document.querySelector("#auth-dialog");
 const accountButton = document.querySelector("#account-button");
+const headerLogoutButton = document.querySelector("#header-logout-button");
 
 async function renderHeaderAccount(
   user = currentUser,
   profile = currentProfile,
 ) {
   accountButton.replaceChildren();
+  if (headerLogoutButton) headerLogoutButton.hidden = !user;
   if (!user) {
     localStorage.removeItem("conectatech-mini-profile");
     accountButton.classList.remove("account-button-profile");
@@ -699,8 +701,9 @@ document
     result.innerHTML = `<article class="public-profile-result"><div class="avatar">${avatarUrl ? `<img src="${avatarUrl}" alt="">` : escapeHtml(data.display_name.slice(0, 2).toUpperCase())}</div><div><h3>${escapeHtml(data.display_name)}</h3><p>@${escapeHtml(data.username)}</p><p>${escapeHtml(data.bio || "")}</p><p>${escapeHtml(data.city || "")}</p></div></article>`;
   });
 
-document.querySelector("#logout-button").addEventListener("click", async () => {
-  if (!currentUser || !confirm("Deseja sair da sua conta?")) return;
+async function logoutCurrentUser({ ask = true } = {}) {
+  if (!currentUser) return;
+  if (ask && !confirm("Deseja sair da sua conta?")) return;
   await supabase.auth.signOut();
   currentUser = null;
   currentProfile = null;
@@ -715,7 +718,16 @@ document.querySelector("#logout-button").addEventListener("click", async () => {
     "Seu perfil permanece vinculado à sua conta com segurança.";
   document.querySelector("#profile-visibility").textContent =
     "Entre para criar seu perfil";
-});
+  document.querySelector("#offline-status").textContent =
+    "Voce saiu da sua conta.";
+  document.querySelector("#offline-status").style.display = "block";
+}
+
+document
+  .querySelector("#logout-button")
+  .addEventListener("click", () => logoutCurrentUser());
+
+headerLogoutButton?.addEventListener("click", () => logoutCurrentUser());
 
 const privacyDialog = document.querySelector("#privacy-dialog");
 async function exportPersonalData() {

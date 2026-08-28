@@ -27,10 +27,29 @@ async function hydrateMiniProfile() {
     '.header-actions a[href="/perfil.html"]',
   );
   if (!entry || !supabase) return;
+  const actions = entry.closest(".header-actions");
+  const logoutId = "page-logout-button";
   const cacheKey = "conectatech-mini-profile";
+  const removeLogout = () => document.querySelector(`#${logoutId}`)?.remove();
+  const renderLogout = () => {
+    if (!actions || document.querySelector(`#${logoutId}`)) return;
+    const button = document.createElement("button");
+    button.id = logoutId;
+    button.className = "button button-small button-secondary";
+    button.type = "button";
+    button.textContent = "Sair";
+    button.addEventListener("click", async () => {
+      if (!window.confirm("Deseja sair da sua conta?")) return;
+      await supabase.auth.signOut();
+      localStorage.removeItem(cacheKey);
+      window.location.href = "/";
+    });
+    actions.append(button);
+  };
   const render = (snapshot) => {
     entry.classList.add("account-button-profile");
     entry.innerHTML = `<span class="account-mini-avatar">${snapshot.imageUrl ? `<img src="${snapshot.imageUrl}" alt="">` : escapeHtml(snapshot.initials)}</span><span class="account-mini-copy"><strong>${escapeHtml(snapshot.name)}</strong><small>${snapshot.username ? `@${escapeHtml(snapshot.username)}` : "Minha conta"}</small></span>`;
+    renderLogout();
   };
   try {
     const cached = JSON.parse(localStorage.getItem(cacheKey));
@@ -39,6 +58,7 @@ async function hydrateMiniProfile() {
   const { data } = await supabase.auth.getUser();
   if (!data.user) {
     localStorage.removeItem(cacheKey);
+    removeLogout();
     entry.classList.remove("account-button-profile");
     entry.textContent = "Entrar";
     entry.href = "/?entrar=1";
