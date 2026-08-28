@@ -14,6 +14,7 @@ Reduzir barreiras de acesso a educacao digital e oportunidades profissionais por
 - Aulas com leitura, conclusao, historico e conteudos salvos.
 - Area de carreira com curriculo, portfolio e oportunidades.
 - Painel administrativo para cadastrar trilhas, aulas e oportunidades.
+- Auditoria administrativa para alteracoes em trilhas, aulas e oportunidades.
 - Persistencia local para preferências e fallback de progresso.
 - PWA com manifest, service worker, cache offline e aviso de conexao.
 - Documentacao academica, operacional, privacidade, validacao e retomada.
@@ -100,6 +101,7 @@ Principais areas do banco:
 - `saved_lessons`: conteudos salvos.
 - `opportunities`: oportunidades.
 - `feedback`, `feedbacks`, `consents`: experiencia, privacidade e retorno dos usuarios.
+- `audit_logs`: historico de alteracoes administrativas.
 
 Para tornar uma conta administradora:
 

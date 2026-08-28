@@ -15,6 +15,7 @@ O projeto ja possui:
 - catalogo de trilhas e aulas vindo do banco;
 - oportunidades vindas do banco;
 - painel administrativo protegido por permissao `admin`;
+- auditoria das alteracoes feitas em trilhas, aulas e oportunidades;
 - migracoes SQL versionadas;
 - fallback local com Python/SQLite para testes.
 
@@ -76,6 +77,7 @@ Devem ser adicionados nas proximas entregas:
 | Conteudos salvos | Ajuda quem tem pouco tempo ou conexao instavel a retomar estudos. |
 | Historico de aulas | Evita perda de continuidade na aprendizagem. |
 | RLS | Garante que usuarios comuns acessem somente seus proprios dados. |
+| Auditoria administrativa | Permite identificar quando conteudos foram criados, alterados ou excluidos. |
 
 ## Ajustes manuais fora da interface
 
@@ -97,6 +99,6 @@ Esses ajustes devem ser documentados em `docs/OPERACAO.md` e nunca devem expor c
 2. Criar upload e listagem de materiais por aula.
 3. Criar exercicios administraveis.
 4. Criar dashboard de usuarios, progresso e feedbacks.
-5. Registrar logs de auditoria para mudancas administrativas.
+5. Ampliar auditoria para materiais, exercicios, permissoes e configuracoes.
 6. Criar testes de interface com navegador para login, perfil, aula e admin.
 7. Avaliar migracao para Next.js quando houver necessidade de backend proprio.

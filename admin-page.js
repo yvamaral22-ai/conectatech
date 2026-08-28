@@ -41,8 +41,47 @@ function adminItem(table, id, title, detail, status) {
   )}</small></div><button class="text-link danger" data-table="${table}" data-id="${id}" type="button">Excluir</button></article>`;
 }
 
+function formatDate(value) {
+  if (!value) return "sem data";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function auditLabel(action) {
+  return {
+    insert: "criou",
+    update: "alterou",
+    delete: "excluiu",
+  }[action] || action;
+}
+
+function renderAudit(items = []) {
+  const target = document.querySelector("#audit-list");
+  document.querySelector("#audit-count").textContent = items.length;
+  if (!items.length) {
+    renderEmpty(target, "Nenhuma alteracao registrada ainda.");
+    return;
+  }
+  target.innerHTML = items
+    .map(
+      (item) =>
+        `<article class="admin-item audit-item"><div><strong>${escapeHtml(
+          auditLabel(item.action),
+        )} ${escapeHtml(item.record_title || item.record_id || "registro")}</strong><span>${escapeHtml(
+          item.table_name,
+        )}</span><small>${escapeHtml(formatDate(item.created_at))}</small></div></article>`,
+    )
+    .join("");
+}
+
 async function refreshAdminData() {
-  const [trackResult, lessonResult, opportunityResult] = await Promise.all([
+  const [trackResult, lessonResult, opportunityResult, auditResult] =
+    await Promise.all([
     supabase
       .from("tracks")
       .select("id,slug,title,level,status,sort_order")
@@ -57,19 +96,32 @@ async function refreshAdminData() {
       .select("id,type,title,organization,status,created_at")
       .order("created_at", { ascending: false })
       .limit(40),
+    supabase
+      .from("audit_logs")
+      .select("id,action,table_name,record_id,record_title,created_at")
+      .order("created_at", { ascending: false })
+      .limit(20),
   ]);
 
   const error = trackResult.error || lessonResult.error || opportunityResult.error;
   if (error) throw error;
+  if (auditResult.error) {
+    document.querySelector("#audit-message").textContent =
+      "Auditoria indisponivel. Rode a migracao admin_audit_logs.";
+  } else {
+    document.querySelector("#audit-message").textContent = "";
+  }
 
   tracks = trackResult.data || [];
   const lessons = lessonResult.data || [];
   const opportunities = opportunityResult.data || [];
+  const auditItems = auditResult.error ? [] : auditResult.data || [];
 
   document.querySelector("#tracks-count").textContent = tracks.length;
   document.querySelector("#lessons-count").textContent = lessons.length;
   document.querySelector("#opportunities-count").textContent =
     opportunities.length;
+  renderAudit(auditItems);
 
   const lessonTrack = document.querySelector("#lesson-track");
   lessonTrack.innerHTML = tracks

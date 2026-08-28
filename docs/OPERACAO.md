@@ -29,6 +29,23 @@ where id = (
 
 Depois disso, entre no site com essa conta e acesse `/admin.html`. O painel deve mostrar `Administrador conectado`.
 
+## Auditoria
+
+A migracao `20260828225217_admin_audit_logs.sql` cria `audit_logs` e registra automaticamente criacao, alteracao e exclusao em:
+
+- `tracks`;
+- `lessons`;
+- `opportunities`.
+
+Somente contas `admin` podem ler esses registros pelo painel ou pelo SQL Editor. Para conferir manualmente:
+
+```sql
+select action, table_name, record_title, actor_id, created_at
+from public.audit_logs
+order by created_at desc
+limit 20;
+```
+
 ## Dominio proprio
 
 Na Vercel, abra Settings > Domains e adicione um dominio que voce possua. Aplique os registros DNS apresentados e inclua a URL em Supabase > Authentication > URL Configuration, em Site URL e Redirect URLs.
