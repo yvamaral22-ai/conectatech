@@ -11,10 +11,10 @@ Reduzir barreiras de acesso a educacao digital e oportunidades profissionais por
 - Cadastro, login e logout com Supabase Auth.
 - Perfil do usuario com foto, capa, nome publico, bio, cidade e controle de visibilidade.
 - Trilhas de aprendizagem carregadas do Supabase.
-- Aulas com leitura, conclusao, historico e conteudos salvos.
+- Aulas com video, leitura em paginas, materiais, conclusao, historico e conteudos salvos.
 - Area de carreira com curriculo, portfolio e oportunidades.
-- Painel administrativo para cadastrar trilhas, aulas e oportunidades.
-- Auditoria administrativa para alteracoes em trilhas, aulas e oportunidades.
+- Painel administrativo para cadastrar trilhas, aulas, paginas, materiais e oportunidades.
+- Auditoria administrativa para alteracoes em trilhas, aulas, paginas, materiais e oportunidades.
 - Persistencia local para preferências e fallback de progresso.
 - PWA com manifest, service worker, cache offline e aviso de conexao.
 - Documentacao academica, operacional, privacidade, validacao e retomada.
@@ -97,11 +97,14 @@ Principais areas do banco:
 - `user_roles`: permissao administrativa.
 - `tracks`: trilhas.
 - `lessons`: aulas.
+- `lesson_sections`: paginas internas das aulas.
+- `materials`: materiais de apoio, links e arquivos.
 - `lesson_progress` e `course_progress`: progresso.
 - `saved_lessons`: conteudos salvos.
 - `opportunities`: oportunidades.
 - `feedback`, `feedbacks`, `consents`: experiencia, privacidade e retorno dos usuarios.
 - `audit_logs`: historico de alteracoes administrativas.
+- `storage.lesson-media`: bucket privado para midias e materiais proprios.
 
 Para tornar uma conta administradora:
 
@@ -161,10 +164,10 @@ O modo sem conta armazena progresso e preferencias no navegador. Ao criar conta,
 
 ## Proximos incrementos
 
-- Edicao completa de trilhas, aulas e oportunidades no painel admin.
-- Upload de materiais didaticos: PDF, imagens, videos e links.
+- Edicao completa de trilhas, aulas, paginas, materiais e oportunidades no painel admin.
+- Upload direto de materiais didaticos para o Supabase Storage.
 - Exercicios administraveis por aula.
 - Dashboard admin com usuarios, progresso, feedbacks e indicadores.
-- Logs de auditoria para alteracoes administrativas.
+- Pre-visualizacao antes da publicacao.
 - Testes automatizados de interface com navegador.
 - Evolucao futura para Next.js caso sejam necessarias rotas protegidas no servidor, SEO avancado e backend proprio.

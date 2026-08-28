@@ -606,8 +606,9 @@
     sans-serif;
 }
 .compact-form {
-  max-width: 520px;
   margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
 }
 .compact-form label {
   display: grid;
@@ -620,6 +621,71 @@
   border-radius: 11px;
   padding: 12px 14px;
   background: #fff;
+}
+.lesson-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.lesson-meta span {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink-2);
+  font-size: 0.86rem;
+  font-weight: 750;
+}
+.lesson-video {
+  overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #0f2f28;
+  aspect-ratio: 16 / 9;
+}
+.lesson-video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.lesson-player {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.lesson-video-link {
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  aspect-ratio: auto;
+}
+.lesson-panel,
+.lesson-section {
+  margin-top: 18px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+.lesson-panel h2,
+.lesson-section h2 {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+}
+.lesson-section span {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #9a650f;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.lesson-section p {
+  margin: 0;
+  color: var(--ink-2);
 }
 dialog form label {
   display: grid;

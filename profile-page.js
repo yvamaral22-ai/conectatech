@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { syncAdminNavigation } from "./admin-access.js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -231,10 +232,12 @@ async function initialize() {
   if (!user) {
     guard.hidden = false;
     document.querySelector("#account-state").textContent = "Sessao nao iniciada";
+    await syncAdminNavigation(supabase, null);
     return;
   }
 
   try {
+    await syncAdminNavigation(supabase, user);
     const record = await loadProfileRecord();
     workspace.hidden = false;
     document.querySelector("#account-state").textContent = "Conta conectada";

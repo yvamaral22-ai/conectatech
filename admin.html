@@ -26,6 +26,7 @@
         <a href="/trilhas.html">Trilhas</a>
         <a href="/oportunidades.html">Oportunidades</a>
         <a href="/perfil.html">Perfil</a>
+        <a href="/admin.html" aria-current="page">Administracao</a>
       </nav>
       <div class="header-actions">
         <a class="button button-small" href="/perfil.html">Minha conta</a>
@@ -153,8 +154,66 @@
                 <input name="estimated_minutes" type="number" min="0" value="15" />
               </label>
               <label>
+                Formato
+                <select name="content_format">
+                  <option value="text_video">Texto e video</option>
+                  <option value="video">Video</option>
+                  <option value="text">Texto</option>
+                  <option value="activity">Atividade guiada</option>
+                  <option value="project">Projeto pratico</option>
+                </select>
+              </label>
+              <label>
+                Origem
+                <select name="source_type" id="lesson-source">
+                  <option value="own">Aula propria</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="partner">Parceiro</option>
+                  <option value="live">Aula ao vivo</option>
+                  <option value="text">Sem video</option>
+                </select>
+              </label>
+              <label>
+                Provedor do video
+                <select name="video_provider">
+                  <option value="none">Sem video</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="supabase_storage">Arquivo no Supabase</option>
+                  <option value="external">Link externo</option>
+                </select>
+              </label>
+              <label>
+                URL do video
+                <input name="video_url" placeholder="https://... ou caminho no Storage" />
+              </label>
+              <label>
+                Upload de video proprio
+                <input name="video_file" type="file" accept="video/mp4,video/webm" />
+              </label>
+              <label>
+                Instrutor
+                <input name="instructor_name" maxlength="120" placeholder="Seu nome ou professor" />
+              </label>
+              <label>
+                Parceiro
+                <input name="partner_name" maxlength="120" placeholder="Opcional" />
+              </label>
+              <label>
+                Paginas/secoes
+                <input name="page_count" type="number" min="1" max="40" value="1" />
+              </label>
+              <label>
                 Ordem
                 <input name="sort_order" type="number" min="0" value="1" />
+              </label>
+              <label class="form-wide">
+                Objetivos de aprendizagem
+                <textarea
+                  name="learning_objectives"
+                  maxlength="800"
+                  rows="3"
+                  placeholder="Um objetivo por linha"
+                ></textarea>
               </label>
               <label class="form-wide">
                 Resumo
@@ -174,6 +233,76 @@
               <span><strong>Publicar aula</strong></span>
             </label>
             <button class="button" type="submit">Salvar aula</button>
+          </form>
+        </section>
+
+        <section class="settings-card" aria-labelledby="section-admin-title">
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">Editor de aula</p>
+              <h2 id="section-admin-title">Paginas e materiais</h2>
+            </div>
+            <span class="save-state" id="section-message" role="status"></span>
+          </div>
+          <form id="section-form" class="settings-form">
+            <div class="form-grid">
+              <label>
+                Aula
+                <select name="lesson_id" id="section-lesson" required></select>
+              </label>
+              <label>
+                Titulo da pagina
+                <input name="title" required maxlength="160" />
+              </label>
+              <label>
+                Ordem
+                <input name="sort_order" type="number" min="1" value="1" />
+              </label>
+              <label>
+                Minutos
+                <input name="estimated_minutes" type="number" min="0" value="5" />
+              </label>
+              <label class="form-wide">
+                Conteudo da pagina
+                <textarea name="body" required rows="7"></textarea>
+              </label>
+            </div>
+            <button class="button" type="submit">Salvar pagina</button>
+          </form>
+          <form id="material-form" class="settings-form compact-form">
+            <div class="form-grid">
+              <label>
+                Aula
+                <select name="lesson_id" id="material-lesson" required></select>
+              </label>
+              <label>
+                Nome do material
+                <input name="title" required maxlength="160" />
+              </label>
+              <label>
+                Tipo
+                <select name="file_type">
+                  <option value="pdf">PDF</option>
+                  <option value="link">Link externo</option>
+                  <option value="video">Video</option>
+                  <option value="image">Imagem</option>
+                  <option value="text">Texto</option>
+                </select>
+              </label>
+              <label>
+                URL do arquivo ou link
+                <input name="file_url" placeholder="https://... ou caminho no Storage" />
+              </label>
+              <label>
+                Upload do material
+                <input
+                  name="material_file"
+                  type="file"
+                  accept=".pdf,.txt,image/jpeg,image/png,image/webp,video/mp4,video/webm"
+                />
+              </label>
+            </div>
+            <button class="button button-secondary" type="submit">Adicionar material</button>
           </form>
         </section>
 

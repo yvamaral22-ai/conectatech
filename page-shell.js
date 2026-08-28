@@ -1,4 +1,5 @@
 import { supabase } from "./data-client.js";
+import { syncAdminNavigation } from "./admin-access.js";
 
 const menuButton = document.querySelector(".menu-button");
 menuButton?.addEventListener("click", () => {
@@ -91,3 +92,4 @@ async function hydrateMiniProfile() {
   render(snapshot);
 }
 hydrateMiniProfile();
+syncAdminNavigation(supabase);

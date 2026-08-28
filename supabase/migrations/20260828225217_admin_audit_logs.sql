@@ -63,13 +63,28 @@ as $$
 declare
   changed_id text;
   changed_title text;
+  before_row jsonb;
+  after_row jsonb;
 begin
+  before_row := case when tg_op in ('UPDATE', 'DELETE') then to_jsonb(old) else null end;
+  after_row := case when tg_op in ('INSERT', 'UPDATE') then to_jsonb(new) else null end;
+
   if tg_op = 'DELETE' then
-    changed_id := old.id::text;
-    changed_title := coalesce(old.title, old.slug, old.id::text);
+    changed_id := before_row ->> 'id';
+    changed_title := coalesce(
+      before_row ->> 'title',
+      before_row ->> 'slug',
+      before_row ->> 'file_url',
+      before_row ->> 'id'
+    );
   else
-    changed_id := new.id::text;
-    changed_title := coalesce(new.title, new.slug, new.id::text);
+    changed_id := after_row ->> 'id';
+    changed_title := coalesce(
+      after_row ->> 'title',
+      after_row ->> 'slug',
+      after_row ->> 'file_url',
+      after_row ->> 'id'
+    );
   end if;
 
   insert into public.audit_logs (
@@ -88,8 +103,8 @@ begin
     tg_table_name,
     changed_id,
     changed_title,
-    case when tg_op in ('UPDATE', 'DELETE') then to_jsonb(old) else null end,
-    case when tg_op in ('INSERT', 'UPDATE') then to_jsonb(new) else null end,
+    before_row,
+    after_row,
     jsonb_build_object('schema', tg_table_schema)
   );
 

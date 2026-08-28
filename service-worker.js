@@ -1,4 +1,4 @@
-const CACHE = "conectatech-v6";
+const CACHE = "conectatech-v7";
 const ASSETS = [
   "./",
   "./trilhas.html",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./perfil.html",
   "./impacto.html",
   "./aula.html",
+  "./admin.html",
 ];
 self.addEventListener("install", (event) =>
   event.waitUntil(

@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { syncAdminNavigation } from "./admin-access.js";
 
 document.documentElement.classList.add("js");
 
@@ -427,6 +428,7 @@ async function renderHeaderAccount(
   if (headerLogoutButton) headerLogoutButton.hidden = !user;
   if (!user) {
     localStorage.removeItem("conectatech-mini-profile");
+    await syncAdminNavigation(supabase, null);
     accountButton.classList.remove("account-button-profile");
     const label = document.createElement("span");
     label.className = "account-button-label";
@@ -471,6 +473,7 @@ async function renderHeaderAccount(
       imageUrl: avatarUrl || "",
     }),
   );
+  await syncAdminNavigation(supabase, user);
 }
 
 try {
