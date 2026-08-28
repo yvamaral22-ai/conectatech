@@ -43,6 +43,41 @@ create table if not exists public.opportunities (
   check (closes_at is null or opens_at is null or closes_at >= opens_at)
 );
 
+-- Compatibilidade com versões anteriores do catálogo.
+alter table public.courses add column if not exists icon text not null default '◇';
+alter table public.courses add column if not exists title text not null default 'Trilha';
+alter table public.courses add column if not exists level text not null default 'iniciante';
+alter table public.courses add column if not exists description text not null default '';
+alter table public.courses add column if not exists duration_minutes integer not null default 10;
+alter table public.courses add column if not exists position integer not null default 0;
+alter table public.courses add column if not exists published boolean not null default false;
+alter table public.courses add column if not exists created_at timestamptz not null default now();
+alter table public.courses add column if not exists updated_at timestamptz not null default now();
+
+alter table public.lessons add column if not exists course_id text references public.courses(id) on delete cascade;
+alter table public.lessons add column if not exists title text not null default 'Aula';
+alter table public.lessons add column if not exists position integer not null default 0;
+alter table public.lessons add column if not exists summary text not null default '';
+alter table public.lessons add column if not exists content text not null default '';
+alter table public.lessons add column if not exists question text not null default '';
+alter table public.lessons add column if not exists answer text not null default '';
+alter table public.lessons add column if not exists options jsonb not null default '[]'::jsonb;
+alter table public.lessons add column if not exists published boolean not null default false;
+alter table public.lessons add column if not exists created_at timestamptz not null default now();
+alter table public.lessons add column if not exists updated_at timestamptz not null default now();
+
+alter table public.opportunities add column if not exists kind text not null default 'curso';
+alter table public.opportunities add column if not exists title text not null default 'Oportunidade';
+alter table public.opportunities add column if not exists organization text not null default '';
+alter table public.opportunities add column if not exists source_url text not null default '';
+alter table public.opportunities add column if not exists description text not null default '';
+alter table public.opportunities add column if not exists opens_at timestamptz;
+alter table public.opportunities add column if not exists closes_at timestamptz;
+alter table public.opportunities add column if not exists verified_at timestamptz;
+alter table public.opportunities add column if not exists published boolean not null default false;
+alter table public.opportunities add column if not exists created_at timestamptz not null default now();
+alter table public.opportunities add column if not exists updated_at timestamptz not null default now();
+
 insert into public.courses (id, icon, title, level, description, duration_minutes, position, published)
 values
   ('basica', '⌨', 'Informática básica', 'iniciante', 'Use o computador, organize arquivos e navegue com confiança.', 10, 1, true),
