@@ -23,6 +23,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test.ps1
 - Protótipo responsivo e instalável em `index.html`;
 - persistência de preferências e progresso no navegador;
 - API mínima e sincronização de progresso em SQLite;
+- cadastro, login e sessões com cookie protegido;
+- catálogo persistido, aulas práticas e exercícios;
 - registro de feedback e relatos de barreira com protocolo;
 - cache offline e aviso de conexão;
 - documentação consolidada em `docs/PROJETO.md`;

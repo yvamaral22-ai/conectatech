@@ -1,0 +1,16 @@
+input{border:1px solid #738980;border-radius:10px;padding:12px;color:var(--ink);background:#fff}
+#auth-form{display:grid;gap:10px}
+#auth-form>div{display:grid;gap:6px}
+.form-message{min-height:1.5em;color:#a12618;margin:0}
+.lesson-view{padding:32px;max-height:90vh;overflow:auto}
+.lesson-view .dialog-close{float:right}
+.lead-small{font-size:1.08rem;color:var(--ink-2)}
+.lesson-content{padding:20px;margin:22px 0;background:var(--mint);border-radius:14px}
+.lesson-content p{margin:0}
+.lesson-view fieldset{border:0;padding:0;margin:0 0 18px}
+.lesson-view legend{font-weight:700;margin-bottom:12px}
+.lesson-option{display:flex;align-items:center;gap:10px;padding:10px;margin:6px 0;border:1px solid var(--line);border-radius:10px}
+.lesson-option input{width:20px;height:20px}
+.answer-correct{color:#0a664b;font-weight:800}
+.answer-wrong{color:#a12618;font-weight:800}
+@media(max-width:650px){.lesson-view{padding:22px}}

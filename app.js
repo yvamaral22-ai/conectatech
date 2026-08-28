@@ -1,4 +1,4 @@
-const courses = [
+let courses = [
   {id:'basica', icon:'⌨', title:'Informática básica', level:'iniciante', lessons:8, time:'1h 40min', description:'Use o computador, organize arquivos e navegue com confiança.'},
   {id:'seguranca', icon:'◉', title:'Segurança digital', level:'iniciante', lessons:6, time:'1h 10min', description:'Proteja suas contas, reconheça golpes e cuide dos seus dados.'},
   {id:'web', icon:'</>', title:'Desenvolvimento web', level:'intermediario', lessons:12, time:'3h 20min', description:'Crie suas primeiras páginas com HTML, CSS e JavaScript.'},
@@ -61,10 +61,7 @@ document.querySelectorAll('.filter').forEach(button => button.addEventListener('
 
 grid.addEventListener('click', event => {
   const button = event.target.closest('.course-action'); if (!button) return;
-  if (!state.completed.includes(button.dataset.course)) state.completed.push(button.dataset.course);
-  saveState(); updateProgress(); renderCourses(document.querySelector('.filter.active').dataset.filter);
-  api('/progress', {method: 'POST', body: JSON.stringify({courseId: button.dataset.course})}).catch(() => {});
-  openDialog('Trilha disponível!', 'Seu progresso foi salvo neste aparelho. Na versão integrada, este botão abre a primeira aula e baixa o material escolhido.', 'Alguma necessidade de acessibilidade?');
+  openLesson(`${button.dataset.course}-1`);
 });
 
 document.querySelector('#continue-button').addEventListener('click', () => document.querySelector('.course-action')?.click());
@@ -77,6 +74,64 @@ document.querySelector('#dialog form').addEventListener('submit', event => {
   api('/feedback', {method:'POST', body:JSON.stringify({category:document.querySelector('#dialog').dataset.category, message})})
     .then(result => { document.querySelector('#offline-status').textContent = `Mensagem registrada. Protocolo ${result.protocol}.`; document.querySelector('#offline-status').style.display = 'block'; setTimeout(() => document.querySelector('#offline-status').style.removeProperty('display'), 5000); })
     .catch(() => { localStorage.setItem(`conectatech-feedback-${Date.now()}`, JSON.stringify({message, category:document.querySelector('#dialog').dataset.category})); });
+});
+
+let activeLesson;
+async function openLesson(lessonId) {
+  try {
+    const result = await api(`/lessons/${lessonId}`, {headers:{}});
+    activeLesson = result.lesson;
+    document.querySelector('#lesson-title').textContent = activeLesson.title;
+    document.querySelector('#lesson-summary').textContent = activeLesson.summary;
+    document.querySelector('#lesson-content').innerHTML = `<p>${activeLesson.content}</p>`;
+    document.querySelector('#lesson-question').textContent = activeLesson.question;
+    document.querySelector('#lesson-options').innerHTML = activeLesson.options.map((option, index) => `<label class="lesson-option"><input type="radio" name="answer" value="${option}" ${index === 0 ? 'required' : ''}> <span>${option}</span></label>`).join('');
+    document.querySelector('#exercise-result').textContent = '';
+    document.querySelector('#lesson-dialog').showModal();
+  } catch (_) { openDialog('Aula indisponível', 'Inicie o servidor local para acessar o conteúdo completo da aula.'); }
+}
+
+document.querySelector('#exercise-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const selected = new FormData(event.currentTarget).get('answer');
+  const result = document.querySelector('#exercise-result');
+  if (selected !== activeLesson.answer) { result.className = 'answer-wrong'; result.textContent = 'Ainda não. Releia o conteúdo e tente outra opção.'; return; }
+  result.className = 'answer-correct'; result.textContent = 'Resposta correta! Seu progresso foi salvo.';
+  if (!state.completed.includes(activeLesson.courseId)) state.completed.push(activeLesson.courseId);
+  saveState(); updateProgress(); renderCourses(document.querySelector('.filter.active').dataset.filter);
+  api('/progress', {method:'POST', body:JSON.stringify({courseId:activeLesson.courseId})}).catch(() => {});
+});
+
+document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => document.querySelector(`#${button.dataset.close}`).close()));
+
+let registerMode = false;
+const authDialog = document.querySelector('#auth-dialog');
+const accountButton = document.querySelector('#account-button');
+function setAuthMode(register) {
+  registerMode = register;
+  document.querySelector('#auth-title').textContent = register ? 'Criar conta' : 'Entrar';
+  document.querySelector('#name-field').hidden = !register;
+  document.querySelector('#auth-name').required = register;
+  document.querySelector('#auth-password').autocomplete = register ? 'new-password' : 'current-password';
+  document.querySelector('#auth-mode').textContent = register ? 'Já tenho uma conta' : 'Ainda não tenho conta';
+  document.querySelector('#auth-message').textContent = '';
+}
+accountButton.addEventListener('click', async () => {
+  if (accountButton.dataset.authenticated === 'true') {
+    if (!confirm('Deseja sair da sua conta?')) return;
+    await api('/auth/logout', {method:'POST', body:'{}'}); accountButton.dataset.authenticated = 'false'; accountButton.textContent = 'Entrar'; return;
+  }
+  setAuthMode(false); authDialog.showModal();
+});
+document.querySelector('#auth-mode').addEventListener('click', () => setAuthMode(!registerMode));
+document.querySelector('#auth-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(event.currentTarget));
+  try {
+    const result = await api(registerMode ? '/auth/register' : '/auth/login', {method:'POST', body:JSON.stringify(data)});
+    accountButton.textContent = result.user.name.split(' ')[0]; accountButton.dataset.authenticated = 'true'; authDialog.close();
+    await mergeRemoteProgress();
+  } catch (error) { document.querySelector('#auth-message').textContent = 'Não foi possível continuar. Verifique os dados ou tente novamente.'; }
 });
 
 const menuButton = document.querySelector('.menu-button');
@@ -102,6 +157,14 @@ async function mergeRemoteProgress() {
     saveState(); updateProgress(); renderCourses(document.querySelector('.filter.active').dataset.filter);
   } catch (_) { /* O modo estático/offline continua usando armazenamento local. */ }
 }
-mergeRemoteProgress();
+async function initializeFromServer() {
+  try {
+    const [catalog, session] = await Promise.all([api('/courses'), api('/me')]);
+    courses = catalog.courses; renderCourses(); updateProgress();
+    if (session.user) { accountButton.textContent = session.user.name.split(' ')[0]; accountButton.dataset.authenticated = 'true'; }
+  } catch (_) { /* Catálogo incorporado garante a experiência estática. */ }
+  mergeRemoteProgress();
+}
+initializeFromServer();
 
 if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));

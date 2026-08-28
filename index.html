@@ -8,6 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="features.css">
   <title>ConectaTech — Tecnologia abre caminhos</title>
 </head>
 <body>
@@ -27,7 +28,7 @@
     <div class="header-actions">
       <button id="text-size" class="icon-button" type="button" aria-label="Aumentar tamanho do texto">A+</button>
       <button id="contrast" class="icon-button" type="button" aria-pressed="false" aria-label="Ativar alto contraste">◐</button>
-      <a class="button button-small" href="#painel">Meu progresso</a>
+      <button class="button button-small" id="account-button" type="button">Entrar</button>
     </div>
   </header>
 
@@ -124,6 +125,8 @@
   </footer>
 
   <dialog id="dialog"><form method="dialog"><button class="dialog-close" aria-label="Fechar">×</button><h2 id="dialog-title">Em breve</h2><p id="dialog-copy"></p><label for="dialog-input">Conte para nós (opcional)</label><textarea id="dialog-input" rows="4" placeholder="Digite sua mensagem"></textarea><button class="button" value="confirm">Enviar</button></form></dialog>
+  <dialog id="auth-dialog"><form id="auth-form"><button class="dialog-close" type="button" data-close="auth-dialog" aria-label="Fechar">×</button><p class="eyebrow">Sua conta</p><h2 id="auth-title">Entrar</h2><div id="name-field" hidden><label for="auth-name">Nome</label><input id="auth-name" name="name" autocomplete="name"></div><label for="auth-email">E-mail</label><input id="auth-email" name="email" type="email" autocomplete="email" required><label for="auth-password">Senha</label><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="10" required aria-describedby="password-help"><small id="password-help">Use pelo menos 10 caracteres. Você pode usar um gerenciador de senhas.</small><p class="form-message" id="auth-message" role="alert"></p><button class="button" type="submit">Continuar</button><button class="text-link" id="auth-mode" type="button">Ainda não tenho conta</button></form></dialog>
+  <dialog id="lesson-dialog"><article class="lesson-view"><button class="dialog-close" type="button" data-close="lesson-dialog" aria-label="Fechar aula">×</button><p class="eyebrow">Aula prática</p><h2 id="lesson-title"></h2><p class="lead-small" id="lesson-summary"></p><div class="lesson-content" id="lesson-content"></div><form id="exercise-form"><fieldset><legend id="lesson-question"></legend><div id="lesson-options"></div></fieldset><p id="exercise-result" role="status"></p><button class="button" type="submit">Verificar resposta</button></form></article></dialog>
   <div id="offline-status" role="status" aria-live="polite"></div>
   <script src="app.js" defer></script>
 </body>
