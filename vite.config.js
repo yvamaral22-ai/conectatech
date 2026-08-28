@@ -21,6 +21,8 @@ export default defineConfig({
         carreira: resolve(import.meta.dirname, "carreira.html"),
         oportunidades: resolve(import.meta.dirname, "oportunidades.html"),
         impacto: resolve(import.meta.dirname, "impacto.html"),
+        aula: resolve(import.meta.dirname, "aula.html"),
+        admin: resolve(import.meta.dirname, "admin.html"),
       },
     },
   },

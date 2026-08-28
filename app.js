@@ -470,6 +470,23 @@ document
   .querySelector("#auth-mode")
   .addEventListener("click", () => setAuthMode(!registerMode));
 document
+  .querySelector("#forgot-password")
+  .addEventListener("click", async () => {
+    const email = document.querySelector("#auth-email").value.trim();
+    const message = document.querySelector("#auth-message");
+    if (!email) {
+      message.textContent =
+        "Informe seu e-mail para receber o link de recuperação.";
+      return;
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${location.origin}/perfil.html`,
+    });
+    message.textContent = error
+      ? error.message
+      : "Enviamos um link de recuperação para seu e-mail.";
+  });
+document
   .querySelector("#auth-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -757,13 +774,19 @@ document.querySelector("#export-data").addEventListener("click", async () => {
 document
   .querySelector("#delete-account")
   .addEventListener("click", async () => {
-    const password = document.querySelector("#delete-password").value;
     const confirmation = document.querySelector("#delete-confirmation").value;
     try {
-      await api("/privacy/delete", {
-        method: "POST",
-        body: JSON.stringify({ password, confirmation }),
-      });
+      if (supabase) {
+        const { error } = await supabase.rpc("delete_own_account", {
+          confirmation,
+        });
+        if (error) throw error;
+        await supabase.auth.signOut();
+      } else
+        await api("/privacy/delete", {
+          method: "POST",
+          body: JSON.stringify({ confirmation }),
+        });
       localStorage.removeItem("conectatech-state");
       accountButton.dataset.authenticated = "false";
       await renderHeaderAccount(null);

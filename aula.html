@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#173f35" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/pages.css" />
+    <title>Aula — ConectaTech</title>
+  </head>
+  <body class="app-page">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <header class="site-header">
+      <a class="brand" href="/"
+        ><img src="/assets/icon.svg" width="38" height="38" alt="" /><span
+          >Conecta<span>Tech</span></span
+        ></a
+      >
+      <nav id="main-nav">
+        <a href="/trilhas.html" aria-current="page">Trilhas</a
+        ><a href="/carreira.html">Carreira</a
+        ><a href="/oportunidades.html">Oportunidades</a
+        ><a href="/perfil.html">Perfil</a><a href="/impacto.html">Impacto</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-small account-entry" href="/perfil.html"
+          >Minha conta</a
+        >
+      </div>
+    </header>
+    <main id="conteudo" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="Navegação estrutural">
+        <a href="/trilhas.html">Trilhas</a><span>/</span
+        ><span id="course-label">Aula</span>
+      </nav>
+      <article class="lesson-page">
+        <p class="eyebrow">Aula prática</p>
+        <h1 id="lesson-title">Carregando aula…</h1>
+        <p class="lesson-lead" id="lesson-summary"></p>
+        <div class="lesson-body" id="lesson-content"></div>
+        <form class="lesson-exercise" id="exercise-form" hidden>
+          <fieldset>
+            <legend id="lesson-question"></legend>
+            <div id="lesson-options"></div>
+          </fieldset>
+          <p id="exercise-result" role="status"></p>
+          <button class="button" type="submit">Verificar resposta</button>
+        </form>
+      </article>
+    </main>
+    <script type="module" src="/aula-page.js"></script>
+  </body>
+</html>

@@ -160,6 +160,32 @@ document.querySelector("#profile-public").addEventListener("change", () => {
 });
 
 document
+  .querySelector("#password-form")
+  .addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = document.querySelector("#password-message");
+    const password = document.querySelector("#new-password").value;
+    const { error } = await supabase.auth.updateUser({ password });
+    message.textContent = error
+      ? error.message
+      : "Senha alterada com segurança.";
+    if (!error) event.currentTarget.reset();
+  });
+
+document.querySelector("#change-email").addEventListener("click", async () => {
+  const message = document.querySelector("#password-message");
+  const email = document.querySelector("#new-email").value.trim();
+  if (!email) {
+    message.textContent = "Informe o novo e-mail.";
+    return;
+  }
+  const { error } = await supabase.auth.updateUser({ email });
+  message.textContent = error
+    ? error.message
+    : "Confirme a alteração pelos links enviados aos endereços de e-mail.";
+});
+
+document
   .querySelector("#profile-search-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();

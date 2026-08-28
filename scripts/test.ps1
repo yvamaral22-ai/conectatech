@@ -3,11 +3,18 @@ $baseUrl = if ($args.Count) { $args[0].TrimEnd('/') } else { 'http://127.0.0.1:4
 
 $checks = @(
     @{ Path = '/'; Contains = '<main id="conteudo">' },
+    @{ Path = '/trilhas.html'; Contains = 'Trilhas de aprendizagem' },
+    @{ Path = '/carreira.html'; Contains = 'Desenvolva sua carreira' },
+    @{ Path = '/oportunidades.html'; Contains = 'Central de oportunidades' },
+    @{ Path = '/perfil.html'; Contains = 'Meu perfil' },
+    @{ Path = '/impacto.html'; Contains = 'Impacto da comunidade' },
+    @{ Path = '/aula.html?id=basica-1'; Contains = 'lesson-page' },
+    @{ Path = '/admin.html'; Contains = 'Administração' },
     @{ Path = '/styles.css'; Contains = '.skip-link' },
     @{ Path = '/app.js'; Contains = 'serviceWorker' },
     @{ Path = '/manifest.webmanifest'; Contains = 'ConectaTech' },
     @{ Path = '/features.css'; Contains = '.lesson-view' },
-    @{ Path = '/service-worker.js'; Contains = 'conectatech-v4' },
+    @{ Path = '/service-worker.js'; Contains = 'conectatech-v6' },
     @{ Path = '/api/health'; Contains = '"status": "ok"' }
 )
 

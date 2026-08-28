@@ -84,6 +84,7 @@
           <nav>
             <a class="active" href="#informacoes">Informações pessoais</a>
             <a href="#visibilidade">Visibilidade</a>
+            <a href="#seguranca">Segurança</a>
             <a href="#progresso">Meu progresso</a>
             <a href="#descobrir">Encontrar pessoas</a>
           </nav>
@@ -187,6 +188,40 @@
                 ></span
               ></label
             >
+          </section>
+
+          <section
+            class="settings-card"
+            id="seguranca"
+            aria-labelledby="security-title"
+          >
+            <p class="eyebrow">Segurança</p>
+            <h2 id="security-title">Senha e acesso</h2>
+            <form id="password-form" class="settings-form compact-form">
+              <label
+                >Novo e-mail<input
+                  id="new-email"
+                  type="email"
+                  autocomplete="email"
+              /></label>
+              <label
+                >Nova senha<input
+                  id="new-password"
+                  type="password"
+                  minlength="10"
+                  autocomplete="new-password"
+                  required
+              /></label>
+              <button class="button" type="submit">Alterar senha</button>
+              <button
+                class="button button-secondary"
+                id="change-email"
+                type="button"
+              >
+                Alterar e-mail
+              </button>
+              <p id="password-message" role="status"></p>
+            </form>
           </section>
 
           <section

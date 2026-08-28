@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#173f35" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/modern.css" />
+    <link rel="stylesheet" href="/pages.css" />
+    <title>Administração — ConectaTech</title>
+  </head>
+  <body class="app-page">
+    <header class="site-header">
+      <a class="brand" href="/"
+        ><span>Conecta<span>Tech</span></span></a
+      >
+      <nav><a href="/">Início</a><a href="/perfil.html">Perfil</a></nav>
+    </header>
+    <main class="account-shell">
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">Acesso restrito</p>
+          <h1>Administração</h1>
+          <p>
+            Publique oportunidades verificadas sem editar diretamente o banco.
+          </p>
+        </div>
+        <span class="account-state" id="admin-status">Verificando acesso…</span>
+      </header>
+      <section class="settings-card" id="admin-content" hidden>
+        <h2>Nova oportunidade</h2>
+        <form id="opportunity-form" class="settings-form">
+          <div class="form-grid">
+            <label
+              >Tipo<select name="kind">
+                <option value="curso">Curso</option>
+                <option value="vaga">Vaga</option>
+                <option value="bolsa">Bolsa</option>
+              </select></label
+            ><label>Título<input name="title" required maxlength="160" /></label
+            ><label
+              >Organização<input
+                name="organization"
+                required
+                maxlength="160" /></label
+            ><label
+              >Fonte oficial<input
+                name="source_url"
+                type="url"
+                required /></label
+            ><label class="form-wide"
+              >Descrição<textarea
+                name="description"
+                required
+                maxlength="1000"
+              ></textarea></label
+            ><label
+              >Encerramento<input name="closes_at" type="datetime-local"
+            /></label>
+          </div>
+          <label class="privacy-option"
+            ><input name="published" type="checkbox" /><span
+              ><strong>Publicar agora</strong></span
+            ></label
+          >
+          <p id="admin-message" role="status"></p>
+          <button class="button" type="submit">Salvar oportunidade</button>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="/admin-page.js"></script>
+  </body>
+</html>

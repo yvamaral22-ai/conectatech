@@ -370,6 +370,73 @@
   grid-template-columns: 1fr 1fr;
   gap: 22px;
 }
+.lesson-shell {
+  width: min(900px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 42px 0 100px;
+}
+.lesson-breadcrumb {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+  color: var(--ink-2);
+}
+.lesson-page {
+  padding: clamp(26px, 6vw, 64px);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+}
+.lesson-page h1 {
+  margin: 0;
+  font:
+    800 clamp(2.3rem, 6vw, 4.5rem) / 1.05 "Manrope",
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+.lesson-lead {
+  font-size: 1.2rem;
+  color: var(--ink-2);
+}
+.lesson-body {
+  margin: 34px 0;
+  padding: 28px;
+  border-left: 5px solid var(--gold);
+  background: #f5f1e5;
+  font-size: 1.08rem;
+  white-space: pre-line;
+}
+.lesson-exercise {
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+.lesson-exercise fieldset {
+  border: 0;
+  padding: 0;
+}
+.lesson-exercise legend {
+  margin-bottom: 18px;
+  font:
+    750 1.25rem "Manrope",
+    sans-serif;
+}
+.compact-form {
+  max-width: 520px;
+  margin-top: 24px;
+}
+.compact-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 750;
+}
+.compact-form input,
+.settings-form select {
+  border: 1px solid #82958e;
+  border-radius: 11px;
+  padding: 12px 14px;
+  background: #fff;
+}
 @media (max-width: 850px) {
   .profile-workspace {
     grid-template-columns: 1fr;

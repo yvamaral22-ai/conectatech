@@ -511,6 +511,8 @@
         </fieldset>
         <p class="form-message" id="auth-message" role="alert"></p>
         <button class="button" type="submit">Continuar</button
+        ><button class="text-link" id="forgot-password" type="button">
+          Esqueci minha senha</button
         ><button class="text-link" id="auth-mode" type="button">
           Ainda não tenho conta
         </button>
@@ -544,12 +546,7 @@
           Esta ação apaga a conta, as sessões, o progresso e os feedbacks
           vinculados. Ela não pode ser desfeita.
         </p>
-        <label for="delete-password">Confirme sua senha</label
-        ><input
-          id="delete-password"
-          type="password"
-          autocomplete="current-password"
-        /><label for="delete-confirmation">Digite EXCLUIR</label
+        <label for="delete-confirmation">Digite EXCLUIR</label
         ><input id="delete-confirmation" autocomplete="off" />
         <p class="form-message" id="privacy-message" role="status"></p>
         <button class="text-link danger" id="delete-account" type="button">

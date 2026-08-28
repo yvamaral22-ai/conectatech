@@ -9,7 +9,7 @@ async function initialize() {
     metrics.registered_people || 0,
   ).toLocaleString("pt-BR");
   document.querySelector("#active-stat").textContent = Number(
-    metrics.people_with_progress || 0,
+    metrics.active_learners || 0,
   ).toLocaleString("pt-BR");
   document.querySelector("#courses-stat").textContent = Number(
     metrics.available_courses || 0,

@@ -54,10 +54,18 @@ document.querySelectorAll(".filter").forEach((button) =>
   }),
 );
 
-grid.addEventListener("click", (event) => {
+grid.addEventListener("click", async (event) => {
   const button = event.target.closest(".course-start");
-  if (button)
-    window.location.href = `/?trilha=${encodeURIComponent(button.dataset.course)}#trilhas`;
+  if (!button) return;
+  const { data } = await supabase
+    .from("lessons")
+    .select("id")
+    .eq("course_id", button.dataset.course)
+    .order("position")
+    .limit(1)
+    .maybeSingle();
+  if (data)
+    window.location.href = `/aula.html?id=${encodeURIComponent(data.id)}`;
 });
 
 initialize().catch(() => {

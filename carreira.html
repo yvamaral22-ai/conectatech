@@ -114,6 +114,56 @@
         </div>
       </section>
     </main>
+    <dialog id="career-dialog">
+      <form id="career-form">
+        <button class="dialog-close" type="button" data-close="career-dialog">
+          ×
+        </button>
+        <p class="eyebrow">Currículo</p>
+        <h2>Informações profissionais</h2>
+        <label
+          >Objetivo<textarea name="objective" maxlength="240"></textarea></label
+        ><label
+          >Formação<textarea
+            name="education"
+            maxlength="2000"
+          ></textarea></label
+        ><label
+          >Experiências<textarea
+            name="experience"
+            maxlength="4000"
+          ></textarea></label
+        ><label
+          >Competências<textarea name="skills" maxlength="1000"></textarea>
+        </label>
+        <p id="career-message" role="status"></p>
+        <button class="button" type="submit">Salvar currículo</button>
+      </form>
+    </dialog>
+    <dialog id="portfolio-dialog">
+      <form id="portfolio-form">
+        <button
+          class="dialog-close"
+          type="button"
+          data-close="portfolio-dialog"
+        >
+          ×
+        </button>
+        <p class="eyebrow">Portfólio</p>
+        <h2>Adicionar projeto</h2>
+        <label>Título<input name="title" maxlength="120" required /></label
+        ><label
+          >Descrição<textarea
+            name="description"
+            maxlength="1000"
+          ></textarea></label
+        ><label
+          >Link do projeto<input name="project_url" type="url" maxlength="500"
+        /></label>
+        <p id="portfolio-message" role="status"></p>
+        <button class="button" type="submit">Adicionar projeto</button>
+      </form>
+    </dialog>
     <div id="page-status" role="status" aria-live="polite"></div>
     <script type="module" src="/carreira-page.js"></script>
   </body>
