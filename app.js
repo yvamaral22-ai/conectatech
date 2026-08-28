@@ -535,11 +535,13 @@ document
     const message = document.querySelector("#profile-message");
     try {
       const form = new FormData(event.currentTarget);
+      const displayName = String(form.get("display_name")).trim();
+      const username = String(form.get("username")).trim().toLowerCase();
       const update = {
-        display_name: String(form.get("display_name")).trim(),
-        username: String(form.get("username")).trim().toLowerCase(),
-        bio: String(form.get("bio")).trim(),
-        city: String(form.get("city")).trim(),
+        display_name: displayName || currentProfile.display_name,
+        username: username || currentProfile.username,
+        bio: String(form.get("bio")).trim() || currentProfile.bio || "",
+        city: String(form.get("city")).trim() || currentProfile.city || "",
         is_public: form.get("is_public") === "on",
         updated_at: new Date().toISOString(),
       };
