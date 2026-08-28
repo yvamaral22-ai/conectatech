@@ -8,6 +8,17 @@ const supabase =
   supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 const privacyVersion = "2026-08-28";
 
+function authMessage(error) {
+  const message = error?.message || "Nao foi possivel concluir esta acao.";
+  if (message.toLowerCase().includes("database error saving new user")) {
+    return "O cadastro foi recusado por uma configuracao do banco. Rode a migracao fix_signup_profile_trigger no SQL Editor do Supabase e tente novamente.";
+  }
+  if (message.toLowerCase().includes("already registered")) {
+    return "Este e-mail ja possui uma conta. Use Entrar ou recupere a senha.";
+  }
+  return message;
+}
+
 async function supabaseUser() {
   if (!supabase) return null;
   const { data, error } = await supabase.auth.getUser();
@@ -567,7 +578,7 @@ document
       await loadUserProgress();
       await loadMyProfile();
     } catch (error) {
-      document.querySelector("#auth-message").textContent = error.message;
+      document.querySelector("#auth-message").textContent = authMessage(error);
     }
   });
 

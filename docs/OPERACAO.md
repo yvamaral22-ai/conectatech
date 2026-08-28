@@ -1,27 +1,42 @@
-# Operação da ConectaTech
+# Operacao da ConectaTech
 
-## Publicação
+## Publicacao
 
-Valide com `npm run check` e publique na Vercel. As variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` devem existir em Preview e Production.
+Valide com `npm run check` e publique na Vercel. As variaveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` devem existir em Preview e Production.
 
-## Banco de dados e administração
+## Banco de dados e administracao
 
-A migração `20260828193000_product_features.sql` habilita exclusão de conta na Vercel, currículo, portfólio e administração protegida. Para tornar uma conta administradora, execute no SQL Editor, substituindo o e-mail:
+A migracao `20260828193000_product_features.sql` habilita exclusao de conta na Vercel, curriculo, portfolio e administracao protegida.
+
+A migracao `20260828220929_owner_admin_permissions.sql` reforca uma unica permissao administrativa: `admin`. Apos roda-la no SQL Editor, transforme sua conta em administradora substituindo o e-mail:
 
 ```sql
 insert into public.user_roles (user_id, role)
-select id, 'admin' from auth.users where email = 'seu-email@exemplo.com'
-on conflict (user_id) do update set role = 'admin';
+select id, 'admin'
+from auth.users
+where email = 'seu-email@exemplo.com'
+on conflict (user_id) do update
+set role = 'admin';
+
+update public.profiles
+set role = 'admin'
+where id = (
+  select id
+  from auth.users
+  where email = 'seu-email@exemplo.com'
+);
 ```
 
-## Domínio próprio
+Depois disso, entre no site com essa conta e acesse `/admin.html`. O painel deve mostrar `Administrador conectado`.
 
-Na Vercel, abra Settings > Domains e adicione um domínio que você possua. Aplique os registros DNS apresentados e inclua a URL em Supabase > Authentication > URL Configuration, em Site URL e Redirect URLs.
+## Dominio proprio
+
+Na Vercel, abra Settings > Domains e adicione um dominio que voce possua. Aplique os registros DNS apresentados e inclua a URL em Supabase > Authentication > URL Configuration, em Site URL e Redirect URLs.
 
 ## Monitoramento
 
-Builds e implantações ficam em Vercel > Deployments. Banco e autenticação podem ser acompanhados em Supabase > Logs. Nunca registre senhas, tokens ou conteúdo de perfis.
+Builds e implantacoes ficam em Vercel > Deployments. Banco e autenticacao podem ser acompanhados em Supabase > Logs. Nunca registre senhas, tokens ou conteudo de perfis.
 
-## Verificação
+## Verificacao
 
-Antes de publicar, teste login, recuperação de senha, perfil público/privado, conclusão de aula, currículo, portfólio, administração, navegação por teclado, celular e modo offline.
+Antes de publicar, teste login, recuperacao de senha, perfil publico/privado, conclusao de aula, curriculo, portfolio, administracao, navegacao por teclado, celular e modo offline.
