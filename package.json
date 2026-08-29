@@ -10,7 +10,8 @@
     "check": "vite build"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.0"
+    "@supabase/supabase-js": "^2.57.0",
+    "pdfjs-dist": "^4.10.38"
   },
   "devDependencies": {
     "vite": "^7.1.0"

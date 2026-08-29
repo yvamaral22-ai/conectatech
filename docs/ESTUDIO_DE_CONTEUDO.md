@@ -1,81 +1,98 @@
-# Estudio de Conteudo ConectaTech
+# Estúdio de Conteúdo ConectaTech
 
-Este documento define como a administracao de conteudos deve funcionar na ConectaTech.
+Este documento define como a administração de conteúdos deve funcionar na ConectaTech.
 
 ## Objetivo
 
-Transformar o painel administrativo em um ambiente parecido com um LMS moderno: administradores e professores criam trilhas, publicam aulas, organizam paginas internas, registram a origem do video, adicionam materiais e acompanham alteracoes por auditoria.
+Transformar o painel administrativo em um ambiente parecido com um LMS moderno: administradores e professores criam trilhas, publicam aulas, organizam páginas internas, registram a origem do vídeo, adicionam PDFs, materiais de apoio e acompanham alterações por auditoria.
 
 ## Estrutura Recomendada
 
-1. Trilha: representa uma area de aprendizagem, como informatica basica, seguranca digital ou desenvolvimento web.
+1. Trilha: representa uma área de aprendizagem, como informática básica, segurança digital ou desenvolvimento web.
 2. Aula: representa uma unidade de estudo dentro da trilha.
-3. Paginas da aula: dividem o conteudo em partes menores para celular, leitura offline e acessibilidade.
-4. Materiais: links, PDFs, imagens, textos ou arquivos de apoio.
-5. Auditoria: registra criacao, edicao e exclusao de conteudos.
+3. PDF: representa uma aula de leitura, exibida página por página dentro do site.
+4. Páginas da aula: dividem o conteúdo em partes menores para celular, leitura offline e acessibilidade.
+5. Materiais: links, PDFs, imagens, textos ou arquivos de apoio.
+6. Auditoria: registra criação, edição e exclusão de conteúdos.
 
-## Origem Do Conteudo
+## Origem do Conteúdo
 
-- Aula propria: video ou texto produzido pela equipe da ConectaTech.
-- YouTube: aula hospedada no YouTube, exibida por embed quando possivel.
-- Parceiro: conteudo de uma instituicao apoiadora, sempre com nome do parceiro e fonte oficial.
-- Aula ao vivo: conteudo associado a encontro remoto, mentoria ou transmissao.
-- Texto: aula sem video, priorizando baixo consumo de dados.
+- Aula própria: vídeo, texto ou PDF produzido pela equipe da ConectaTech.
+- YouTube: aula hospedada no YouTube, exibida por embed quando possível.
+- Parceiro: conteúdo de uma instituição apoiadora, sempre com nome do parceiro e fonte oficial.
+- Aula ao vivo: conteúdo associado a encontro remoto, mentoria ou transmissão.
+- Texto: aula sem vídeo, priorizando baixo consumo de dados.
 
-## Criterios De Publicacao
+## Critérios de Publicação
 
-Uma aula so deve ser publicada quando tiver:
+Uma aula só deve ser publicada quando tiver:
 
-- titulo claro;
+- título claro;
 - resumo curto;
 - origem definida;
-- conteudo principal ou video;
-- pelo menos uma orientacao pratica;
+- conteúdo principal, vídeo ou PDF;
+- pelo menos uma orientação prática;
 - linguagem simples;
-- transcricao ou apoio textual quando houver video;
-- materiais com fontes confiaveis;
+- transcrição ou apoio textual quando houver vídeo;
+- materiais com fontes confiáveis;
 - status `published`.
 
-## Padrao Editorial
+## Padrão Editorial
 
-O painel aplica uma revisao automatica basica antes de salvar:
+O painel aplica uma revisão automática básica antes de salvar:
 
-- remove espacos duplicados;
-- ajusta espacos antes e depois de pontuacao;
-- coloca letra maiuscula no inicio de frases;
-- preserva termos tecnicos e marcas como HTML, CSS, JavaScript, GitHub, Supabase, YouTube, LGPD e WCAG;
-- corrige acentuacoes comuns do projeto, como conteúdo, currículo, informática, página, programação, segurança, usuário e vídeo.
+- remove espaços duplicados;
+- ajusta espaços antes e depois de pontuação;
+- coloca letra maiúscula no início de frases;
+- preserva termos técnicos e marcas como HTML, CSS, JavaScript, GitHub, Supabase, YouTube, LGPD e WCAG;
+- corrige acentuações comuns do projeto, como conteúdo, currículo, informática, página, programação, segurança, usuário e vídeo.
 
-Essa revisao automatica ajuda, mas nao substitui leitura humana. Antes de publicar, revise clareza, acentuacao, pontuacao, maiusculas/minusculas e padrao ABNT2 quando o texto for usado em entregas academicas.
+Essa revisão automática ajuda, mas não substitui leitura humana. Antes de publicar, revise clareza, acentuação, pontuação, maiúsculas/minúsculas e padrão ABNT2 quando o texto for usado em entregas acadêmicas.
 
-## Como Cadastrar Uma Aula
+## Como Cadastrar Conteúdo
 
-1. Crie ou escolha uma trilha.
-2. Cadastre a aula com titulo, formato, origem, URL do video, instrutor/parceiro, objetivos e resumo.
-3. Se a aula for propria, envie o arquivo de video pelo campo de upload ou informe um caminho ja existente no Storage.
-4. Se a aula vier do YouTube ou de parceiro, informe a URL oficial.
-5. Adicione paginas na area "Paginas e materiais".
-6. Adicione materiais de apoio por link externo ou upload.
-7. Marque como publicada somente depois de revisar.
+1. Escolha uma ação no painel: Trilha, Aula, PDF, Página, Material, Oportunidade, Publicação, Auditoria ou Usuários.
+2. Crie ou escolha uma trilha.
+3. Cadastre a aula com título, formato, origem, URL do vídeo, instrutor/parceiro, objetivos e resumo.
+4. Para PDF, envie o arquivo pelo painel ou informe uma URL/caminho existente.
+5. Se a aula for própria, envie o arquivo de vídeo pelo campo de upload ou informe um caminho já existente no Storage.
+6. Se a aula vier do YouTube ou de parceiro, informe a URL oficial.
+7. Adicione páginas internas quando o conteúdo precisar ser dividido em partes curtas.
+8. Adicione materiais de apoio por link externo ou upload.
+9. Marque como publicada somente depois de revisar.
 
-## Banco De Dados
+## Leitura de PDF
+
+O PDF é salvo como aula com `content_format = 'pdf'` e o caminho do arquivo em `lessons.pdf_url`.
+
+Na visualização da aula, o arquivo é exibido por um leitor responsivo:
+
+- uma página por vez;
+- botões de página anterior e próxima;
+- indicação “Página X de Y”;
+- largura adaptada ao celular ou computador;
+- botão para abrir o PDF em nova aba quando necessário.
+
+## Banco de Dados
 
 As aulas ficam em `lessons`.
-As paginas internas ficam em `lesson_sections`.
+As páginas internas ficam em `lesson_sections`.
 Os materiais ficam em `materials`.
-Arquivos proprios devem ficar no bucket `lesson-media`.
-Videos externos podem ficar apenas como URL em `lessons.video_url`.
+Arquivos próprios devem ficar no bucket `lesson-media`.
+Vídeos externos podem ficar apenas como URL em `lessons.video_url`.
+PDFs podem ficar no Supabase Storage ou em uma URL externa registrada em `lessons.pdf_url`.
 
-## Seguranca
+## Segurança
 
-Usuarios com permissao `admin` ou `teacher` podem criar, editar, publicar e excluir conteudos educacionais. Apenas `admin` pode administrar usuarios e permissoes. Alunos e visitantes leem apenas o que estiver publicado.
+Usuários com permissão `admin` ou `teacher` podem criar, editar, publicar e excluir conteúdos educacionais. Apenas `admin` pode administrar usuários e permissões. Alunos e visitantes leem apenas o que estiver publicado.
 
-## Proximos Incrementos
+## Próximos Incrementos
 
-- editor visual com pre-visualizacao antes de publicar;
-- upload direto para o Supabase Storage pelo painel;
-- rascunho, revisao e publicacao em etapas;
+- edição completa de conteúdos já cadastrados;
+- editor visual com pré-visualização antes de publicar;
+- rascunho, revisão e publicação em etapas;
 - duplicar aulas;
-- ordenar paginas por arrastar e soltar;
-- historico detalhado por aula;
-- painel de desempenho por conteudo.
+- ordenar páginas por arrastar e soltar;
+- histórico detalhado por aula;
+- painel de desempenho por conteúdo;
+- busca interna por aula, trilha, professor e tipo de material.

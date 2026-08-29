@@ -35,6 +35,9 @@ alter table public.lessons
 add column if not exists video_url text;
 
 alter table public.lessons
+add column if not exists pdf_url text;
+
+alter table public.lessons
 add column if not exists instructor_name text;
 
 alter table public.lessons
@@ -68,7 +71,7 @@ drop constraint if exists lessons_content_format_check;
 
 alter table public.lessons
 add constraint lessons_content_format_check
-check (content_format in ('text', 'video', 'text_video', 'activity', 'project'));
+check (content_format in ('text', 'video', 'text_video', 'activity', 'project', 'pdf'));
 
 alter table public.lessons
 drop constraint if exists lessons_page_count_check;

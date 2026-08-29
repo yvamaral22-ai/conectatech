@@ -6,6 +6,32 @@ const denied = document.querySelector("#admin-denied");
 let tracks = [];
 let lessons = [];
 let currentRole = "student";
+let activeAdminMode = "track";
+
+function allowedAdminMode(mode) {
+  return mode !== "users" || currentRole === "admin";
+}
+
+function showAdminPanel(mode = activeAdminMode) {
+  activeAdminMode = allowedAdminMode(mode) ? mode : "track";
+  document.querySelectorAll("[data-admin-panel]").forEach((panel) => {
+    panel.hidden = panel.dataset.adminPanel !== activeAdminMode;
+  });
+  document.querySelectorAll("[data-admin-mode]").forEach((button) => {
+    const isAllowed = allowedAdminMode(button.dataset.adminMode);
+    button.hidden = button.hasAttribute("data-admin-only") && !isAllowed;
+    const isActive = button.dataset.adminMode === activeAdminMode;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+  const status = document.querySelector("#admin-action-status");
+  if (status) {
+    status.textContent =
+      activeAdminMode === "users"
+        ? "Administração de usuários"
+        : "Gestão de conteúdo";
+  }
+}
 
 function escapeHtml(value = "") {
   const node = document.createElement("span");
@@ -185,7 +211,6 @@ function renderUsers(items = []) {
     return;
   }
 
-  section.hidden = false;
   overview.hidden = false;
   document.querySelector("#users-count").textContent = items.length;
   const target = document.querySelector("#users-list");
@@ -290,7 +315,7 @@ async function refreshAdminData() {
       supabase
         .from("lessons")
         .select(
-          "id,title,status,sort_order,source_type,video_provider,page_count,tracks(title)",
+          "id,title,status,sort_order,source_type,video_provider,content_format,page_count,tracks(title)",
         )
         .order("sort_order", { ascending: true })
         .limit(40),
@@ -339,6 +364,8 @@ async function refreshAdminData() {
   lessonTrack.innerHTML = tracks
     .map((track) => `<option value="${track.id}">${escapeHtml(track.title)}</option>`)
     .join("");
+  const pdfTrack = document.querySelector("#pdf-track");
+  pdfTrack.innerHTML = lessonTrack.innerHTML;
   fillLessonSelect(document.querySelector("#section-lesson"));
   fillLessonSelect(document.querySelector("#material-lesson"));
 
@@ -360,7 +387,9 @@ async function refreshAdminData() {
             "lessons",
             lesson.id,
             lesson.title,
-            `${lesson.tracks?.title || "Sem trilha"} - ${lesson.source_type || "own"} - ${lesson.page_count || 1} página(s)`,
+            `${lesson.tracks?.title || "Sem trilha"} - ${
+              lesson.content_format || lesson.source_type || "aula"
+            } - ${lesson.page_count || 1} página(s)`,
             lesson.status,
           ),
         )
@@ -384,6 +413,7 @@ async function refreshAdminData() {
   if (!lessons.length) renderEmpty(lessonsList, "Nenhuma aula cadastrada.");
   if (!opportunities.length)
     renderEmpty(opportunitiesList, "Nenhuma oportunidade cadastrada.");
+  showAdminPanel(activeAdminMode);
 }
 
 async function initialize() {
@@ -400,8 +430,15 @@ async function initialize() {
   document.querySelector("#admin-status").textContent =
     currentRole === "admin" ? "Administrador conectado" : "Professor conectado";
   content.hidden = false;
+  showAdminPanel();
   await refreshAdminData();
 }
+
+document.querySelector("#admin-actions").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-admin-mode]");
+  if (!button) return;
+  showAdminPanel(button.dataset.adminMode);
+});
 
 document.querySelector("#track-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -468,6 +505,54 @@ document
     }
   });
 
+document.querySelector("#pdf-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const message = document.querySelector("#pdf-message");
+  message.textContent = "Salvando PDF...";
+  try {
+    const form = new FormData(event.currentTarget);
+    const title = formatTitle(form.get("title"));
+    const uploadedPdf = await uploadLessonMedia("pdfs", form.get("pdf_file"));
+    const pdfUrl = uploadedPdf || String(form.get("pdf_url") || "").trim();
+    if (!pdfUrl) {
+      message.textContent = "Envie um PDF ou informe uma URL.";
+      return;
+    }
+    const supportText =
+      formatText(form.get("body"), { multiline: true }) ||
+      "Material de leitura disponível em PDF.";
+    const payload = {
+      track_id: form.get("track_id"),
+      title,
+      slug: slugify(form.get("slug") || title),
+      summary: formatText(form.get("summary")) || supportText,
+      body: supportText,
+      transcript: "",
+      audio_description: "",
+      source_type: "own",
+      video_provider: "none",
+      video_url: null,
+      pdf_url: pdfUrl,
+      instructor_name: formatTitle(form.get("instructor_name")) || null,
+      partner_name: formatTitle(form.get("partner_name")) || null,
+      content_format: "pdf",
+      page_count: numberValue(form.get("page_count"), 1),
+      learning_objectives: formatObjectives(form.get("learning_objectives")),
+      estimated_minutes: numberValue(form.get("estimated_minutes"), 20),
+      sort_order: numberValue(form.get("sort_order"), 1),
+      status: statusFrom(form),
+    };
+    const { error } = await supabase.from("lessons").insert(payload);
+    message.textContent = error ? error.message : "PDF salvo como aula.";
+    if (!error) {
+      event.currentTarget.reset();
+      await refreshAdminData();
+    }
+  } catch (error) {
+    message.textContent = error.message;
+  }
+});
+
 document
   .querySelector("#section-form")
   .addEventListener("submit", async (event) => {
@@ -491,7 +576,7 @@ document
   .querySelector("#material-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
-    const message = document.querySelector("#section-message");
+    const message = document.querySelector("#material-message");
     message.textContent = "Adicionando material...";
     const form = new FormData(event.currentTarget);
     const uploadedMaterial = await uploadLessonMedia(

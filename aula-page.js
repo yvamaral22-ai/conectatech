@@ -1,5 +1,9 @@
 import { supabase } from "./data-client.js";
 import "./page-shell.js";
+import * as pdfjsLib from "pdfjs-dist";
+import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.mjs?url";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 const lessonId = new URLSearchParams(location.search).get("id");
 
@@ -59,6 +63,95 @@ function renderVideo(lesson) {
   return `<div class="lesson-video lesson-video-link"><a class="button" href="${escapeHtml(
     lesson.playback_url || lesson.video_url,
   )}" target="_blank" rel="noopener">Abrir vídeo da aula</a></div>`;
+}
+
+function renderPdfReader(lesson) {
+  if (!lesson.pdf_display_url) return "";
+  return `<section class="pdf-reader" id="pdf-reader" aria-label="Leitor de PDF">
+    <div class="pdf-reader-toolbar">
+      <div class="pdf-reader-controls">
+        <button class="button button-small button-secondary" id="pdf-prev" type="button">Anterior</button>
+        <span class="pdf-reader-status" id="pdf-page-status">Página 1</span>
+        <button class="button button-small button-secondary" id="pdf-next" type="button">Próxima</button>
+      </div>
+      <a class="text-link" href="${escapeHtml(
+        lesson.pdf_display_url,
+      )}" target="_blank" rel="noopener">Abrir PDF</a>
+    </div>
+    <div class="pdf-reader-page">
+      <canvas id="pdf-canvas"></canvas>
+      <p class="pdf-reader-message" id="pdf-reader-message" role="status">Carregando PDF...</p>
+    </div>
+  </section>`;
+}
+
+async function mountPdfReader(url) {
+  const reader = document.querySelector("#pdf-reader");
+  if (!reader || !url) return;
+
+  const canvas = reader.querySelector("#pdf-canvas");
+  const message = reader.querySelector("#pdf-reader-message");
+  const status = reader.querySelector("#pdf-page-status");
+  const previous = reader.querySelector("#pdf-prev");
+  const next = reader.querySelector("#pdf-next");
+  const pageWrap = reader.querySelector(".pdf-reader-page");
+  const context = canvas.getContext("2d");
+  let pdf = null;
+  let pageNumber = 1;
+  let renderToken = 0;
+
+  async function renderPage() {
+    if (!pdf) return;
+    const token = ++renderToken;
+    message.textContent = "Carregando página...";
+    const page = await pdf.getPage(pageNumber);
+    if (token !== renderToken) return;
+
+    const baseViewport = page.getViewport({ scale: 1 });
+    const availableWidth = Math.max(280, Math.min(pageWrap.clientWidth - 28, 920));
+    const scale = availableWidth / baseViewport.width;
+    const viewport = page.getViewport({ scale });
+    const outputScale = window.devicePixelRatio || 1;
+
+    canvas.width = Math.floor(viewport.width * outputScale);
+    canvas.height = Math.floor(viewport.height * outputScale);
+    canvas.style.width = `${Math.floor(viewport.width)}px`;
+    canvas.style.height = `${Math.floor(viewport.height)}px`;
+    context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
+    context.clearRect(0, 0, viewport.width, viewport.height);
+    await page.render({ canvasContext: context, viewport }).promise;
+
+    status.textContent = `Página ${pageNumber} de ${pdf.numPages}`;
+    previous.disabled = pageNumber <= 1;
+    next.disabled = pageNumber >= pdf.numPages;
+    message.textContent = "";
+  }
+
+  try {
+    pdf = await pdfjsLib.getDocument(url).promise;
+    await renderPage();
+  } catch {
+    canvas.hidden = true;
+    message.textContent = "Não foi possível carregar o PDF nesta tela.";
+    return;
+  }
+
+  previous.addEventListener("click", () => {
+    if (pageNumber <= 1) return;
+    pageNumber -= 1;
+    renderPage();
+  });
+  next.addEventListener("click", () => {
+    if (!pdf || pageNumber >= pdf.numPages) return;
+    pageNumber += 1;
+    renderPage();
+  });
+
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(renderPage, 150);
+  });
 }
 
 function renderObjectives(objectives = []) {
@@ -149,7 +242,7 @@ async function initialize() {
   const { data: lesson, error } = await supabase
     .from("lessons")
     .select(
-      "id,track_id,title,summary,body,estimated_minutes,source_type,video_provider,video_url,instructor_name,partner_name,content_format,page_count,learning_objectives,tracks(title,slug)",
+      "id,track_id,title,summary,body,estimated_minutes,source_type,video_provider,video_url,pdf_url,instructor_name,partner_name,content_format,page_count,learning_objectives,tracks(title,slug)",
     )
     .eq("id", lessonId)
     .single();
@@ -173,6 +266,7 @@ async function initialize() {
   } else {
     lesson.playback_url = lesson.video_url;
   }
+  lesson.pdf_display_url = await signedLessonMediaUrl(lesson.pdf_url);
 
   const materials = await Promise.all(
     (materialResult.data || []).map(async (material) => ({
@@ -203,10 +297,12 @@ async function initialize() {
       }
     </div>
     ${renderVideo(lesson)}
+    ${renderPdfReader(lesson)}
     ${renderObjectives(lesson.learning_objectives || [])}
     ${renderSections(sectionResult.data || [], lesson.body)}
     ${renderMaterials(materials)}
   `;
+  mountPdfReader(lesson.pdf_display_url);
 
   const article = document.querySelector(".lesson-page");
   const actions = document.createElement("div");
