@@ -26,7 +26,7 @@ function escapeHtml(value = "") {
 }
 
 function formatDate(value) {
-  if (!value) return "Data nao registrada";
+  if (!value) return "Data não registrada";
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "short",
@@ -174,7 +174,7 @@ async function loadProgress() {
 
   if (error) {
     history.innerHTML =
-      '<p class="empty-state">Historico indisponivel. Confira a migracao de progresso.</p>';
+      '<p class="empty-state">Histórico indisponível. Confira a migração de progresso.</p>';
     return;
   }
 
@@ -208,7 +208,7 @@ async function loadSavedLessons() {
 
   if (error) {
     target.innerHTML =
-      '<p class="empty-state">Salvos indisponiveis. Rode a migracao da experiencia do perfil.</p>';
+      '<p class="empty-state">Salvos indisponíveis. Rode a migração da experiência do perfil.</p>';
     return;
   }
 
@@ -216,14 +216,14 @@ async function loadSavedLessons() {
     ? data
         .map((item) => lessonCard(item, `Salvo em ${formatDate(item.created_at)}`))
         .join("")
-    : '<p class="empty-state">Nenhum conteudo salvo ainda.</p>';
+    : '<p class="empty-state">Nenhum conteúdo salvo ainda.</p>';
 }
 
 async function initialize() {
   if (!supabase) {
     guard.hidden = false;
     document.querySelector("#account-state").textContent =
-      "Servico indisponivel";
+      "Serviço indisponível";
     return;
   }
 
@@ -231,7 +231,7 @@ async function initialize() {
   user = data.user;
   if (!user) {
     guard.hidden = false;
-    document.querySelector("#account-state").textContent = "Sessao nao iniciada";
+    document.querySelector("#account-state").textContent = "Sessão não iniciada";
     await syncAdminNavigation(supabase, null);
     return;
   }
@@ -245,11 +245,11 @@ async function initialize() {
   } catch (error) {
     guard.hidden = false;
     guard.querySelector("h2").textContent =
-      "Nao foi possivel carregar seu perfil";
+      "Não foi possível carregar seu perfil";
     guard.querySelector("p").textContent =
       "Confirme se a estrutura de perfis foi instalada no projeto.";
     document.querySelector("#account-state").textContent =
-      "Perfil indisponivel";
+      "Perfil indisponível";
     return;
   }
 }
@@ -317,11 +317,11 @@ document
       await supabase.auth.updateUser({ data: { name: update.display_name } });
       await render({ ...data, cover_path: data.cover_path || profile.cover_path });
       localStorage.removeItem("conectatech-mini-profile");
-      saveState.textContent = "Alteracoes salvas.";
+      saveState.textContent = "Alterações salvas.";
     } catch (error) {
       saveState.textContent =
         error.code === "23505"
-          ? "Esse nome de usuario ja esta em uso."
+          ? "Esse nome de usuário já está em uso."
           : error.message;
     }
   });
@@ -354,7 +354,7 @@ document.querySelector("#change-email").addEventListener("click", async () => {
   const { error } = await supabase.auth.updateUser({ email });
   message.textContent = error
     ? error.message
-    : "Confirme a alteracao pelos links enviados aos enderecos de e-mail.";
+    : "Confirme a alteração pelos links enviados aos endereços de e-mail.";
 });
 
 document
@@ -375,7 +375,7 @@ document
       .maybeSingle();
     if (error || !data) {
       target.innerHTML =
-        '<p class="empty-state">Perfil publico nao encontrado.</p>';
+        '<p class="empty-state">Perfil público não encontrado.</p>';
       return;
     }
     const image = await mediaUrl(data.avatar_path);
@@ -395,4 +395,4 @@ menuButton.addEventListener("click", () => {
   menuButton.setAttribute("aria-expanded", String(open));
 });
 
-initialize().catch(() => notify("Nao foi possivel carregar a area pessoal."));
+initialize().catch(() => notify("Não foi possível carregar a área pessoal."));

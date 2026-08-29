@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#173f35" />
     <meta
       name="description"
-      content="Gerencie seu perfil, progresso e conteudos salvos na ConectaTech."
+      content="Gerencie seu perfil, progresso e conteúdos salvos na ConectaTech."
     />
     <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
@@ -15,9 +15,9 @@
     <title>Meu perfil - ConectaTech</title>
   </head>
   <body class="app-page">
-    <a class="skip-link" href="#conteudo">Pular para o conteudo</a>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="ConectaTech, pagina inicial">
+      <a class="brand" href="/" aria-label="ConectaTech, página inicial">
         <img src="/assets/icon.svg" width="38" height="38" alt="" />
         <span>Conecta<span>Tech</span></span>
       </a>
@@ -29,7 +29,7 @@
       >
         Menu
       </button>
-      <nav id="main-nav" aria-label="Navegacao principal">
+      <nav id="main-nav" aria-label="Navegação principal">
         <a href="/trilhas.html">Trilhas</a>
         <a href="/carreira.html">Carreira</a>
         <a href="/oportunidades.html">Oportunidades</a>
@@ -37,22 +37,22 @@
         <a href="/impacto.html">Impacto</a>
       </nav>
       <div class="header-actions">
-        <a class="button button-small" href="/">Inicio</a>
+        <a class="button button-small" href="/">Início</a>
       </div>
     </header>
 
     <main id="conteudo" class="account-shell">
       <header class="page-heading reveal is-visible">
         <div>
-          <p class="eyebrow">Area pessoal</p>
+          <p class="eyebrow">Área pessoal</p>
           <h1>Meu perfil</h1>
           <p>
-            Controle como voce aparece na plataforma, acompanhe progresso e
-            organize os conteudos importantes para continuar estudando.
+            Controle como você aparece na plataforma, acompanhe progresso e
+            organize os conteúdos importantes para continuar estudando.
           </p>
         </div>
         <span class="account-state" id="account-state"
-          >Verificando sessao...</span
+          >Verificando sessão...</span
         >
       </header>
 
@@ -61,15 +61,15 @@
           <p class="eyebrow">Acesso protegido</p>
           <h2>Entre para acessar seu perfil</h2>
           <p>
-            Seus dados pessoais, progresso e conteudos salvos so aparecem
-            depois da confirmacao da sua sessao.
+            Seus dados pessoais, progresso e conteúdos salvos só aparecem
+            depois da confirmação da sua sessão.
           </p>
         </div>
         <a class="button" href="/?entrar=1">Entrar na minha conta</a>
       </section>
 
       <div class="profile-workspace" id="profile-workspace" hidden>
-        <aside class="account-sidebar" aria-label="Navegacao da conta">
+        <aside class="account-sidebar" aria-label="Navegação da conta">
           <div class="account-summary">
             <div class="avatar avatar-large" id="summary-avatar" aria-hidden="true">
               CT
@@ -79,11 +79,11 @@
           </div>
           <nav>
             <a class="active" href="#painel">Painel</a>
-            <a href="#perfil-publico">Perfil publico</a>
+            <a href="#perfil-publico">Perfil público</a>
             <a href="#privacidade">Privacidade</a>
             <a href="#salvos">Salvos</a>
-            <a href="#historico">Historico</a>
-            <a href="#seguranca">Seguranca</a>
+            <a href="#historico">Histórico</a>
+            <a href="#seguranca">Segurança</a>
           </nav>
           <button class="text-link danger" id="logout-button" type="button">
             Sair da conta
@@ -130,15 +130,15 @@
           >
             <div class="settings-heading">
               <div>
-                <p class="eyebrow">Apresentacao</p>
-                <h2 id="information-title">Informacoes publicas</h2>
+                <p class="eyebrow">Apresentação</p>
+                <h2 id="information-title">Informações públicas</h2>
               </div>
               <span class="save-state" id="save-state" role="status"></span>
             </div>
             <form id="profile-form" class="settings-form">
               <div class="form-grid">
                 <label>
-                  Nome de exibicao
+                  Nome de exibição
                   <input
                     id="profile-display-name"
                     name="display_name"
@@ -147,23 +147,23 @@
                   />
                 </label>
                 <label>
-                  Nome de usuario
+                  Nome de usuário
                   <input
                     id="profile-username"
                     name="username"
                     pattern="[a-z0-9_]{3,30}"
                     maxlength="30"
                   />
-                  <small>Use letras minusculas, numeros ou sublinhado.</small>
+                  <small>Use letras minúsculas, números ou sublinhado.</small>
                 </label>
                 <label class="form-wide">
-                  Sobre voce
+                  Sobre você
                   <textarea
                     id="profile-bio"
                     name="bio"
                     maxlength="280"
                     rows="5"
-                    placeholder="Conte seus interesses, objetivos e o que esta aprendendo."
+                    placeholder="Conte seus interesses, objetivos e o que está aprendendo."
                   ></textarea>
                 </label>
                 <label>
@@ -172,7 +172,7 @@
                 </label>
               </div>
               <div class="form-actions">
-                <button class="button" type="submit">Salvar alteracoes</button>
+                <button class="button" type="submit">Salvar alterações</button>
               </div>
             </form>
           </section>
@@ -186,19 +186,19 @@
             <h2 id="privacy-title">O que outras pessoas podem ver</h2>
             <div class="privacy-summary">
               <div>
-                <strong>Visivel se voce permitir</strong>
-                <span>Nome, usuario, foto, capa, biografia e cidade.</span>
+                <strong>Visível se você permitir</strong>
+                <span>Nome, usuário, foto, capa, biografia e cidade.</span>
               </div>
               <div>
                 <strong>Sempre privado</strong>
-                <span>E-mail, senha, progresso, salvos, historico e dados de conta.</span>
+                <span>E-mail, senha, progresso, salvos, histórico e dados de conta.</span>
               </div>
             </div>
             <label class="privacy-option">
               <input id="profile-public" type="checkbox" />
               <span>
                 <strong>Permitir que outras pessoas encontrem meu perfil</strong>
-                <small>Voce pode mudar esta escolha a qualquer momento.</small>
+                <small>Você pode mudar esta escolha a qualquer momento.</small>
               </span>
             </label>
           </section>
@@ -213,7 +213,7 @@
             <div class="profile-metrics">
               <div>
                 <strong id="completed-count">0</strong>
-                <span>Aulas concluidas</span>
+                <span>Aulas concluídas</span>
               </div>
               <div>
                 <strong id="progress-percent">0%</strong>
@@ -225,9 +225,9 @@
 
           <section class="settings-card" id="salvos" aria-labelledby="saved-title">
             <p class="eyebrow">Biblioteca</p>
-            <h2 id="saved-title">Conteudos salvos</h2>
+            <h2 id="saved-title">Conteúdos salvos</h2>
             <div class="learning-list" id="saved-list">
-              <p class="empty-state">Nenhum conteudo salvo ainda.</p>
+              <p class="empty-state">Nenhum conteúdo salvo ainda.</p>
             </div>
           </section>
 
@@ -236,10 +236,10 @@
             id="historico"
             aria-labelledby="history-title"
           >
-            <p class="eyebrow">Historico</p>
+            <p class="eyebrow">Histórico</p>
             <h2 id="history-title">Aulas acessadas</h2>
             <div class="learning-list" id="history-list">
-              <p class="empty-state">Nenhuma aula concluida ainda.</p>
+              <p class="empty-state">Nenhuma aula concluída ainda.</p>
             </div>
           </section>
 
@@ -251,7 +251,7 @@
             <p class="eyebrow">Comunidade</p>
             <h2 id="discover-title">Encontrar pessoas</h2>
             <form id="profile-search-form" class="search-row">
-              <label class="sr-only" for="profile-search">Nome de usuario</label>
+              <label class="sr-only" for="profile-search">Nome de usuário</label>
               <input
                 id="profile-search"
                 placeholder="Ex.: maria_silva"
@@ -271,7 +271,7 @@
             id="seguranca"
             aria-labelledby="security-title"
           >
-            <p class="eyebrow">Seguranca</p>
+            <p class="eyebrow">Segurança</p>
             <h2 id="security-title">Senha e acesso</h2>
             <form id="password-form" class="settings-form compact-form">
               <label>

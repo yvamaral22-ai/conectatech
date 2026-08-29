@@ -56,7 +56,7 @@ export async function syncAdminNavigation(supabase, knownUser) {
 
   const link = document.createElement("a");
   link.href = "/admin.html";
-  link.textContent = role === "admin" ? "Administracao" : "Estudio";
+  link.textContent = role === "admin" ? "Administração" : "Estúdio";
   link.dataset.adminNav = "true";
   if (window.location.pathname.endsWith("/admin.html")) {
     link.setAttribute("aria-current", "page");

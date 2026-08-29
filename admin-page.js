@@ -190,7 +190,7 @@ function renderUsers(items = []) {
   document.querySelector("#users-count").textContent = items.length;
   const target = document.querySelector("#users-list");
   if (!items.length) {
-    renderEmpty(target, "Nenhum usuario encontrado.");
+    renderEmpty(target, "Nenhum usuário encontrado.");
     return;
   }
 
@@ -198,12 +198,12 @@ function renderUsers(items = []) {
     .map(
       (item) =>
         `<article class="admin-item user-admin-item"><div><strong>${escapeHtml(
-          item.display_name || item.email || "Usuario",
+          item.display_name || item.email || "Usuário",
         )}</strong><span>${escapeHtml(item.email || "Sem e-mail")}</span><small>${escapeHtml(
           `${roleLabel(item.role)} - ${item.is_active ? "ativo" : "inativo"}`,
         )}</small></div><div class="user-admin-actions"><select data-user-role="${
           item.user_id
-        }" aria-label="Permissao"><option value="student" ${
+        }" aria-label="Permissão"><option value="student" ${
           item.role === "student" ? "selected" : ""
         }>Aluno</option><option value="teacher" ${
           item.role === "teacher" ? "selected" : ""
@@ -254,7 +254,7 @@ function renderAudit(items = []) {
   const target = document.querySelector("#audit-list");
   document.querySelector("#audit-count").textContent = items.length;
   if (!items.length) {
-    renderEmpty(target, "Nenhuma alteracao registrada ainda.");
+    renderEmpty(target, "Nenhuma alteração registrada ainda.");
     return;
   }
   target.innerHTML = items
@@ -313,7 +313,7 @@ async function refreshAdminData() {
   if (error) throw error;
   if (auditResult.error) {
     document.querySelector("#audit-message").textContent =
-      "Auditoria indisponivel. Rode a migracao admin_audit_logs.";
+      "Auditoria indisponível. Rode a migração admin_audit_logs.";
   } else {
     document.querySelector("#audit-message").textContent = "";
   }
@@ -332,7 +332,7 @@ async function refreshAdminData() {
   renderUsers(users);
   document.querySelector("#users-message").textContent =
     usersResult.error && currentRole === "admin"
-      ? "Gestao de usuarios indisponivel. Rode a migracao de papeis."
+      ? "Gestão de usuários indisponível. Rode a migração de papéis."
       : "";
 
   const lessonTrack = document.querySelector("#lesson-track");
@@ -360,7 +360,7 @@ async function refreshAdminData() {
             "lessons",
             lesson.id,
             lesson.title,
-            `${lesson.tracks?.title || "Sem trilha"} - ${lesson.source_type || "own"} - ${lesson.page_count || 1} pagina(s)`,
+            `${lesson.tracks?.title || "Sem trilha"} - ${lesson.source_type || "own"} - ${lesson.page_count || 1} página(s)`,
             lesson.status,
           ),
         )
@@ -373,7 +373,7 @@ async function refreshAdminData() {
             "opportunities",
             item.id,
             item.title,
-            `${item.type} - ${item.organization || "Sem organizacao"}`,
+            `${item.type} - ${item.organization || "Sem organização"}`,
             item.status,
           ),
         )
@@ -387,16 +387,16 @@ async function refreshAdminData() {
 }
 
 async function initialize() {
-  if (!supabase) throw new Error("Supabase nao configurado.");
+  if (!supabase) throw new Error("Supabase não configurado.");
   const { data } = await supabase.auth.getUser();
   if (!data.user) throw new Error("Entre na conta de administrador.");
 
   const access = await hasAdminAccess(data.user.id);
-  if (!access) throw new Error("Esta conta nao possui acesso ao painel.");
+  if (!access) throw new Error("Esta conta não possui acesso ao painel.");
 
   await syncAdminNavigation(supabase, data.user);
   document.querySelector(".page-heading h1").textContent =
-    currentRole === "admin" ? "Administracao" : "Estudio de conteudo";
+    currentRole === "admin" ? "Administração" : "Estúdio de conteúdo";
   document.querySelector("#admin-status").textContent =
     currentRole === "admin" ? "Administrador conectado" : "Professor conectado";
   content.hidden = false;
@@ -473,7 +473,7 @@ document
   .addEventListener("submit", async (event) => {
     event.preventDefault();
     const message = document.querySelector("#section-message");
-    message.textContent = "Salvando pagina...";
+    message.textContent = "Salvando página...";
     const form = new FormData(event.currentTarget);
     const payload = {
       lesson_id: form.get("lesson_id"),
@@ -483,7 +483,7 @@ document
       estimated_minutes: numberValue(form.get("estimated_minutes"), 5),
     };
     const { error } = await supabase.from("lesson_sections").insert(payload);
-    message.textContent = error ? error.message : "Pagina salva.";
+    message.textContent = error ? error.message : "Página salva.";
     if (!error) event.currentTarget.reset();
   });
 
@@ -557,7 +557,7 @@ document.querySelector("#admin-content").addEventListener("click", async (event)
     });
     document.querySelector("#users-message").textContent = error
       ? error.message
-      : "Usuario atualizado.";
+      : "Usuário atualizado.";
     if (!error) await refreshAdminData();
     return;
   }
@@ -574,7 +574,7 @@ document.querySelector("#admin-content").addEventListener("click", async (event)
     });
     document.querySelector("#users-message").textContent = error
       ? error.message
-      : "Usuario removido.";
+      : "Usuário removido.";
     if (!error) await refreshAdminData();
     return;
   }
@@ -604,7 +604,7 @@ document
     });
     document.querySelector("#users-message").textContent = error
       ? error.message
-      : "Permissao atualizada.";
+      : "Permissão atualizada.";
     if (!error) await refreshAdminData();
   });
 

@@ -12,17 +12,17 @@
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/modern.css" />
     <link rel="stylesheet" href="/pages.css" />
-    <title>Administracao - ConectaTech</title>
+    <title>Administração - ConectaTech</title>
   </head>
   <body class="app-page">
-    <a class="skip-link" href="#conteudo">Pular para o conteudo</a>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="ConectaTech, pagina inicial">
+      <a class="brand" href="/" aria-label="ConectaTech, página inicial">
         <img src="/assets/icon.svg" width="38" height="38" alt="" />
         <span>Conecta<span>Tech</span></span>
       </a>
-      <nav id="main-nav" aria-label="Navegacao principal">
-        <a href="/">Inicio</a>
+      <nav id="main-nav" aria-label="Navegação principal">
+        <a href="/">Início</a>
         <a href="/trilhas.html">Trilhas</a>
         <a href="/oportunidades.html">Oportunidades</a>
         <a href="/perfil.html">Perfil</a>
@@ -36,9 +36,9 @@
       <header class="page-heading">
         <div>
           <p class="eyebrow">Acesso restrito</p>
-          <h1>Administracao</h1>
+          <h1>Administração</h1>
           <p>
-            Gerencie o catalogo de aprendizagem e as oportunidades exibidas no
+            Gerencie o catálogo de aprendizagem e as oportunidades exibidas no
             site sem editar arquivos manualmente.
           </p>
         </div>
@@ -48,7 +48,7 @@
       <section class="auth-guard" id="admin-denied" hidden>
         <div>
           <p class="eyebrow">Acesso protegido</p>
-          <h2>Conta sem permissao de painel</h2>
+          <h2>Conta sem permissão de painel</h2>
           <p id="admin-denied-message">
             Entre com uma conta marcada como admin ou professor no Supabase.
           </p>
@@ -89,19 +89,19 @@
           <div class="settings-heading">
             <div>
               <p class="eyebrow">Controle master</p>
-              <h2 id="users-admin-title">Usuarios e permissoes</h2>
+              <h2 id="users-admin-title">Usuários e permissões</h2>
             </div>
             <span class="save-state" id="users-message" role="status"></span>
           </div>
           <div class="admin-list users-list" id="users-list">
-            <p class="empty-state">Carregando usuarios...</p>
+            <p class="empty-state">Carregando usuários...</p>
           </div>
         </section>
 
         <section class="settings-card" aria-labelledby="track-title">
           <div class="settings-heading">
             <div>
-              <p class="eyebrow">Catalogo</p>
+              <p class="eyebrow">Catálogo</p>
               <h2 id="track-title">Nova trilha</h2>
             </div>
             <span class="save-state" id="track-message" role="status"></span>
@@ -136,7 +136,7 @@
                 <input name="sort_order" type="number" min="0" value="1" />
               </label>
               <label class="form-wide">
-                Descricao
+                Descrição
                 <textarea name="description" required maxlength="600" rows="4"></textarea>
               </label>
             </div>
@@ -177,8 +177,8 @@
               <label>
                 Formato
                 <select name="content_format">
-                  <option value="text_video">Texto e video</option>
-                  <option value="video">Video</option>
+                  <option value="text_video">Texto e vídeo</option>
+                  <option value="video">Vídeo</option>
                   <option value="text">Texto</option>
                   <option value="activity">Atividade guiada</option>
                   <option value="project">Projeto pratico</option>
@@ -187,28 +187,28 @@
               <label>
                 Origem
                 <select name="source_type" id="lesson-source">
-                  <option value="own">Aula propria</option>
+                  <option value="own">Aula própria</option>
                   <option value="youtube">YouTube</option>
                   <option value="partner">Parceiro</option>
                   <option value="live">Aula ao vivo</option>
-                  <option value="text">Sem video</option>
+                  <option value="text">Sem vídeo</option>
                 </select>
               </label>
               <label>
-                Provedor do video
+                Provedor do vídeo
                 <select name="video_provider">
-                  <option value="none">Sem video</option>
+                  <option value="none">Sem vídeo</option>
                   <option value="youtube">YouTube</option>
                   <option value="supabase_storage">Arquivo no Supabase</option>
                   <option value="external">Link externo</option>
                 </select>
               </label>
               <label>
-                URL do video
+                URL do vídeo
                 <input name="video_url" placeholder="https://... ou caminho no Storage" />
               </label>
               <label>
-                Upload de video proprio
+                Upload de vídeo próprio
                 <input name="video_file" type="file" accept="video/mp4,video/webm" />
               </label>
               <label>
@@ -220,7 +220,7 @@
                 <input name="partner_name" maxlength="120" placeholder="Opcional" />
               </label>
               <label>
-                Paginas/secoes
+                Páginas/seções
                 <input name="page_count" type="number" min="1" max="40" value="1" />
               </label>
               <label>
@@ -241,7 +241,7 @@
                 <textarea name="summary" maxlength="500" rows="3"></textarea>
               </label>
               <label class="form-wide">
-                Conteudo da aula
+                Conteúdo da aula
                 <textarea name="body" required rows="8"></textarea>
               </label>
               <label class="form-wide">
@@ -261,7 +261,7 @@
           <div class="settings-heading">
             <div>
               <p class="eyebrow">Editor de aula</p>
-              <h2 id="section-admin-title">Paginas e materiais</h2>
+              <h2 id="section-admin-title">Páginas e materiais</h2>
             </div>
             <span class="save-state" id="section-message" role="status"></span>
           </div>
@@ -272,7 +272,7 @@
                 <select name="lesson_id" id="section-lesson" required></select>
               </label>
               <label>
-                Titulo da pagina
+                Título da página
                 <input name="title" required maxlength="160" />
               </label>
               <label>
@@ -284,11 +284,11 @@
                 <input name="estimated_minutes" type="number" min="0" value="5" />
               </label>
               <label class="form-wide">
-                Conteudo da pagina
+                Conteúdo da página
                 <textarea name="body" required rows="7"></textarea>
               </label>
             </div>
-            <button class="button" type="submit">Salvar pagina</button>
+            <button class="button" type="submit">Salvar página</button>
           </form>
           <form id="material-form" class="settings-form compact-form">
             <div class="form-grid">
@@ -305,7 +305,7 @@
                 <select name="file_type">
                   <option value="pdf">PDF</option>
                   <option value="link">Link externo</option>
-                  <option value="video">Video</option>
+                  <option value="video">Vídeo</option>
                   <option value="image">Imagem</option>
                   <option value="text">Texto</option>
                 </select>
@@ -350,7 +350,7 @@
                 <input name="title" required maxlength="160" />
               </label>
               <label>
-                Organizacao
+                Organização
                 <input name="organization" required maxlength="160" />
               </label>
               <label>
@@ -366,7 +366,7 @@
                 <input name="url" type="url" required />
               </label>
               <label class="form-wide">
-                Descricao
+                Descrição
                 <textarea name="description" required maxlength="1000" rows="4"></textarea>
               </label>
             </div>
@@ -381,8 +381,8 @@
         <section class="settings-card" aria-labelledby="content-list-title">
           <div class="settings-heading">
             <div>
-              <p class="eyebrow">Publicacao</p>
-              <h2 id="content-list-title">Conteudos cadastrados</h2>
+              <p class="eyebrow">Publicação</p>
+              <h2 id="content-list-title">Conteúdos cadastrados</h2>
             </div>
             <button class="button button-secondary" id="refresh-admin" type="button">
               Atualizar
@@ -408,12 +408,12 @@
           <div class="settings-heading">
             <div>
               <p class="eyebrow">Auditoria</p>
-              <h2 id="audit-title">Ultimas alteracoes</h2>
+              <h2 id="audit-title">Últimas alterações</h2>
             </div>
             <span class="save-state" id="audit-message" role="status"></span>
           </div>
           <div class="admin-list audit-list" id="audit-list">
-            <p class="empty-state">Nenhuma alteracao registrada ainda.</p>
+            <p class="empty-state">Nenhuma alteração registrada ainda.</p>
           </div>
         </section>
       </div>

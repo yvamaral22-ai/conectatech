@@ -58,7 +58,7 @@ function renderVideo(lesson) {
   }
   return `<div class="lesson-video lesson-video-link"><a class="button" href="${escapeHtml(
     lesson.playback_url || lesson.video_url,
-  )}" target="_blank" rel="noopener">Abrir video da aula</a></div>`;
+  )}" target="_blank" rel="noopener">Abrir vídeo da aula</a></div>`;
 }
 
 function renderObjectives(objectives = []) {
@@ -70,14 +70,14 @@ function renderObjectives(objectives = []) {
 
 function renderSections(sections = [], fallbackBody = "") {
   if (!sections.length) {
-    return `<section class="lesson-section"><h2>Conteudo</h2><p>${escapeHtml(
+    return `<section class="lesson-section"><h2>Conteúdo</h2><p>${escapeHtml(
       fallbackBody,
     )}</p></section>`;
   }
   return sections
     .map(
       (section, index) =>
-        `<section class="lesson-section"><span>Pagina ${index + 1}</span><h2>${escapeHtml(
+        `<section class="lesson-section"><span>Página ${index + 1}</span><h2>${escapeHtml(
           section.title,
         )}</h2><p>${escapeHtml(section.body)}</p></section>`,
     )
@@ -102,7 +102,7 @@ function renderMaterials(materials = []) {
 
 function originLabel(lesson) {
   const labels = {
-    own: "Aula propria",
+    own: "Aula própria",
     youtube: "YouTube",
     partner: "Parceiro",
     live: "Ao vivo",
@@ -212,7 +212,7 @@ async function initialize() {
   const actions = document.createElement("div");
   actions.className = "lesson-actions";
   actions.innerHTML =
-    '<button class="button button-secondary" id="save-lesson-button" type="button">Salvar conteudo</button><p id="save-lesson-result" role="status"></p>';
+    '<button class="button button-secondary" id="save-lesson-button" type="button">Salvar conteúdo</button><p id="save-lesson-result" role="status"></p>';
   document.querySelector("#lesson-content").before(actions);
 
   document
@@ -233,15 +233,15 @@ async function initialize() {
           { onConflict: "user_id,lesson_id" },
         );
         if (saved.error) throw saved.error;
-        result.textContent = "Conteudo salvo no seu perfil.";
+        result.textContent = "Conteúdo salvo no seu perfil.";
       } catch (error) {
-        result.textContent = `Nao foi possivel salvar: ${error.message}`;
+        result.textContent = `Não foi possível salvar: ${error.message}`;
       }
     });
 
   const exercise = document.querySelector("#exercise-form");
   exercise.innerHTML =
-    '<p>Terminou a leitura e a atividade proposta no conteudo?</p><p id="exercise-result" role="status"></p><button class="button" type="submit">Concluir aula</button>';
+    '<p>Terminou a leitura e a atividade proposta no conteúdo?</p><p id="exercise-result" role="status"></p><button class="button" type="submit">Concluir aula</button>';
   exercise.hidden = false;
   exercise.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -255,14 +255,14 @@ async function initialize() {
       await saveLessonProgress(user, lesson);
       result.textContent = "Aula concluida. Seu progresso foi atualizado!";
     } catch (error) {
-      result.textContent = `Nao foi possivel salvar agora: ${error.message}`;
+      result.textContent = `Não foi possível salvar agora: ${error.message}`;
     }
   });
   article.classList.add("lesson-ready");
 }
 
 initialize().catch(() => {
-  document.querySelector("#lesson-title").textContent = "Aula nao encontrada";
+  document.querySelector("#lesson-title").textContent = "Aula não encontrada";
   document.querySelector("#lesson-summary").textContent =
-    "Volte ao catalogo e escolha uma aula disponivel.";
+    "Volte ao catálogo e escolha uma aula disponível.";
 });
