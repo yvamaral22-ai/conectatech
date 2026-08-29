@@ -38,6 +38,15 @@ alter table public.lessons
 add column if not exists pdf_url text;
 
 alter table public.lessons
+add column if not exists pdf_file_name text;
+
+alter table public.lessons
+add column if not exists pdf_file_size bigint;
+
+alter table public.lessons
+add column if not exists pdf_mime_type text;
+
+alter table public.lessons
 add column if not exists instructor_name text;
 
 alter table public.lessons
@@ -78,7 +87,7 @@ drop constraint if exists lessons_page_count_check;
 
 alter table public.lessons
 add constraint lessons_page_count_check
-check (page_count between 1 and 40);
+check (page_count between 1 and 1000);
 
 create table if not exists public.lesson_sections (
   id uuid primary key default gen_random_uuid(),

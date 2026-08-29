@@ -259,10 +259,11 @@
               <label>Minutos estimados <input name="estimated_minutes" type="number" min="0" value="20" /></label>
               <label>Instrutor <input name="instructor_name" maxlength="120" placeholder="Seu nome ou professor" /></label>
               <label>Parceiro <input name="partner_name" maxlength="120" placeholder="Opcional" /></label>
-              <label>Número de páginas <input name="page_count" type="number" min="1" max="40" value="1" /></label>
+              <label>Número de páginas <input name="page_count" type="number" min="1" max="400" value="1" readonly /></label>
               <label>Ordem <input name="sort_order" type="number" min="0" value="1" /></label>
               <label>Upload do PDF <input name="pdf_file" type="file" accept="application/pdf,.pdf" /></label>
               <label>URL ou caminho do PDF <input name="pdf_url" placeholder="https://... ou caminho no Storage" /></label>
+              <div class="pdf-file-details form-wide" id="pdf-details" hidden></div>
               <label class="form-wide">
                 Objetivos de aprendizagem
                 <textarea name="learning_objectives" maxlength="800" rows="3" placeholder="Um objetivo por linha"></textarea>
@@ -274,7 +275,8 @@
               <input name="published" type="checkbox" checked />
               <span><strong>Publicar PDF</strong></span>
             </label>
-            <button class="button" type="submit">Salvar PDF</button>
+            <button class="button" id="publish-pdf-button" type="submit">Publicar PDF</button>
+            <p class="form-status" id="pdf-submit-message" role="status"></p>
           </form>
         </section>
 

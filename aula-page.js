@@ -37,6 +37,16 @@ function isExternalUrl(value) {
   return /^https?:\/\//i.test(value || "");
 }
 
+function formatBytes(bytes = 0) {
+  if (!bytes) return "";
+  const units = ["B", "KB", "MB", "GB"];
+  const index = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
+  return `${(bytes / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`;
+}
+
 async function signedLessonMediaUrl(path) {
   if (!path) return null;
   if (isExternalUrl(path)) return path;
@@ -204,6 +214,17 @@ function originLabel(lesson) {
   return labels[lesson.source_type] || "Aula";
 }
 
+function formatLabel(value) {
+  return {
+    pdf: "PDF",
+    text: "Texto",
+    video: "Vídeo",
+    text_video: "Texto e vídeo",
+    activity: "Atividade guiada",
+    project: "Projeto prático",
+  }[value] || value || "Aula";
+}
+
 async function saveLessonProgress(user, lesson) {
   const now = new Date().toISOString();
   const lessonProgress = await supabase.from("lesson_progress").upsert(
@@ -242,7 +263,7 @@ async function initialize() {
   const { data: lesson, error } = await supabase
     .from("lessons")
     .select(
-      "id,track_id,title,summary,body,estimated_minutes,source_type,video_provider,video_url,pdf_url,instructor_name,partner_name,content_format,page_count,learning_objectives,tracks(title,slug)",
+      "id,track_id,title,summary,body,estimated_minutes,source_type,video_provider,video_url,pdf_url,pdf_file_name,pdf_file_size,pdf_mime_type,instructor_name,partner_name,content_format,page_count,learning_objectives,tracks(title,slug)",
     )
     .eq("id", lessonId)
     .single();
@@ -283,8 +304,18 @@ async function initialize() {
   document.querySelector("#lesson-content").innerHTML = `
     <div class="lesson-meta">
       <span>${escapeHtml(originLabel(lesson))}</span>
-      <span>${escapeHtml(lesson.content_format || "text_video")}</span>
+      <span>${escapeHtml(formatLabel(lesson.content_format))}</span>
       <span>${escapeHtml(String(lesson.estimated_minutes || 0))} min</span>
+      ${
+        lesson.pdf_file_name
+          ? `<span>Arquivo: ${escapeHtml(lesson.pdf_file_name)}</span>`
+          : ""
+      }
+      ${
+        lesson.pdf_file_size
+          ? `<span>${escapeHtml(formatBytes(lesson.pdf_file_size))}</span>`
+          : ""
+      }
       ${
         lesson.instructor_name
           ? `<span>Instrutor: ${escapeHtml(lesson.instructor_name)}</span>`

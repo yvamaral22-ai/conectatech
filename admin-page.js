@@ -1,5 +1,9 @@
 import { currentUserRole, syncAdminNavigation } from "./admin-access.js";
 import { supabase } from "./data-client.js";
+import * as pdfjsLib from "pdfjs-dist";
+import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.mjs?url";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 const content = document.querySelector("#admin-content");
 const denied = document.querySelector("#admin-denied");
@@ -7,6 +11,7 @@ let tracks = [];
 let lessons = [];
 let currentRole = "student";
 let activeAdminMode = "track";
+let selectedPdfDetails = null;
 
 function allowedAdminMode(mode) {
   return mode !== "users" || currentRole === "admin";
@@ -180,6 +185,54 @@ async function uploadLessonMedia(kind, file) {
     });
   if (error) throw error;
   return path;
+}
+
+function formatBytes(bytes = 0) {
+  if (!bytes) return "0 KB";
+  const units = ["B", "KB", "MB", "GB"];
+  const index = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
+  return `${(bytes / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`;
+}
+
+function setPdfMessage(message, kind = "info") {
+  document.querySelector("#pdf-message").textContent = message;
+  const inline = document.querySelector("#pdf-submit-message");
+  if (inline) {
+    inline.textContent = message;
+    inline.dataset.kind = kind;
+  }
+}
+
+function renderPdfDetails(details) {
+  const target = document.querySelector("#pdf-details");
+  if (!target) return;
+  if (!details) {
+    target.hidden = true;
+    target.innerHTML = "";
+    return;
+  }
+  target.hidden = false;
+  target.innerHTML = `
+    <strong>${escapeHtml(details.name)}</strong>
+    <span>${details.pages} página(s) detectada(s)</span>
+    <span>${escapeHtml(details.sizeLabel)} - ${escapeHtml(details.type || "application/pdf")}</span>
+  `;
+}
+
+async function readPdfDetails(file) {
+  if (!file || !file.size) return null;
+  const buffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buffer) }).promise;
+  return {
+    name: file.name,
+    pages: pdf.numPages,
+    size: file.size,
+    sizeLabel: formatBytes(file.size),
+    type: file.type || "application/pdf",
+  };
 }
 
 function renderEmpty(target, message) {
@@ -440,6 +493,44 @@ document.querySelector("#admin-actions").addEventListener("click", (event) => {
   showAdminPanel(button.dataset.adminMode);
 });
 
+document
+  .querySelector('#pdf-form input[name="pdf_file"]')
+  .addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    const pageInput = document.querySelector('#pdf-form input[name="page_count"]');
+    const publishButton = document.querySelector("#publish-pdf-button");
+    selectedPdfDetails = null;
+    renderPdfDetails(null);
+    pageInput.value = 1;
+
+    if (!file) {
+      setPdfMessage("");
+      return;
+    }
+    if (file.type && file.type !== "application/pdf") {
+      setPdfMessage("Escolha um arquivo PDF válido.", "error");
+      return;
+    }
+
+    publishButton.disabled = true;
+    setPdfMessage("Lendo detalhes do PDF...");
+    try {
+      selectedPdfDetails = await readPdfDetails(file);
+      pageInput.value = selectedPdfDetails.pages;
+      renderPdfDetails(selectedPdfDetails);
+      setPdfMessage(
+        `PDF pronto: ${selectedPdfDetails.pages} página(s), ${selectedPdfDetails.sizeLabel}.`,
+      );
+    } catch (error) {
+      setPdfMessage(
+        `Não consegui ler os detalhes do PDF: ${error.message}`,
+        "error",
+      );
+    } finally {
+      publishButton.disabled = false;
+    }
+  });
+
 document.querySelector("#track-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const message = document.querySelector("#track-message");
@@ -507,15 +598,23 @@ document
 
 document.querySelector("#pdf-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const message = document.querySelector("#pdf-message");
-  message.textContent = "Salvando PDF...";
+  const button = document.querySelector("#publish-pdf-button");
+  button.disabled = true;
+  setPdfMessage("Publicando PDF...");
   try {
     const form = new FormData(event.currentTarget);
+    const pdfFile = form.get("pdf_file");
     const title = formatTitle(form.get("title"));
-    const uploadedPdf = await uploadLessonMedia("pdfs", form.get("pdf_file"));
+    if (pdfFile?.size && !selectedPdfDetails) {
+      selectedPdfDetails = await readPdfDetails(pdfFile);
+      document.querySelector('#pdf-form input[name="page_count"]').value =
+        selectedPdfDetails.pages;
+      renderPdfDetails(selectedPdfDetails);
+    }
+    const uploadedPdf = await uploadLessonMedia("pdfs", pdfFile);
     const pdfUrl = uploadedPdf || String(form.get("pdf_url") || "").trim();
     if (!pdfUrl) {
-      message.textContent = "Envie um PDF ou informe uma URL.";
+      setPdfMessage("Envie um PDF ou informe uma URL.", "error");
       return;
     }
     const supportText =
@@ -533,23 +632,30 @@ document.querySelector("#pdf-form").addEventListener("submit", async (event) => 
       video_provider: "none",
       video_url: null,
       pdf_url: pdfUrl,
+      pdf_file_name: selectedPdfDetails?.name || null,
+      pdf_file_size: selectedPdfDetails?.size || null,
+      pdf_mime_type: selectedPdfDetails?.type || null,
       instructor_name: formatTitle(form.get("instructor_name")) || null,
       partner_name: formatTitle(form.get("partner_name")) || null,
       content_format: "pdf",
-      page_count: numberValue(form.get("page_count"), 1),
+      page_count: selectedPdfDetails?.pages || numberValue(form.get("page_count"), 1),
       learning_objectives: formatObjectives(form.get("learning_objectives")),
       estimated_minutes: numberValue(form.get("estimated_minutes"), 20),
       sort_order: numberValue(form.get("sort_order"), 1),
       status: statusFrom(form),
     };
     const { error } = await supabase.from("lessons").insert(payload);
-    message.textContent = error ? error.message : "PDF salvo como aula.";
+    setPdfMessage(error ? error.message : "PDF publicado como aula.", error ? "error" : "success");
     if (!error) {
       event.currentTarget.reset();
+      selectedPdfDetails = null;
+      renderPdfDetails(null);
       await refreshAdminData();
     }
   } catch (error) {
-    message.textContent = error.message;
+    setPdfMessage(error.message, "error");
+  } finally {
+    button.disabled = false;
   }
 });
 

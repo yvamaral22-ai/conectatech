@@ -55,15 +55,16 @@ Essa revisão automática ajuda, mas não substitui leitura humana. Antes de pub
 2. Crie ou escolha uma trilha.
 3. Cadastre a aula com título, formato, origem, URL do vídeo, instrutor/parceiro, objetivos e resumo.
 4. Para PDF, envie o arquivo pelo painel ou informe uma URL/caminho existente.
-5. Se a aula for própria, envie o arquivo de vídeo pelo campo de upload ou informe um caminho já existente no Storage.
-6. Se a aula vier do YouTube ou de parceiro, informe a URL oficial.
-7. Adicione páginas internas quando o conteúdo precisar ser dividido em partes curtas.
-8. Adicione materiais de apoio por link externo ou upload.
-9. Marque como publicada somente depois de revisar.
+5. Ao enviar um arquivo PDF, o painel detecta automaticamente nome, tamanho e quantidade de páginas.
+6. Se a aula for própria, envie o arquivo de vídeo pelo campo de upload ou informe um caminho já existente no Storage.
+7. Se a aula vier do YouTube ou de parceiro, informe a URL oficial.
+8. Adicione páginas internas quando o conteúdo precisar ser dividido em partes curtas.
+9. Adicione materiais de apoio por link externo ou upload.
+10. Marque como publicada somente depois de revisar.
 
 ## Leitura de PDF
 
-O PDF é salvo como aula com `content_format = 'pdf'` e o caminho do arquivo em `lessons.pdf_url`.
+O PDF é salvo como aula com `content_format = 'pdf'` e o caminho do arquivo em `lessons.pdf_url`. Quando o arquivo é enviado pelo painel, também são salvos `pdf_file_name`, `pdf_file_size`, `pdf_mime_type` e `page_count`.
 
 Na visualização da aula, o arquivo é exibido por um leitor responsivo:
 

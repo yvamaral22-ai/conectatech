@@ -697,6 +697,33 @@
   padding: 12px 14px;
   background: #fff;
 }
+.pdf-file-details {
+  display: grid;
+  gap: 5px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #f8f5ed;
+}
+.pdf-file-details strong,
+.pdf-file-details span {
+  display: block;
+}
+.pdf-file-details span {
+  color: var(--ink-2);
+}
+.form-status {
+  min-height: 1.5rem;
+  margin: -12px 0 0;
+  color: var(--ink-2);
+  font-weight: 750;
+}
+.form-status[data-kind="success"] {
+  color: #146c53;
+}
+.form-status[data-kind="error"] {
+  color: #9d2616;
+}
 .lesson-meta {
   display: flex;
   flex-wrap: wrap;
