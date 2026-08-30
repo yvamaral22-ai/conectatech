@@ -185,3 +185,6 @@ O modo sem conta armazena progresso e preferências no navegador. Ao criar conta
 - Pré-visualização antes da publicação.
 - Testes automatizados de interface com navegador.
 - Evolução futura para Next.js caso sejam necessárias rotas protegidas no servidor, SEO avançado e backend próprio.
+
+
+crie a seção de indicadores como deve ser,uma parte separada tambem, com os graficos baseados nos dados reais do Site, quantidade de usuarios, Quantidade de ususarios ativos, tipo de conteudo mais procurado, quantos acessos teve no mês, usuario que mais acessou, usuarios mais veem os conteudos e trilhas, oportunidades etc, crie essa sessão para analisarmos o progesso do site, e adminstrarmos tambem
