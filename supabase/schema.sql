@@ -3,7 +3,7 @@
 
 create extension if not exists "pgcrypto";
 
-create type public.app_role as enum ('owner', 'admin', 'editor', 'mentor', 'analyst', 'student');
+create type public.app_role as enum ('admin', 'teacher', 'student');
 create type public.course_level as enum ('iniciante', 'intermediario');
 create type public.content_status as enum ('draft', 'published', 'archived');
 create type public.progress_status as enum ('started', 'completed');
@@ -178,7 +178,10 @@ create table public.audit_logs (
   actor_id uuid references public.profiles(id) on delete set null,
   action text not null,
   table_name text not null,
-  record_id uuid,
+  record_id text,
+  record_title text,
+  before_data jsonb,
+  after_data jsonb,
   metadata jsonb not null default '{}',
   created_at timestamptz not null default now()
 );
@@ -252,7 +255,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_role() in ('owner', 'admin', 'editor', 'mentor', 'analyst'), false);
+  select coalesce(public.current_role() in ('admin', 'teacher'), false);
 $$;
 
 create or replace function public.can_manage_content()
@@ -262,7 +265,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_role() in ('owner', 'admin', 'editor'), false);
+  select coalesce(public.current_role() in ('admin', 'teacher'), false);
 $$;
 
 create or replace function public.can_manage_users()
@@ -272,17 +275,17 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_role() in ('owner', 'admin'), false);
+  select coalesce(public.current_role() = 'admin', false);
 $$;
 
-create or replace function public.is_owner()
+create or replace function public.is_admin()
 returns boolean
 language sql
 stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_role() = 'owner', false);
+  select coalesce(public.current_role() = 'admin', false);
 $$;
 
 alter table public.profiles enable row level security;
@@ -398,13 +401,13 @@ create policy "certificates_manage_staff" on public.certificates
 
 create policy "settings_public_read" on public.site_settings
   for select using (true);
-create policy "settings_owner_admin_write" on public.site_settings
-  for all using (public.current_role() in ('owner', 'admin')) with check (public.current_role() in ('owner', 'admin'));
+create policy "settings_admin_write" on public.site_settings
+  for all using (public.can_manage_users()) with check (public.can_manage_users());
 
-create policy "audit_read_owner_admin" on public.audit_logs
-  for select using (public.current_role() in ('owner', 'admin'));
-create policy "audit_insert_staff" on public.audit_logs
-  for insert with check (public.is_staff());
+create policy "audit_read_content_managers" on public.audit_logs
+  for select using (public.can_manage_content());
+create policy "audit_no_public_write" on public.audit_logs
+  for all using (false) with check (false);
 
 create view public.impact_summary as
 select
@@ -441,5 +444,4 @@ grant insert, update, delete on public.materials to authenticated;
 grant insert, update, delete on public.exercises to authenticated;
 grant insert, update, delete on public.opportunities to authenticated;
 grant insert, update, delete on public.site_settings to authenticated;
-grant insert on public.audit_logs to authenticated;
 grant select on public.audit_logs to authenticated;

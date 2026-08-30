@@ -2,54 +2,131 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#173f35" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#071064" />
+    <meta
+      name="description"
+      content="Leitor de aulas da ConectaTech com vídeo, PDF, materiais e progresso."
+    />
     <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/modern.css" />
     <link rel="stylesheet" href="/pages.css" />
-    <title>Aula — ConectaTech</title>
+    <link rel="stylesheet" href="/app-ui.css" />
+    <title>Aula - ConectaTech</title>
   </head>
-  <body class="app-page">
+  <body class="app-page lesson-os">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header class="site-header">
-      <a class="brand" href="/"
-        ><img src="/assets/icon.svg" width="38" height="38" alt="" /><span
-          >Conecta<span>Tech</span></span
-        ></a
-      >
-      <nav id="main-nav">
-        <a href="/trilhas.html" aria-current="page">Trilhas</a
-        ><a href="/carreira.html">Carreira</a
-        ><a href="/oportunidades.html">Oportunidades</a
-        ><a href="/perfil.html">Perfil</a><a href="/impacto.html">Impacto</a>
+      <a class="brand" href="/" aria-label="ConectaTech, página inicial">
+        <img src="/assets/icon.svg" width="38" height="38" alt="" />
+        <span>Conecta<span>Tech</span></span>
+      </a>
+      <nav id="main-nav" aria-label="Navegação principal">
+        <a href="/trilhas.html" aria-current="page">Meus cursos</a>
+        <a href="/trilhas.html">Trilhas</a>
+        <a href="/carreira.html">Carreira</a>
+        <a href="/oportunidades.html">Oportunidades</a>
       </nav>
+      <label class="app-search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Buscar conteúdo, aulas..." />
+      </label>
       <div class="header-actions">
-        <a class="button button-small account-entry" href="/perfil.html"
-          >Minha conta</a
-        >
+        <a class="button button-small account-entry" href="/perfil.html">Minha conta</a>
       </div>
     </header>
-    <main id="conteudo" class="lesson-shell">
-      <nav class="lesson-breadcrumb" aria-label="Navegação estrutural">
-        <a href="/trilhas.html">Trilhas</a><span>/</span
-        ><span id="course-label">Aula</span>
-      </nav>
-      <article class="lesson-page">
-        <p class="eyebrow">Aula prática</p>
-        <h1 id="lesson-title">Carregando aula…</h1>
-        <p class="lesson-lead" id="lesson-summary"></p>
-        <div class="lesson-body" id="lesson-content"></div>
-        <form class="lesson-exercise" id="exercise-form" hidden>
-          <fieldset>
-            <legend id="lesson-question"></legend>
-            <div id="lesson-options"></div>
-          </fieldset>
-          <p id="exercise-result" role="status"></p>
-          <button class="button" type="submit">Verificar resposta</button>
-        </form>
-      </article>
+
+    <main id="conteudo" class="lesson-reader-shell">
+      <aside class="app-sidebar">
+        <div class="app-sidebar-inner">
+          <section class="app-nav-card">
+            <p class="app-nav-title" id="lesson-track-title">Trilha</p>
+            <div class="progress-rail" aria-label="Progresso do curso">
+              <span id="lesson-track-progress" style="width: 0%"></span>
+            </div>
+            <p class="lesson-progress-copy" id="lesson-track-progress-copy">Entre para acompanhar seu progresso.</p>
+          </section>
+
+          <section class="app-nav-card">
+            <p class="app-nav-title">Módulo atual</p>
+            <div class="lesson-module-list" id="lesson-module-list">
+              <div class="lesson-module-item current">
+                <span class="lesson-module-dot">1</span>
+                <span>Carregando aula...</span>
+                <small>--</small>
+              </div>
+            </div>
+          </section>
+
+          <a class="button button-secondary" href="/trilhas.html">Voltar para trilhas</a>
+        </div>
+      </aside>
+
+      <section class="lesson-center">
+        <nav class="lesson-breadcrumb" aria-label="Navegação estrutural">
+          <a href="/trilhas.html">Meus cursos</a>
+          <span>/</span>
+          <span id="course-label">Aula</span>
+        </nav>
+
+        <article class="lesson-page">
+          <header class="lesson-reader-header">
+            <div>
+              <p class="eyebrow">Aula</p>
+              <h1 id="lesson-title">Carregando aula...</h1>
+            </div>
+            <div class="lesson-reader-tools" aria-label="Ferramentas da aula">
+              <button class="tool-button" type="button" title="Buscar na aula">⌕</button>
+              <button class="tool-button" type="button" title="Salvar aula">♡</button>
+              <button class="tool-button" type="button" title="Baixar material">⇩</button>
+            </div>
+          </header>
+
+          <div class="lesson-body">
+            <p class="lesson-lead" id="lesson-summary"></p>
+            <div id="lesson-content"></div>
+          </div>
+
+          <form class="lesson-exercise" id="exercise-form" hidden>
+            <fieldset>
+              <legend id="lesson-question"></legend>
+              <div id="lesson-options"></div>
+            </fieldset>
+            <p id="exercise-result" role="status"></p>
+            <button class="button" type="submit">Concluir aula</button>
+          </form>
+        </article>
+      </section>
+
+      <aside class="context-panel">
+        <div class="context-inner">
+          <section class="context-card">
+            <h2>Resumo da aula</h2>
+            <p id="lesson-context-summary">Carregando detalhes...</p>
+          </section>
+          <section class="context-card context-stack">
+            <div>
+              <strong>Tempo estimado</strong>
+              <p id="lesson-context-time">--</p>
+            </div>
+            <div>
+              <strong>Progresso da aula</strong>
+              <div class="progress-rail"><span id="lesson-context-progress" style="width: 0%"></span></div>
+            </div>
+            <div>
+              <strong>Arquivo</strong>
+              <p id="lesson-context-file">Nenhum arquivo detectado.</p>
+            </div>
+          </section>
+          <section class="context-card">
+            <h3>Próxima etapa</h3>
+            <p>Conclua a aula para atualizar seu progresso e liberar a continuidade da trilha.</p>
+          </section>
+        </div>
+      </aside>
     </main>
+
     <script type="module" src="/aula-page.js"></script>
   </body>
 </html>

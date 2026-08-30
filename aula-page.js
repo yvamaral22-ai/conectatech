@@ -21,12 +21,13 @@ function escapeHtml(value = "") {
 
 function youtubeEmbedUrl(url) {
   if (!url) return null;
+
   try {
     const parsed = new URL(url);
-    const id =
-      parsed.hostname.includes("youtu.be")
-        ? parsed.pathname.slice(1)
-        : parsed.searchParams.get("v");
+    const id = parsed.hostname.includes("youtu.be")
+      ? parsed.pathname.slice(1)
+      : parsed.searchParams.get("v");
+
     return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
   } catch {
     return null;
@@ -39,37 +40,45 @@ function isExternalUrl(value) {
 
 function formatBytes(bytes = 0) {
   if (!bytes) return "";
+
   const units = ["B", "KB", "MB", "GB"];
   const index = Math.min(
     Math.floor(Math.log(bytes) / Math.log(1024)),
     units.length - 1,
   );
+
   return `${(bytes / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`;
 }
 
 async function signedLessonMediaUrl(path) {
   if (!path) return null;
   if (isExternalUrl(path)) return path;
+
   const { data, error } = await supabase.storage
     .from("lesson-media")
     .createSignedUrl(path, 3600);
+
   return error ? null : data.signedUrl;
 }
 
 function renderVideo(lesson) {
   if (!lesson.video_url || lesson.video_provider === "none") return "";
+
   if (lesson.video_provider === "youtube") {
     const embed = youtubeEmbedUrl(lesson.video_url);
     if (!embed) return "";
+
     return `<div class="lesson-video"><iframe src="${escapeHtml(
       embed,
-    )}" title="Video da aula" allowfullscreen loading="lazy"></iframe></div>`;
+    )}" title="Vídeo da aula" allowfullscreen loading="lazy"></iframe></div>`;
   }
+
   if (lesson.video_provider === "supabase_storage" && lesson.playback_url) {
     return `<video class="lesson-video lesson-player" controls preload="metadata" src="${escapeHtml(
       lesson.playback_url,
     )}"></video>`;
   }
+
   return `<div class="lesson-video lesson-video-link"><a class="button" href="${escapeHtml(
     lesson.playback_url || lesson.video_url,
   )}" target="_blank" rel="noopener">Abrir vídeo da aula</a></div>`;
@@ -77,6 +86,7 @@ function renderVideo(lesson) {
 
 function renderPdfReader(lesson) {
   if (!lesson.pdf_display_url) return "";
+
   return `<section class="pdf-reader" id="pdf-reader" aria-label="Leitor de PDF">
     <div class="pdf-reader-toolbar">
       <div class="pdf-reader-controls">
@@ -112,6 +122,7 @@ async function mountPdfReader(url) {
 
   async function renderPage() {
     if (!pdf) return;
+
     const token = ++renderToken;
     message.textContent = "Carregando página...";
     const page = await pdf.getPage(pageNumber);
@@ -151,6 +162,7 @@ async function mountPdfReader(url) {
     pageNumber -= 1;
     renderPage();
   });
+
   next.addEventListener("click", () => {
     if (!pdf || pageNumber >= pdf.numPages) return;
     pageNumber += 1;
@@ -166,6 +178,7 @@ async function mountPdfReader(url) {
 
 function renderObjectives(objectives = []) {
   if (!objectives.length) return "";
+
   return `<section class="lesson-panel"><h2>Objetivos</h2><ul>${objectives
     .map((item) => `<li>${escapeHtml(item)}</li>`)
     .join("")}</ul></section>`;
@@ -177,6 +190,7 @@ function renderSections(sections = [], fallbackBody = "") {
       fallbackBody,
     )}</p></section>`;
   }
+
   return sections
     .map(
       (section, index) =>
@@ -189,6 +203,7 @@ function renderSections(sections = [], fallbackBody = "") {
 
 function renderMaterials(materials = []) {
   if (!materials.length) return "";
+
   return `<section class="lesson-panel"><h2>Materiais</h2><div class="learning-list">${materials
     .map(
       (material) =>
@@ -203,6 +218,31 @@ function renderMaterials(materials = []) {
     .join("")}</div></section>`;
 }
 
+function updateLessonChrome(lesson) {
+  const trackTitle = lesson.tracks?.title || "Trilha";
+  const format = formatLabel(lesson.content_format);
+  const pageCount = Number(lesson.page_count || 1);
+  const fileText = lesson.pdf_file_name
+    ? `${lesson.pdf_file_name}${lesson.pdf_file_size ? ` · ${formatBytes(lesson.pdf_file_size)}` : ""}`
+    : lesson.pdf_url
+      ? "PDF vinculado à aula"
+      : "Nenhum arquivo detectado.";
+
+  document.querySelector("#lesson-track-title").textContent = trackTitle;
+  document.querySelector("#lesson-context-summary").textContent =
+    lesson.summary || "Aula disponível na trilha selecionada.";
+  document.querySelector("#lesson-context-time").textContent =
+    `${lesson.estimated_minutes || 0} minutos`;
+  document.querySelector("#lesson-context-file").textContent = fileText;
+  document.querySelector("#lesson-module-list").innerHTML = `
+    <div class="lesson-module-item current">
+      <span class="lesson-module-dot">${format === "PDF" ? "PDF" : "▶"}</span>
+      <span>${escapeHtml(lesson.title)}</span>
+      <small>${pageCount} ${pageCount === 1 ? "página" : "páginas"}</small>
+    </div>
+  `;
+}
+
 function originLabel(lesson) {
   const labels = {
     own: "Aula própria",
@@ -211,18 +251,23 @@ function originLabel(lesson) {
     live: "Ao vivo",
     text: "Texto",
   };
+
   return labels[lesson.source_type] || "Aula";
 }
 
 function formatLabel(value) {
-  return {
-    pdf: "PDF",
-    text: "Texto",
-    video: "Vídeo",
-    text_video: "Texto e vídeo",
-    activity: "Atividade guiada",
-    project: "Projeto prático",
-  }[value] || value || "Aula";
+  return (
+    {
+      pdf: "PDF",
+      text: "Texto",
+      video: "Vídeo",
+      text_video: "Texto e vídeo",
+      activity: "Atividade guiada",
+      project: "Projeto prático",
+    }[value] ||
+    value ||
+    "Aula"
+  );
 }
 
 async function saveLessonProgress(user, lesson) {
@@ -238,6 +283,7 @@ async function saveLessonProgress(user, lesson) {
     },
     { onConflict: "user_id,lesson_id" },
   );
+
   if (lessonProgress.error) throw lessonProgress.error;
 
   const track = await supabase
@@ -245,6 +291,7 @@ async function saveLessonProgress(user, lesson) {
     .select("slug")
     .eq("id", lesson.track_id)
     .single();
+
   if (!track.error && track.data?.slug) {
     await supabase.from("course_progress").upsert(
       {
@@ -260,6 +307,7 @@ async function saveLessonProgress(user, lesson) {
 
 async function initialize() {
   if (!lessonId || !supabase) throw new Error();
+
   const { data: lesson, error } = await supabase
     .from("lessons")
     .select(
@@ -267,6 +315,7 @@ async function initialize() {
     )
     .eq("id", lessonId)
     .single();
+
   if (error) throw error;
 
   const [sectionResult, materialResult] = await Promise.all([
@@ -287,6 +336,7 @@ async function initialize() {
   } else {
     lesson.playback_url = lesson.video_url;
   }
+
   lesson.pdf_display_url = await signedLessonMediaUrl(lesson.pdf_url);
 
   const materials = await Promise.all(
@@ -301,6 +351,7 @@ async function initialize() {
     lesson.tracks?.title || "Trilha";
   document.querySelector("#lesson-title").textContent = lesson.title;
   document.querySelector("#lesson-summary").textContent = lesson.summary;
+  updateLessonChrome(lesson);
   document.querySelector("#lesson-content").innerHTML = `
     <div class="lesson-meta">
       <span>${escapeHtml(originLabel(lesson))}</span>
@@ -333,9 +384,9 @@ async function initialize() {
     ${renderSections(sectionResult.data || [], lesson.body)}
     ${renderMaterials(materials)}
   `;
+
   mountPdfReader(lesson.pdf_display_url);
 
-  const article = document.querySelector(".lesson-page");
   const actions = document.createElement("div");
   actions.className = "lesson-actions";
   actions.innerHTML =
@@ -346,12 +397,14 @@ async function initialize() {
     .querySelector("#save-lesson-button")
     .addEventListener("click", async () => {
       const result = document.querySelector("#save-lesson-result");
+
       try {
         const user = await currentUser();
         if (!user) {
           result.textContent = "Entre na sua conta para salvar esta aula.";
           return;
         }
+
         const saved = await supabase.from("saved_lessons").upsert(
           {
             user_id: user.id,
@@ -359,6 +412,7 @@ async function initialize() {
           },
           { onConflict: "user_id,lesson_id" },
         );
+
         if (saved.error) throw saved.error;
         result.textContent = "Conteúdo salvo no seu perfil.";
       } catch (error) {
@@ -373,19 +427,26 @@ async function initialize() {
   exercise.addEventListener("submit", async (event) => {
     event.preventDefault();
     const result = document.querySelector("#exercise-result");
+
     try {
       const user = await currentUser();
       if (!user) {
         result.textContent = "Entre na sua conta para salvar o progresso.";
         return;
       }
+
       await saveLessonProgress(user, lesson);
-      result.textContent = "Aula concluida. Seu progresso foi atualizado!";
+      document.querySelector("#lesson-track-progress").style.width = "100%";
+      document.querySelector("#lesson-track-progress-copy").textContent =
+        "Aula concluída nesta trilha.";
+      document.querySelector("#lesson-context-progress").style.width = "100%";
+      result.textContent = "Aula concluída. Seu progresso foi atualizado!";
     } catch (error) {
       result.textContent = `Não foi possível salvar agora: ${error.message}`;
     }
   });
-  article.classList.add("lesson-ready");
+
+  document.querySelector(".lesson-page").classList.add("lesson-ready");
 }
 
 initialize().catch(() => {

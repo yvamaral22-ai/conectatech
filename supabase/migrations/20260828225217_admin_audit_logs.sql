@@ -24,6 +24,10 @@ alter table public.audit_logs add column if not exists after_data jsonb;
 alter table public.audit_logs add column if not exists metadata jsonb not null default '{}'::jsonb;
 alter table public.audit_logs add column if not exists created_at timestamptz not null default now();
 
+alter table public.audit_logs
+alter column record_id type text
+using record_id::text;
+
 create index if not exists audit_logs_created_idx
 on public.audit_logs (created_at desc);
 
@@ -131,3 +135,5 @@ for each row execute function public.audit_content_change();
 create trigger audit_opportunities_changes
 after insert or update or delete on public.opportunities
 for each row execute function public.audit_content_change();
+
+notify pgrst, 'reload schema';

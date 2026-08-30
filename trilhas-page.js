@@ -10,21 +10,36 @@ function render(filter = "todas") {
   const visible = courses.filter(
     (course) => filter === "todas" || course.level === filter,
   );
+
   if (!visible.length) {
     grid.innerHTML =
       '<p class="empty-state">Nenhuma trilha está disponível neste filtro.</p>';
     return;
   }
+
   grid.innerHTML = visible
     .map(
       (course) =>
-        `<article class="course-card"><span class="course-icon" aria-hidden="true">${escapeHtml(course.icon)}</span><p class="card-kicker">${escapeHtml(course.level)}</p><h2>${escapeHtml(course.title)}</h2><p>${escapeHtml(course.description)}</p><div class="course-meta"><span>Conteúdo prático</span><span>${course.estimated_minutes} min</span></div><button class="text-link course-start" data-track="${course.id}" type="button">${completed.includes(course.slug) ? "Revisar trilha" : "Começar trilha"} →</button></article>`,
+        `<article class="course-card"><span class="course-icon" aria-hidden="true">${escapeHtml(
+          course.icon,
+        )}</span><p class="card-kicker">${escapeHtml(
+          course.level,
+        )}</p><h2>${escapeHtml(course.title)}</h2><p>${escapeHtml(
+          course.description,
+        )}</p><div class="course-meta"><span>Conteúdo prático</span><span>${
+          course.estimated_minutes
+        } min</span></div><button class="text-link course-start" data-track="${
+          course.id
+        }" type="button">${
+          completed.includes(course.slug) ? "Revisar trilha" : "Começar trilha"
+        } →</button></article>`,
     )
     .join("");
 }
 
 async function initialize() {
   if (!supabase) throw new Error("Serviço indisponível.");
+
   const [{ data, error }, session] = await Promise.all([
     supabase
       .from("tracks")
@@ -34,13 +49,19 @@ async function initialize() {
       .order("sort_order"),
     supabase.auth.getUser(),
   ]);
+
   if (error) throw error;
+
   courses = data || [];
+
   if (session.data.user) {
     const progress = await supabase.from("course_progress").select("course_id");
     completed = progress.data?.map((item) => item.course_id) || [];
   }
-  status.textContent = `${courses.length} ${courses.length === 1 ? "trilha disponível" : "trilhas disponíveis"}`;
+
+  status.textContent = `${courses.length} ${
+    courses.length === 1 ? "trilha disponível" : "trilhas disponíveis"
+  }`;
   render();
 }
 
@@ -57,6 +78,7 @@ document.querySelectorAll(".filter").forEach((button) =>
 grid.addEventListener("click", async (event) => {
   const button = event.target.closest(".course-start");
   if (!button) return;
+
   const { data } = await supabase
     .from("lessons")
     .select("id")
@@ -64,8 +86,10 @@ grid.addEventListener("click", async (event) => {
     .order("sort_order")
     .limit(1)
     .maybeSingle();
-  if (data)
+
+  if (data) {
     window.location.href = `/aula.html?id=${encodeURIComponent(data.id)}`;
+  }
 });
 
 initialize().catch(() => {

@@ -501,6 +501,12 @@ document.querySelector("#admin-actions").addEventListener("click", (event) => {
   showAdminPanel(button.dataset.adminMode);
 });
 
+document.querySelector("#admin-side-actions").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-admin-mode]");
+  if (!button) return;
+  showAdminPanel(button.dataset.adminMode);
+});
+
 document
   .querySelector('#pdf-form input[name="pdf_file"]')
   .addEventListener("change", async (event) => {
@@ -541,9 +547,10 @@ document
 
 document.querySelector("#track-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  const formElement = event.currentTarget;
   const message = document.querySelector("#track-message");
   message.textContent = "Salvando...";
-  const form = new FormData(event.currentTarget);
+  const form = new FormData(formElement);
   const title = formatTitle(form.get("title"));
   const payload = {
     title,
@@ -559,7 +566,7 @@ document.querySelector("#track-form").addEventListener("submit", async (event) =
   const { error } = await supabase.from("tracks").insert(payload);
   message.textContent = error ? error.message : "Trilha salva.";
   if (!error) {
-    event.currentTarget.reset();
+    formElement.reset();
     await refreshAdminData();
   }
 });
@@ -568,49 +575,57 @@ document
   .querySelector("#lesson-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
     const message = document.querySelector("#lesson-message");
     message.textContent = "Salvando...";
-    const form = new FormData(event.currentTarget);
-    const title = formatTitle(form.get("title"));
-    const uploadedVideo = await uploadLessonMedia(
-      "videos",
-      form.get("video_file"),
-    );
-    const payload = {
-      track_id: form.get("track_id"),
-      title,
-      slug: slugify(form.get("slug") || title),
-      summary: formatText(form.get("summary")),
-      body: formatText(form.get("body"), { multiline: true }),
-      transcript: formatText(form.get("transcript"), { multiline: true }),
-      audio_description: "",
-      source_type: form.get("source_type"),
-      video_provider: uploadedVideo ? "supabase_storage" : form.get("video_provider"),
-      video_url: uploadedVideo || String(form.get("video_url") || "").trim() || null,
-      instructor_name: formatTitle(form.get("instructor_name")) || null,
-      partner_name: formatTitle(form.get("partner_name")) || null,
-      content_format: form.get("content_format"),
-      page_count: numberValue(form.get("page_count"), 1),
-      learning_objectives: formatObjectives(form.get("learning_objectives")),
-      estimated_minutes: numberValue(form.get("estimated_minutes"), 15),
-      sort_order: numberValue(form.get("sort_order"), 1),
-      status: statusFrom(form),
-    };
-    const { error } = await supabase.from("lessons").insert(payload);
-    message.textContent = error ? error.message : "Aula salva.";
-    if (!error) {
-      event.currentTarget.reset();
-      await refreshAdminData();
+    try {
+      const form = new FormData(formElement);
+      const title = formatTitle(form.get("title"));
+      const uploadedVideo = await uploadLessonMedia(
+        "videos",
+        form.get("video_file"),
+      );
+      const payload = {
+        track_id: form.get("track_id"),
+        title,
+        slug: slugify(form.get("slug") || title),
+        summary: formatText(form.get("summary")),
+        body: formatText(form.get("body"), { multiline: true }),
+        transcript: formatText(form.get("transcript"), { multiline: true }),
+        audio_description: "",
+        source_type: form.get("source_type"),
+        video_provider: uploadedVideo
+          ? "supabase_storage"
+          : form.get("video_provider"),
+        video_url: uploadedVideo || String(form.get("video_url") || "").trim() || null,
+        instructor_name: formatTitle(form.get("instructor_name")) || null,
+        partner_name: formatTitle(form.get("partner_name")) || null,
+        content_format: form.get("content_format"),
+        page_count: numberValue(form.get("page_count"), 1),
+        learning_objectives: formatObjectives(form.get("learning_objectives")),
+        estimated_minutes: numberValue(form.get("estimated_minutes"), 15),
+        sort_order: numberValue(form.get("sort_order"), 1),
+        status: statusFrom(form),
+      };
+      const { error } = await supabase.from("lessons").insert(payload);
+      message.textContent = error ? error.message : "Aula salva.";
+      if (!error) {
+        formElement.reset();
+        await refreshAdminData();
+      }
+    } catch (error) {
+      message.textContent = error.message;
     }
   });
 
 document.querySelector("#pdf-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  const formElement = event.currentTarget;
   const button = document.querySelector("#publish-pdf-button");
   button.disabled = true;
   setPdfMessage("Publicando PDF...");
   try {
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(formElement);
     const pdfFile = form.get("pdf_file");
     const title = formatTitle(form.get("title"));
     if (pdfFile?.size && !selectedPdfDetails) {
@@ -683,7 +698,7 @@ document.querySelector("#pdf-form").addEventListener("submit", async (event) => 
       );
     }
     if (!error) {
-      event.currentTarget.reset();
+      formElement.reset();
       selectedPdfDetails = null;
       renderPdfDetails(null);
       await refreshAdminData();
@@ -699,9 +714,10 @@ document
   .querySelector("#section-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
     const message = document.querySelector("#section-message");
     message.textContent = "Salvando página...";
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(formElement);
     const payload = {
       lesson_id: form.get("lesson_id"),
       title: formatTitle(form.get("title")),
@@ -711,44 +727,50 @@ document
     };
     const { error } = await supabase.from("lesson_sections").insert(payload);
     message.textContent = error ? error.message : "Página salva.";
-    if (!error) event.currentTarget.reset();
+    if (!error) formElement.reset();
   });
 
 document
   .querySelector("#material-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
     const message = document.querySelector("#material-message");
     message.textContent = "Adicionando material...";
-    const form = new FormData(event.currentTarget);
-    const uploadedMaterial = await uploadLessonMedia(
-      "materials",
-      form.get("material_file"),
-    );
-    const externalUrl = String(form.get("file_url") || "").trim();
-    const payload = {
-      lesson_id: form.get("lesson_id"),
-      title: formatTitle(form.get("title")),
-      file_url: uploadedMaterial || externalUrl,
-      file_type: String(form.get("file_type")),
-      is_downloadable: true,
-    };
-    if (!payload.file_url) {
-      message.textContent = "Informe uma URL ou envie um arquivo.";
-      return;
+    try {
+      const form = new FormData(formElement);
+      const uploadedMaterial = await uploadLessonMedia(
+        "materials",
+        form.get("material_file"),
+      );
+      const externalUrl = String(form.get("file_url") || "").trim();
+      const payload = {
+        lesson_id: form.get("lesson_id"),
+        title: formatTitle(form.get("title")),
+        file_url: uploadedMaterial || externalUrl,
+        file_type: String(form.get("file_type")),
+        is_downloadable: true,
+      };
+      if (!payload.file_url) {
+        message.textContent = "Informe uma URL ou envie um arquivo.";
+        return;
+      }
+      const { error } = await supabase.from("materials").insert(payload);
+      message.textContent = error ? error.message : "Material adicionado.";
+      if (!error) formElement.reset();
+    } catch (error) {
+      message.textContent = error.message;
     }
-    const { error } = await supabase.from("materials").insert(payload);
-    message.textContent = error ? error.message : "Material adicionado.";
-    if (!error) event.currentTarget.reset();
   });
 
 document
   .querySelector("#opportunity-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
     const message = document.querySelector("#opportunity-message");
     message.textContent = "Salvando...";
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(formElement);
     const payload = {
       type: form.get("type"),
       title: formatTitle(form.get("title")),
@@ -764,7 +786,7 @@ document
     const { error } = await supabase.from("opportunities").insert(payload);
     message.textContent = error ? error.message : "Oportunidade salva.";
     if (!error) {
-      event.currentTarget.reset();
+      formElement.reset();
       await refreshAdminData();
     }
   });

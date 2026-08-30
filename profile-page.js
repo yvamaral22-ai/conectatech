@@ -27,6 +27,7 @@ function escapeHtml(value = "") {
 
 function formatDate(value) {
   if (!value) return "Data não registrada";
+
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "short",
@@ -36,9 +37,11 @@ function formatDate(value) {
 
 async function mediaUrl(path) {
   if (!path) return null;
+
   const { data, error } = await supabase.storage
     .from("avatars")
     .createSignedUrl(path, 3600);
+
   return error ? null : data.signedUrl;
 }
 
@@ -51,10 +54,12 @@ async function setAvatar(element, record) {
 
 async function setCover(record) {
   const cover = document.querySelector("#profile-cover");
+
   if (!supportsCoverPath) {
     cover.style.backgroundImage = "";
     return;
   }
+
   const url = await mediaUrl(record.cover_path);
   cover.style.backgroundImage = url
     ? `linear-gradient(120deg, rgba(23, 63, 53, .18), rgba(23, 63, 53, .08)), url("${url}")`
@@ -67,6 +72,7 @@ function defaultProfileRecord() {
     user.user_metadata?.display_name ||
     user.email?.split("@")[0] ||
     "Pessoa ConectaTech";
+
   return {
     id: user.id,
     username: `user_${user.id.replaceAll("-", "").slice(0, 12)}`,
@@ -126,18 +132,17 @@ async function loadProfileRecord() {
 async function render(record) {
   profile = record;
   document.querySelector("#summary-name").textContent = record.display_name;
-  document.querySelector("#summary-username").textContent =
-    `@${record.username}`;
-  document.querySelector("#hero-profile-name").textContent =
-    record.display_name;
+  document.querySelector("#summary-username").textContent = `@${record.username}`;
+  document.querySelector("#hero-profile-name").textContent = record.display_name;
   document.querySelector("#hero-profile-detail").textContent = record.is_public
-    ? `@${record.username} aparece em buscas publicas.`
-    : "Seu perfil esta privado.";
+    ? `@${record.username} aparece em buscas públicas.`
+    : "Seu perfil está privado.";
   document.querySelector("#profile-display-name").value = record.display_name;
   document.querySelector("#profile-username").value = record.username;
   document.querySelector("#profile-bio").value = record.bio || "";
   document.querySelector("#profile-city").value = record.city || "";
   document.querySelector("#profile-public").checked = record.is_public;
+
   await Promise.all([
     setAvatar(document.querySelector("#summary-avatar"), record),
     setAvatar(document.querySelector("#form-avatar"), record),
@@ -148,6 +153,7 @@ async function render(record) {
 function lessonCard(item, dateLabel) {
   const lesson = item.lessons || {};
   const track = lesson.tracks || {};
+
   return `<article class="learning-item"><div><strong>${escapeHtml(
     lesson.title || "Aula",
   )}</strong><span>${escapeHtml(track.title || "Trilha")}</span><small>${escapeHtml(
@@ -190,13 +196,13 @@ async function loadProgress() {
         .map((item) =>
           lessonCard(
             item,
-            `${item.status === "completed" ? "Concluida" : "Iniciada"} em ${formatDate(
+            `${item.status === "completed" ? "Concluída" : "Iniciada"} em ${formatDate(
               item.completed_at || item.updated_at || item.started_at,
             )}`,
           ),
         )
         .join("")
-    : '<p class="empty-state">Nenhuma aula concluida ainda.</p>';
+    : '<p class="empty-state">Nenhuma aula concluída ainda.</p>';
 }
 
 async function loadSavedLessons() {
@@ -222,13 +228,13 @@ async function loadSavedLessons() {
 async function initialize() {
   if (!supabase) {
     guard.hidden = false;
-    document.querySelector("#account-state").textContent =
-      "Serviço indisponível";
+    document.querySelector("#account-state").textContent = "Serviço indisponível";
     return;
   }
 
   const { data } = await supabase.auth.getUser();
   user = data.user;
+
   if (!user) {
     guard.hidden = false;
     document.querySelector("#account-state").textContent = "Sessão não iniciada";
@@ -242,31 +248,32 @@ async function initialize() {
     workspace.hidden = false;
     document.querySelector("#account-state").textContent = "Conta conectada";
     await Promise.all([render(record), loadProgress(), loadSavedLessons()]);
-  } catch (error) {
+  } catch {
     guard.hidden = false;
     guard.querySelector("h2").textContent =
       "Não foi possível carregar seu perfil";
     guard.querySelector("p").textContent =
       "Confirme se a estrutura de perfis foi instalada no projeto.";
-    document.querySelector("#account-state").textContent =
-      "Perfil indisponível";
-    return;
+    document.querySelector("#account-state").textContent = "Perfil indisponível";
   }
 }
 
 async function uploadProfileMedia(file, name) {
   if (!file) return null;
+
   if (
     file.size > 2097152 ||
     !["image/jpeg", "image/png", "image/webp"].includes(file.type)
   ) {
-    throw new Error("Use uma imagem JPG, PNG ou WebP, com ate 2 MB.");
+    throw new Error("Use uma imagem JPG, PNG ou WebP, com até 2 MB.");
   }
+
   const extension = file.type.split("/")[1].replace("jpeg", "jpg");
   const path = `${user.id}/${name}.${extension}`;
   const { error } = await supabase.storage
     .from("avatars")
     .upload(path, file, { upsert: true, contentType: file.type });
+
   if (error) throw error;
   return path;
 }
@@ -275,10 +282,12 @@ document
   .querySelector("#profile-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
     const saveState = document.querySelector("#save-state");
     saveState.textContent = "Salvando...";
+
     try {
-      const form = new FormData(event.currentTarget);
+      const form = new FormData(formElement);
       const displayName = String(form.get("display_name")).trim();
       const username = String(form.get("username")).trim().toLowerCase();
       const update = {
@@ -313,6 +322,7 @@ document
             : "id,username,display_name,bio,city,avatar_path,is_public",
         )
         .single();
+
       if (error) throw error;
       await supabase.auth.updateUser({ data: { name: update.display_name } });
       await render({ ...data, cover_path: data.cover_path || profile.cover_path });
@@ -335,22 +345,25 @@ document
   .querySelector("#password-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
     const message = document.querySelector("#password-message");
     const password = document.querySelector("#new-password").value;
     const { error } = await supabase.auth.updateUser({ password });
     message.textContent = error
       ? error.message
-      : "Senha alterada com seguranca.";
-    if (!error) event.currentTarget.reset();
+      : "Senha alterada com segurança.";
+    if (!error) formElement.reset();
   });
 
 document.querySelector("#change-email").addEventListener("click", async () => {
   const message = document.querySelector("#password-message");
   const email = document.querySelector("#new-email").value.trim();
+
   if (!email) {
     message.textContent = "Informe o novo e-mail.";
     return;
   }
+
   const { error } = await supabase.auth.updateUser({ email });
   message.textContent = error
     ? error.message
@@ -367,19 +380,30 @@ document
       .value.trim()
       .toLowerCase();
     target.innerHTML = '<p class="empty-state">Buscando perfil...</p>';
+
     const { data, error } = await supabase
       .from("profiles")
       .select("username,display_name,bio,city,avatar_path")
       .eq("username", username)
       .eq("is_public", true)
       .maybeSingle();
+
     if (error || !data) {
       target.innerHTML =
         '<p class="empty-state">Perfil público não encontrado.</p>';
       return;
     }
+
     const image = await mediaUrl(data.avatar_path);
-    target.innerHTML = `<article class="public-profile-result"><div class="avatar avatar-large">${image ? `<img src="${image}" alt="" />` : escapeHtml(data.display_name.slice(0, 2).toUpperCase())}</div><div><h3>${escapeHtml(data.display_name)}</h3><p>@${escapeHtml(data.username)}</p><p>${escapeHtml(data.bio || "")}</p><p>${escapeHtml(data.city || "")}</p></div></article>`;
+    target.innerHTML = `<article class="public-profile-result"><div class="avatar avatar-large">${
+      image
+        ? `<img src="${image}" alt="" />`
+        : escapeHtml(data.display_name.slice(0, 2).toUpperCase())
+    }</div><div><h3>${escapeHtml(data.display_name)}</h3><p>@${escapeHtml(
+      data.username,
+    )}</p><p>${escapeHtml(data.bio || "")}</p><p>${escapeHtml(
+      data.city || "",
+    )}</p></div></article>`;
   });
 
 document.querySelector("#logout-button").addEventListener("click", async () => {

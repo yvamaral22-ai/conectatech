@@ -25,6 +25,15 @@ $$;
 
 grant execute on function public.can_manage_content() to authenticated;
 
+do $$
+begin
+  if to_regclass('public.audit_logs') is not null then
+    execute
+      'alter table public.audit_logs alter column record_id type text using record_id::text';
+  end if;
+end;
+$$;
+
 alter table public.lessons
 add column if not exists source_type text not null default 'own';
 

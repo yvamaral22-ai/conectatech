@@ -2,152 +2,138 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#173f35" />
-    <meta
-      name="description"
-      content="Ferramentas de carreira e orientação profissional da ConectaTech."
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#071064" />
+    <meta name="description" content="Ferramentas de carreira e orientação profissional da ConectaTech." />
     <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/modern.css" />
     <link rel="stylesheet" href="/pages.css" />
-    <title>Carreira — ConectaTech</title>
+    <link rel="stylesheet" href="/app-ui.css" />
+    <title>Carreira - ConectaTech</title>
   </head>
   <body class="app-page">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header class="site-header">
-      <a class="brand" href="/"
-        ><img src="/assets/icon.svg" width="38" height="38" alt="" /><span
-          >Conecta<span>Tech</span></span
-        ></a
-      ><button
-        class="menu-button"
-        type="button"
-        aria-expanded="false"
-        aria-controls="main-nav"
-      >
-        Menu
-      </button>
+      <a class="brand" href="/" aria-label="ConectaTech, página inicial">
+        <img src="/assets/icon.svg" width="38" height="38" alt="" />
+        <span>Conecta<span>Tech</span></span>
+      </a>
       <nav id="main-nav" aria-label="Navegação principal">
-        <a href="/trilhas.html">Trilhas</a
-        ><a href="/carreira.html" aria-current="page">Carreira</a
-        ><a href="/oportunidades.html">Oportunidades</a
-        ><a href="/perfil.html">Perfil</a><a href="/impacto.html">Impacto</a>
+        <a href="/trilhas.html">Trilhas</a>
+        <a href="/carreira.html" aria-current="page">Carreira</a>
+        <a href="/oportunidades.html">Oportunidades</a>
+        <a href="/perfil.html">Perfil</a>
       </nav>
+      <label class="app-search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Buscar carreira, currículo, portfólio..." />
+      </label>
       <div class="header-actions">
         <a class="button button-small" href="/perfil.html">Minha conta</a>
       </div>
     </header>
-    <main id="conteudo" class="account-shell">
-      <header class="page-heading">
-        <div>
-          <p class="eyebrow">Da formação à oportunidade</p>
-          <h1>Desenvolva sua carreira</h1>
-          <p>
-            Organize suas experiências, prepare sua apresentação profissional e
-            avance com mais confiança.
-          </p>
+
+    <main class="app-shell with-aside" id="conteudo">
+      <aside class="app-sidebar">
+        <div class="app-sidebar-inner">
+          <section class="app-nav-card">
+            <p class="app-nav-title">Navegação</p>
+            <ul class="app-nav-list">
+              <li><a href="/">Início</a></li>
+              <li><a href="/trilhas.html">Trilhas</a></li>
+              <li><a href="/carreira.html" aria-current="page">Carreira</a></li>
+              <li><a href="/portfolio.html">Portfólio</a></li>
+              <li><a href="/curriculo.html">Currículo</a></li>
+              <li><a href="/oportunidades.html">Oportunidades</a></li>
+            </ul>
+          </section>
+          <section class="app-nav-card">
+            <p class="app-nav-title">Próximo passo</p>
+            <p>Escolha uma área, complete uma trilha, monte currículo e publique projetos.</p>
+          </section>
         </div>
-      </header>
-      <section class="professional-grid" aria-label="Ferramentas de carreira">
-        <article class="feature-panel">
-          <span>01</span>
-          <h2>Currículo profissional</h2>
-          <p>
-            Estruture suas experiências, competências e objetivos em uma
-            apresentação clara.
-          </p>
-          <a class="button" href="/curriculo.html"> Começar currículo </a>
-        </article>
-        <article class="feature-panel">
-          <span>02</span>
-          <h2>Portfólio de projetos</h2>
-          <p>
-            Reúna trabalhos e aprendizados que demonstram suas habilidades na
-            prática.
-          </p>
-          <a class="button" href="/portfolio.html"> Montar portfólio </a>
-        </article>
-        <article class="feature-panel">
-          <span>03</span>
-          <h2>Preparação profissional</h2>
-          <p>
-            Consulte orientações para candidaturas, entrevistas e processos
-            seletivos.
-          </p>
-          <button
-            class="button resource-action"
-            type="button"
-            data-feature="orientação"
-          >
-            Ver orientações
-          </button>
-        </article>
+      </aside>
+
+      <section class="app-main">
+        <header class="page-heading">
+          <div>
+            <p class="eyebrow">Da formação à oportunidade</p>
+            <h1>Carreira</h1>
+            <p>Explore caminhos profissionais, desenvolva habilidades e conecte aprendizado com vagas reais.</p>
+          </div>
+        </header>
+
+        <section class="professional-grid" aria-label="Caminhos de carreira">
+          <article class="feature-panel">
+            <span>⌘</span>
+            <h2>Desenvolvedor Front-end</h2>
+            <p>HTML, CSS, JavaScript, acessibilidade, GitHub e projetos publicados.</p>
+            <a class="button" href="/trilhas.html">Estudar caminho</a>
+          </article>
+          <article class="feature-panel">
+            <span>▦</span>
+            <h2>Analista de dados</h2>
+            <p>Planilhas, SQL, visualização, interpretação de indicadores e relatórios.</p>
+            <a class="button" href="/trilhas.html">Ver trilhas</a>
+          </article>
+          <article class="feature-panel">
+            <span>✎</span>
+            <h2>UX/UI Designer</h2>
+            <p>Pesquisa, interface, protótipos, acessibilidade e apresentação de portfólio.</p>
+            <a class="button" href="/portfolio.html">Montar portfólio</a>
+          </article>
+        </section>
+
+        <section class="settings-card career-path">
+          <div>
+            <p class="eyebrow">Checklist profissional</p>
+            <h2>Currículo, portfólio e candidatura no mesmo fluxo</h2>
+            <p>O aluno aprende, registra evidências do aprendizado e usa essas evidências para se candidatar melhor.</p>
+          </div>
+          <div class="button-row">
+            <a class="button" href="/curriculo.html">Criar currículo</a>
+            <a class="button button-secondary" href="/oportunidades.html">Ver oportunidades</a>
+          </div>
+        </section>
       </section>
-      <section class="settings-card career-path">
-        <div>
-          <p class="eyebrow">Seu próximo passo</p>
-          <h2>Aprendizado e oportunidades no mesmo caminho</h2>
-          <p>
-            Conclua trilhas para fortalecer suas competências e consulte somente
-            oportunidades com fonte identificada.
-          </p>
+
+      <aside class="context-panel">
+        <div class="context-inner">
+          <section class="context-card">
+            <h2>Competências</h2>
+            <p>GitHub, lógica, currículo, comunicação profissional e preparação para entrevistas entram como conteúdos de apoio.</p>
+          </section>
+          <section class="context-card context-stack">
+            <div><strong>Currículo</strong><p>Resumo profissional claro e objetivo.</p></div>
+            <div><strong>Portfólio</strong><p>Projetos com problema, solução e resultado.</p></div>
+            <div><strong>Vagas</strong><p>Oportunidades com fonte e prazo identificados.</p></div>
+          </section>
         </div>
-        <div class="button-row">
-          <a class="button" href="/trilhas.html">Explorar trilhas</a
-          ><a class="button button-secondary" href="/oportunidades.html"
-            >Ver oportunidades</a
-          >
-        </div>
-      </section>
+      </aside>
     </main>
+
     <dialog id="career-dialog">
       <form id="career-form">
-        <button class="dialog-close" type="button" data-close="career-dialog">
-          ×
-        </button>
+        <button class="dialog-close" type="button" data-close="career-dialog">×</button>
         <p class="eyebrow">Currículo</p>
         <h2>Informações profissionais</h2>
-        <label
-          >Objetivo<textarea name="objective" maxlength="240"></textarea></label
-        ><label
-          >Formação<textarea
-            name="education"
-            maxlength="2000"
-          ></textarea></label
-        ><label
-          >Experiências<textarea
-            name="experience"
-            maxlength="4000"
-          ></textarea></label
-        ><label
-          >Competências<textarea name="skills" maxlength="1000"></textarea>
-        </label>
+        <label>Objetivo<textarea name="objective" maxlength="240"></textarea></label>
+        <label>Formação<textarea name="education" maxlength="2000"></textarea></label>
+        <label>Experiências<textarea name="experience" maxlength="4000"></textarea></label>
+        <label>Competências<textarea name="skills" maxlength="1000"></textarea></label>
         <p id="career-message" role="status"></p>
         <button class="button" type="submit">Salvar currículo</button>
       </form>
     </dialog>
     <dialog id="portfolio-dialog">
       <form id="portfolio-form">
-        <button
-          class="dialog-close"
-          type="button"
-          data-close="portfolio-dialog"
-        >
-          ×
-        </button>
+        <button class="dialog-close" type="button" data-close="portfolio-dialog">×</button>
         <p class="eyebrow">Portfólio</p>
         <h2>Adicionar projeto</h2>
-        <label>Título<input name="title" maxlength="120" required /></label
-        ><label
-          >Descrição<textarea
-            name="description"
-            maxlength="1000"
-          ></textarea></label
-        ><label
-          >Link do projeto<input name="project_url" type="url" maxlength="500"
-        /></label>
+        <label>Título<input name="title" maxlength="120" required /></label>
+        <label>Descrição<textarea name="description" maxlength="1000"></textarea></label>
+        <label>Link do projeto<input name="project_url" type="url" maxlength="500" /></label>
         <p id="portfolio-message" role="status"></p>
         <button class="button" type="submit">Adicionar projeto</button>
       </form>

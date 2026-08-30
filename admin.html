@@ -3,18 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#173f35" />
+    <meta name="theme-color" content="#071064" />
     <meta
       name="description"
-      content="Painel administrativo da ConectaTech para gerir trilhas, aulas e oportunidades."
+      content="Painel administrativo da ConectaTech para gerir trilhas, aulas, PDFs, usuários e oportunidades."
     />
     <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/modern.css" />
     <link rel="stylesheet" href="/pages.css" />
+    <link rel="stylesheet" href="/app-ui.css" />
     <title>Administração - ConectaTech</title>
   </head>
-  <body class="app-page">
+  <body class="app-page admin-os">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header class="site-header">
       <a class="brand" href="/" aria-label="ConectaTech, página inicial">
@@ -27,6 +28,10 @@
         <a href="/oportunidades.html">Oportunidades</a>
         <a href="/perfil.html">Perfil</a>
       </nav>
+      <label class="app-search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Buscar usuários, cursos, conteúdos..." />
+      </label>
       <div class="header-actions">
         <a class="button button-small" href="/perfil.html">Minha conta</a>
       </div>
@@ -38,8 +43,8 @@
           <p class="eyebrow">Acesso restrito</p>
           <h1>Administração</h1>
           <p>
-            Gerencie o catálogo de aprendizagem e as oportunidades exibidas no
-            site sem editar arquivos manualmente.
+            Controle a plataforma por função: conteúdo, usuários, publicações,
+            auditoria e oportunidades ficam em áreas separadas.
           </p>
         </div>
         <span class="account-state" id="admin-status">Verificando acesso...</span>
@@ -56,7 +61,26 @@
         <a class="button" href="/?entrar=1">Entrar</a>
       </section>
 
-      <div class="admin-workspace" id="admin-content" hidden>
+      <div class="admin-workspace admin-dashboard-grid" id="admin-content" hidden>
+        <aside class="app-nav-card admin-quick-nav" aria-label="Navegação administrativa">
+          <p class="app-nav-title">Painel</p>
+          <ul class="app-nav-list" id="admin-side-actions">
+            <li><button class="is-active" type="button" data-admin-mode="track">Criar trilha</button></li>
+            <li><button type="button" data-admin-mode="lesson">Cadastrar aula</button></li>
+            <li><button type="button" data-admin-mode="pdf">Publicar PDF</button></li>
+            <li><button type="button" data-admin-mode="section">Páginas da aula</button></li>
+            <li><button type="button" data-admin-mode="material">Materiais</button></li>
+            <li><button type="button" data-admin-mode="opportunity">Oportunidades</button></li>
+            <li><button type="button" data-admin-mode="lists">Publicações</button></li>
+            <li><button type="button" data-admin-mode="audit">Auditoria</button></li>
+            <li><button type="button" data-admin-mode="users" data-admin-only hidden>Usuários</button></li>
+          </ul>
+          <div class="context-card">
+            <h3>Regras de acesso</h3>
+            <p>Admin controla tudo. Professor publica conteúdo e oportunidades. Aluno acessa apenas estudo, perfil e progresso.</p>
+          </div>
+        </aside>
+
         <section class="admin-overview" aria-label="Resumo administrativo">
           <article>
             <strong id="tracks-count">0</strong>
@@ -83,7 +107,7 @@
         <section class="admin-action-board" aria-labelledby="admin-action-title">
           <div class="settings-heading">
             <div>
-              <p class="eyebrow">Área de trabalho</p>
+              <p class="eyebrow">Ações rápidas</p>
               <h2 id="admin-action-title">O que você deseja fazer?</h2>
             </div>
             <span class="save-state" id="admin-action-status" role="status"></span>
@@ -96,39 +120,39 @@
           >
             <button class="admin-action-card is-active" type="button" data-admin-mode="track" role="tab" aria-selected="true">
               <strong>Trilha</strong>
-              <span>Criar uma nova jornada de aprendizagem.</span>
+              <span>Criar uma jornada com nível, ordem e publicação.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="lesson" role="tab" aria-selected="false">
               <strong>Aula</strong>
-              <span>Publicar vídeo, texto, atividade ou projeto.</span>
+              <span>Publicar vídeo próprio, YouTube, parceiro, texto ou projeto.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="pdf" role="tab" aria-selected="false">
               <strong>PDF</strong>
-              <span>Adicionar leitura com navegação por página.</span>
+              <span>Subir material, detectar páginas e abrir no leitor do site.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="section" role="tab" aria-selected="false">
               <strong>Página</strong>
-              <span>Dividir uma aula em partes curtas.</span>
+              <span>Dividir aulas longas em leitura guiada por partes.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="material" role="tab" aria-selected="false">
               <strong>Material</strong>
-              <span>Anexar arquivos ou links de apoio.</span>
+              <span>Anexar arquivos, links, imagens ou vídeos de apoio.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="opportunity" role="tab" aria-selected="false">
               <strong>Oportunidade</strong>
-              <span>Cadastrar vagas, cursos e bolsas.</span>
+              <span>Cadastrar vagas, cursos, bolsas, eventos e projetos.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="lists" role="tab" aria-selected="false">
-              <strong>Publicação</strong>
-              <span>Revisar conteúdos já cadastrados.</span>
+              <strong>Publicações</strong>
+              <span>Revisar o que já está publicado ou em rascunho.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="audit" role="tab" aria-selected="false">
               <strong>Auditoria</strong>
-              <span>Acompanhar alterações do painel.</span>
+              <span>Acompanhar alterações feitas por administradores e professores.</span>
             </button>
             <button class="admin-action-card" type="button" data-admin-mode="users" data-admin-only role="tab" aria-selected="false" hidden>
               <strong>Usuários</strong>
-              <span>Gerenciar contas, papéis e acesso.</span>
+              <span>Gerenciar alunos, professores, admins e contas inativas.</span>
             </button>
           </div>
         </section>
@@ -158,99 +182,46 @@
             <div class="form-grid">
               <label>Título <input name="title" required maxlength="160" /></label>
               <label>Slug <input name="slug" maxlength="90" placeholder="gerado automaticamente" /></label>
-              <label>
-                Nível
-                <select name="level">
-                  <option value="iniciante">Iniciante</option>
-                  <option value="intermediario">Intermediário</option>
-                </select>
-              </label>
+              <label>Nível <select name="level"><option value="iniciante">Iniciante</option><option value="intermediario">Intermediário</option></select></label>
               <label>Ícone <input name="icon" maxlength="8" placeholder="Ex.: <> ou #" /></label>
               <label>Minutos estimados <input name="estimated_minutes" type="number" min="0" value="30" /></label>
               <label>Ordem <input name="sort_order" type="number" min="0" value="1" /></label>
               <label class="form-wide">Descrição <textarea name="description" required maxlength="600" rows="4"></textarea></label>
             </div>
-            <label class="privacy-option">
-              <input name="published" type="checkbox" checked />
-              <span><strong>Publicar trilha</strong></span>
-            </label>
+            <label class="privacy-option"><input name="published" type="checkbox" checked /><span><strong>Publicar trilha</strong><small>Aparece para alunos assim que for salva.</small></span></label>
             <button class="button" type="submit">Salvar trilha</button>
           </form>
         </section>
 
         <section class="settings-card" data-admin-panel="lesson" aria-labelledby="lesson-admin-title" hidden>
-          <div class="settings-heading">
-            <div>
-              <p class="eyebrow">Aulas</p>
-              <h2 id="lesson-admin-title">Nova aula</h2>
-            </div>
-            <span class="save-state" id="lesson-message" role="status"></span>
-          </div>
+          <div class="settings-heading"><div><p class="eyebrow">Aulas</p><h2 id="lesson-admin-title">Nova aula</h2></div><span class="save-state" id="lesson-message" role="status"></span></div>
           <form id="lesson-form" class="settings-form">
             <div class="form-grid">
               <label>Trilha <select name="track_id" id="lesson-track" required></select></label>
               <label>Título <input name="title" required maxlength="160" /></label>
               <label>Slug <input name="slug" maxlength="90" placeholder="gerado automaticamente" /></label>
               <label>Minutos estimados <input name="estimated_minutes" type="number" min="0" value="15" /></label>
-              <label>
-                Formato
-                <select name="content_format">
-                  <option value="text_video">Texto e vídeo</option>
-                  <option value="video">Vídeo</option>
-                  <option value="text">Texto</option>
-                  <option value="activity">Atividade guiada</option>
-                  <option value="project">Projeto prático</option>
-                </select>
-              </label>
-              <label>
-                Origem
-                <select name="source_type" id="lesson-source">
-                  <option value="own">Aula própria</option>
-                  <option value="youtube">YouTube</option>
-                  <option value="partner">Parceiro</option>
-                  <option value="live">Aula ao vivo</option>
-                  <option value="text">Sem vídeo</option>
-                </select>
-              </label>
-              <label>
-                Provedor do vídeo
-                <select name="video_provider">
-                  <option value="none">Sem vídeo</option>
-                  <option value="youtube">YouTube</option>
-                  <option value="supabase_storage">Arquivo no Supabase</option>
-                  <option value="external">Link externo</option>
-                </select>
-              </label>
+              <label>Formato <select name="content_format"><option value="text_video">Texto e vídeo</option><option value="video">Vídeo</option><option value="text">Texto</option><option value="activity">Atividade guiada</option><option value="project">Projeto prático</option></select></label>
+              <label>Origem <select name="source_type" id="lesson-source"><option value="own">Aula própria</option><option value="youtube">YouTube</option><option value="partner">Parceiro</option><option value="live">Aula ao vivo</option><option value="text">Sem vídeo</option></select></label>
+              <label>Provedor do vídeo <select name="video_provider"><option value="none">Sem vídeo</option><option value="youtube">YouTube</option><option value="supabase_storage">Arquivo no Supabase</option><option value="external">Link externo</option></select></label>
               <label>URL do vídeo <input name="video_url" placeholder="https://... ou caminho no Storage" /></label>
               <label>Upload de vídeo próprio <input name="video_file" type="file" accept="video/mp4,video/webm" /></label>
               <label>Instrutor <input name="instructor_name" maxlength="120" placeholder="Seu nome ou professor" /></label>
               <label>Parceiro <input name="partner_name" maxlength="120" placeholder="Opcional" /></label>
               <label>Páginas/seções <input name="page_count" type="number" min="1" max="40" value="1" /></label>
               <label>Ordem <input name="sort_order" type="number" min="0" value="1" /></label>
-              <label class="form-wide">
-                Objetivos de aprendizagem
-                <textarea name="learning_objectives" maxlength="800" rows="3" placeholder="Um objetivo por linha"></textarea>
-              </label>
+              <label class="form-wide">Objetivos de aprendizagem <textarea name="learning_objectives" maxlength="800" rows="3" placeholder="Um objetivo por linha"></textarea></label>
               <label class="form-wide">Resumo <textarea name="summary" maxlength="500" rows="3"></textarea></label>
               <label class="form-wide">Conteúdo da aula <textarea name="body" required rows="8"></textarea></label>
               <label class="form-wide">Transcrição ou apoio textual <textarea name="transcript" rows="4"></textarea></label>
             </div>
-            <label class="privacy-option">
-              <input name="published" type="checkbox" checked />
-              <span><strong>Publicar aula</strong></span>
-            </label>
+            <label class="privacy-option"><input name="published" type="checkbox" checked /><span><strong>Publicar aula</strong><small>Desmarque para salvar como rascunho.</small></span></label>
             <button class="button" type="submit">Salvar aula</button>
           </form>
         </section>
 
         <section class="settings-card" data-admin-panel="pdf" aria-labelledby="pdf-admin-title" hidden>
-          <div class="settings-heading">
-            <div>
-              <p class="eyebrow">Leitura</p>
-              <h2 id="pdf-admin-title">Novo conteúdo em PDF</h2>
-            </div>
-            <span class="save-state" id="pdf-message" role="status"></span>
-          </div>
+          <div class="settings-heading"><div><p class="eyebrow">Leitura</p><h2 id="pdf-admin-title">Novo conteúdo em PDF</h2></div><span class="save-state" id="pdf-message" role="status"></span></div>
           <form id="pdf-form" class="settings-form">
             <div class="form-grid">
               <label>Trilha <select name="track_id" id="pdf-track" required></select></label>
@@ -259,147 +230,44 @@
               <label>Minutos estimados <input name="estimated_minutes" type="number" min="0" value="20" /></label>
               <label>Instrutor <input name="instructor_name" maxlength="120" placeholder="Seu nome ou professor" /></label>
               <label>Parceiro <input name="partner_name" maxlength="120" placeholder="Opcional" /></label>
-              <label>Número de páginas <input name="page_count" type="number" min="1" max="400" value="1" readonly /></label>
+              <label>Número de páginas <input name="page_count" type="number" min="1" max="1000" value="1" readonly /></label>
               <label>Ordem <input name="sort_order" type="number" min="0" value="1" /></label>
               <label>Upload do PDF <input name="pdf_file" type="file" accept="application/pdf,.pdf" /></label>
               <label>URL ou caminho do PDF <input name="pdf_url" placeholder="https://... ou caminho no Storage" /></label>
               <div class="pdf-file-details form-wide" id="pdf-details" hidden></div>
-              <label class="form-wide">
-                Objetivos de aprendizagem
-                <textarea name="learning_objectives" maxlength="800" rows="3" placeholder="Um objetivo por linha"></textarea>
-              </label>
+              <label class="form-wide">Objetivos de aprendizagem <textarea name="learning_objectives" maxlength="800" rows="3" placeholder="Um objetivo por linha"></textarea></label>
               <label class="form-wide">Resumo <textarea name="summary" maxlength="500" rows="3"></textarea></label>
               <label class="form-wide">Texto de apoio <textarea name="body" rows="5"></textarea></label>
             </div>
-            <label class="privacy-option">
-              <input name="published" type="checkbox" checked />
-              <span><strong>Publicar PDF</strong></span>
-            </label>
+            <label class="privacy-option"><input name="published" type="checkbox" checked /><span><strong>Publicar PDF</strong><small>O arquivo será exibido página por página no leitor da aula.</small></span></label>
             <button class="button" id="publish-pdf-button" type="submit">Publicar PDF</button>
             <p class="form-status" id="pdf-submit-message" role="status"></p>
           </form>
         </section>
 
         <section class="settings-card" data-admin-panel="section" aria-labelledby="section-admin-title" hidden>
-          <div class="settings-heading">
-            <div>
-              <p class="eyebrow">Editor de aula</p>
-              <h2 id="section-admin-title">Nova página</h2>
-            </div>
-            <span class="save-state" id="section-message" role="status"></span>
-          </div>
-          <form id="section-form" class="settings-form">
-            <div class="form-grid">
-              <label>Aula <select name="lesson_id" id="section-lesson" required></select></label>
-              <label>Título da página <input name="title" required maxlength="160" /></label>
-              <label>Ordem <input name="sort_order" type="number" min="1" value="1" /></label>
-              <label>Minutos <input name="estimated_minutes" type="number" min="0" value="5" /></label>
-              <label class="form-wide">Conteúdo da página <textarea name="body" required rows="7"></textarea></label>
-            </div>
-            <button class="button" type="submit">Salvar página</button>
-          </form>
+          <div class="settings-heading"><div><p class="eyebrow">Editor de aula</p><h2 id="section-admin-title">Nova página</h2></div><span class="save-state" id="section-message" role="status"></span></div>
+          <form id="section-form" class="settings-form"><div class="form-grid"><label>Aula <select name="lesson_id" id="section-lesson" required></select></label><label>Título da página <input name="title" required maxlength="160" /></label><label>Ordem <input name="sort_order" type="number" min="1" value="1" /></label><label>Minutos <input name="estimated_minutes" type="number" min="0" value="5" /></label><label class="form-wide">Conteúdo da página <textarea name="body" required rows="7"></textarea></label></div><button class="button" type="submit">Salvar página</button></form>
         </section>
 
         <section class="settings-card" data-admin-panel="material" aria-labelledby="material-admin-title" hidden>
-          <div class="settings-heading">
-            <div>
-              <p class="eyebrow">Apoio</p>
-              <h2 id="material-admin-title">Novo material</h2>
-            </div>
-            <span class="save-state" id="material-message" role="status"></span>
-          </div>
-          <form id="material-form" class="settings-form compact-form">
-            <div class="form-grid">
-              <label>Aula <select name="lesson_id" id="material-lesson" required></select></label>
-              <label>Nome do material <input name="title" required maxlength="160" /></label>
-              <label>
-                Tipo
-                <select name="file_type">
-                  <option value="pdf">PDF</option>
-                  <option value="link">Link externo</option>
-                  <option value="video">Vídeo</option>
-                  <option value="image">Imagem</option>
-                  <option value="text">Texto</option>
-                </select>
-              </label>
-              <label>URL do arquivo ou link <input name="file_url" placeholder="https://... ou caminho no Storage" /></label>
-              <label>
-                Upload do material
-                <input name="material_file" type="file" accept=".pdf,.txt,image/jpeg,image/png,image/webp,video/mp4,video/webm" />
-              </label>
-            </div>
-            <button class="button button-secondary" type="submit">Adicionar material</button>
-          </form>
+          <div class="settings-heading"><div><p class="eyebrow">Apoio</p><h2 id="material-admin-title">Novo material</h2></div><span class="save-state" id="material-message" role="status"></span></div>
+          <form id="material-form" class="settings-form compact-form"><div class="form-grid"><label>Aula <select name="lesson_id" id="material-lesson" required></select></label><label>Nome do material <input name="title" required maxlength="160" /></label><label>Tipo <select name="file_type"><option value="pdf">PDF</option><option value="link">Link externo</option><option value="video">Vídeo</option><option value="image">Imagem</option><option value="text">Texto</option></select></label><label>URL do arquivo ou link <input name="file_url" placeholder="https://... ou caminho no Storage" /></label><label>Upload do material <input name="material_file" type="file" accept=".pdf,.txt,image/jpeg,image/png,image/webp,video/mp4,video/webm" /></label></div><button class="button button-secondary" type="submit">Adicionar material</button></form>
         </section>
 
         <section class="settings-card" data-admin-panel="opportunity" aria-labelledby="opportunity-title" hidden>
-          <div class="settings-heading">
-            <div>
-              <p class="eyebrow">Oportunidades</p>
-              <h2 id="opportunity-title">Nova oportunidade</h2>
-            </div>
-            <span class="save-state" id="opportunity-message" role="status"></span>
-          </div>
-          <form id="opportunity-form" class="settings-form">
-            <div class="form-grid">
-              <label>
-                Tipo
-                <select name="type">
-                  <option value="curso">Curso</option>
-                  <option value="vaga">Vaga</option>
-                  <option value="bolsa">Bolsa</option>
-                </select>
-              </label>
-              <label>Título <input name="title" required maxlength="160" /></label>
-              <label>Organização <input name="organization" required maxlength="160" /></label>
-              <label>Local <input name="location" maxlength="120" placeholder="Remoto, Brasil ou cidade" /></label>
-              <label>Prazo <input name="deadline" type="date" /></label>
-              <label>Fonte oficial <input name="url" type="url" required /></label>
-              <label class="form-wide">Descrição <textarea name="description" required maxlength="1000" rows="4"></textarea></label>
-            </div>
-            <label class="privacy-option">
-              <input name="published" type="checkbox" checked />
-              <span><strong>Publicar oportunidade</strong></span>
-            </label>
-            <button class="button" type="submit">Salvar oportunidade</button>
-          </form>
+          <div class="settings-heading"><div><p class="eyebrow">Oportunidades</p><h2 id="opportunity-title">Nova oportunidade</h2></div><span class="save-state" id="opportunity-message" role="status"></span></div>
+          <form id="opportunity-form" class="settings-form"><div class="form-grid"><label>Tipo <select name="type"><option value="curso">Curso</option><option value="vaga">Vaga</option><option value="bolsa">Bolsa</option></select></label><label>Título <input name="title" required maxlength="160" /></label><label>Organização <input name="organization" required maxlength="160" /></label><label>Local <input name="location" maxlength="120" placeholder="Remoto, Brasil ou cidade" /></label><label>Prazo <input name="deadline" type="date" /></label><label>Fonte oficial <input name="url" type="url" required /></label><label class="form-wide">Descrição <textarea name="description" required maxlength="1000" rows="4"></textarea></label></div><label class="privacy-option"><input name="published" type="checkbox" checked /><span><strong>Publicar oportunidade</strong><small>Será exibida na central de oportunidades.</small></span></label><button class="button" type="submit">Salvar oportunidade</button></form>
         </section>
 
         <section class="settings-card" data-admin-panel="lists" aria-labelledby="content-list-title" hidden>
-          <div class="settings-heading">
-            <div>
-              <p class="eyebrow">Publicação</p>
-              <h2 id="content-list-title">Conteúdos cadastrados</h2>
-            </div>
-            <button class="button button-secondary" id="refresh-admin" type="button">Atualizar</button>
-          </div>
-          <div class="admin-lists">
-            <div>
-              <h3>Trilhas</h3>
-              <div class="admin-list" id="tracks-list"></div>
-            </div>
-            <div>
-              <h3>Aulas</h3>
-              <div class="admin-list" id="lessons-list"></div>
-            </div>
-            <div>
-              <h3>Oportunidades</h3>
-              <div class="admin-list" id="opportunities-list"></div>
-            </div>
-          </div>
+          <div class="settings-heading"><div><p class="eyebrow">Publicações</p><h2 id="content-list-title">Conteúdos cadastrados</h2></div><button class="button button-secondary" id="refresh-admin" type="button">Atualizar</button></div>
+          <div class="admin-lists"><div><h3>Trilhas</h3><div class="admin-list" id="tracks-list"></div></div><div><h3>Aulas</h3><div class="admin-list" id="lessons-list"></div></div><div><h3>Oportunidades</h3><div class="admin-list" id="opportunities-list"></div></div></div>
         </section>
 
         <section class="settings-card" data-admin-panel="audit" aria-labelledby="audit-title" hidden>
-          <div class="settings-heading">
-            <div>
-              <p class="eyebrow">Auditoria</p>
-              <h2 id="audit-title">Últimas alterações</h2>
-            </div>
-            <span class="save-state" id="audit-message" role="status"></span>
-          </div>
-          <div class="admin-list audit-list" id="audit-list">
-            <p class="empty-state">Nenhuma alteração registrada ainda.</p>
-          </div>
+          <div class="settings-heading"><div><p class="eyebrow">Auditoria</p><h2 id="audit-title">Últimas alterações</h2></div><span class="save-state" id="audit-message" role="status"></span></div>
+          <div class="admin-list audit-list" id="audit-list"><p class="empty-state">Nenhuma alteração registrada ainda.</p></div>
         </section>
       </div>
     </main>

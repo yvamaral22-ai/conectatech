@@ -1,0 +1,605 @@
+:root {
+  --app-bg: #03083a;
+  --app-bg-2: #071064;
+  --app-panel: rgba(16, 28, 105, 0.78);
+  --app-panel-strong: rgba(18, 34, 126, 0.9);
+  --app-line: rgba(166, 190, 255, 0.18);
+  --app-line-strong: rgba(0, 194, 255, 0.62);
+  --app-text: #f7fbff;
+  --app-muted: #b8c6ef;
+  --app-blue: #0a96ff;
+  --app-cyan: #09d7ff;
+  --app-green: #36e49a;
+  --app-violet: #8a5cff;
+  --app-warning: #ffc247;
+  --app-danger: #ff6678;
+  --app-radius: 18px;
+  --app-shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
+}
+
+body.app-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(0, 214, 255, 0.18), transparent 28%),
+    radial-gradient(circle at 86% 18%, rgba(117, 85, 255, 0.22), transparent 30%),
+    linear-gradient(135deg, #03052d 0%, #07115f 52%, #02051f 100%);
+  color: var(--app-text);
+}
+
+body.app-page::selection {
+  background: rgba(9, 215, 255, 0.32);
+}
+
+body.app-page .site-header {
+  height: 74px;
+  padding: 0 clamp(16px, 3vw, 36px);
+  background: rgba(3, 8, 58, 0.82);
+  border-bottom: 1px solid var(--app-line);
+  box-shadow: none;
+  backdrop-filter: blur(22px) saturate(130%);
+}
+
+body.app-page .brand {
+  color: var(--app-text);
+  font-size: 1.45rem;
+  letter-spacing: 0;
+}
+
+body.app-page .brand span span {
+  color: var(--app-cyan);
+}
+
+body.app-page .site-header nav a {
+  color: var(--app-muted);
+}
+
+body.app-page .site-header nav a:hover,
+body.app-page .site-header nav a[aria-current="page"] {
+  color: var(--app-text);
+  text-decoration-color: var(--app-cyan);
+}
+
+body.app-page .button {
+  background: linear-gradient(135deg, var(--app-blue), #2565ff);
+  border-color: transparent;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(10, 150, 255, 0.24);
+}
+
+body.app-page .button-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--app-line);
+  color: var(--app-text);
+  box-shadow: none;
+}
+
+body.app-page .text-link {
+  color: var(--app-cyan);
+  text-decoration-color: rgba(9, 215, 255, 0.45);
+}
+
+.app-search {
+  width: min(520px, 38vw);
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border: 1px solid var(--app-line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--app-muted);
+}
+
+.app-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--app-text);
+}
+
+.app-search input::placeholder {
+  color: var(--app-muted);
+}
+
+.app-shell {
+  width: min(1920px, 100%);
+  min-height: calc(100vh - 74px);
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 0;
+}
+
+.app-shell.with-aside {
+  grid-template-columns: 320px minmax(0, 1fr) 340px;
+}
+
+.app-sidebar,
+.context-panel {
+  min-width: 0;
+  border-right: 1px solid var(--app-line);
+  background: rgba(3, 8, 58, 0.38);
+}
+
+.context-panel {
+  border-right: 0;
+  border-left: 1px solid var(--app-line);
+}
+
+.app-sidebar-inner,
+.context-inner {
+  position: sticky;
+  top: 74px;
+  display: grid;
+  gap: 18px;
+  padding: 24px 20px;
+  max-height: calc(100vh - 74px);
+  overflow: auto;
+}
+
+.app-main {
+  min-width: 0;
+  padding: 28px clamp(20px, 3vw, 34px);
+}
+
+.app-nav-card,
+.app-panel,
+.settings-card,
+.auth-guard,
+.admin-action-board,
+.profile-hero-card,
+.feature-panel,
+.progress-card,
+.portfolio-empty,
+.project-card {
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius);
+  background: linear-gradient(180deg, rgba(22, 38, 130, 0.78), rgba(12, 24, 89, 0.78));
+  color: var(--app-text);
+  box-shadow: var(--app-shadow);
+}
+
+.settings-card,
+.auth-guard,
+.admin-action-board,
+.profile-hero-card,
+.feature-panel,
+.project-card,
+.portfolio-empty {
+  background: linear-gradient(180deg, rgba(19, 32, 105, 0.82), rgba(8, 18, 72, 0.86));
+}
+
+.app-nav-card {
+  padding: 18px;
+}
+
+.app-nav-title {
+  margin: 0 0 12px;
+  color: var(--app-cyan);
+  font-weight: 800;
+}
+
+.app-nav-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-nav-list a,
+.app-nav-list button {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--app-muted);
+  text-align: left;
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.app-nav-list a[aria-current="page"],
+.app-nav-list a.active,
+.app-nav-list button.is-active {
+  background: linear-gradient(135deg, var(--app-blue), #2565ff);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(10, 150, 255, 0.24);
+}
+
+.progress-rail {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.progress-rail span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--app-cyan), #2565ff);
+}
+
+body.app-page .page-heading {
+  align-items: center;
+  margin: 0 0 22px;
+}
+
+body.app-page .page-heading h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: 0;
+}
+
+body.app-page .page-heading p:last-child,
+body.app-page .lesson-lead,
+body.app-page .feature-panel p,
+body.app-page .learning-item span,
+body.app-page .admin-item span,
+body.app-page .admin-item small,
+body.app-page .privacy-summary span,
+body.app-page .lesson-section p,
+body.app-page .lesson-actions p {
+  color: var(--app-muted);
+}
+
+body.app-page .eyebrow {
+  color: var(--app-cyan);
+  letter-spacing: 0.09em;
+}
+
+body.app-page .account-state {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--app-text);
+  border-color: var(--app-line);
+}
+
+body.app-page .form-grid input,
+body.app-page .form-grid textarea,
+body.app-page .settings-form select,
+body.app-page dialog form input,
+body.app-page dialog form textarea,
+body.app-page dialog form select,
+body.app-page .search-row input {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--app-text);
+  border-color: var(--app-line);
+}
+
+body.app-page input::placeholder,
+body.app-page textarea::placeholder {
+  color: rgba(184, 198, 239, 0.72);
+}
+
+body.app-page .privacy-option,
+body.app-page .avatar-editor,
+body.app-page .learning-item,
+body.app-page .admin-item,
+body.app-page .pdf-file-details,
+body.app-page .empty-state,
+body.app-page .lesson-panel,
+body.app-page .lesson-section,
+body.app-page .resource-grid article {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: var(--app-line);
+  color: var(--app-text);
+}
+
+body.app-page .admin-overview article,
+body.app-page .metrics-board article,
+body.app-page .profile-metrics div {
+  background: linear-gradient(180deg, rgba(18, 34, 126, 0.96), rgba(10, 22, 88, 0.96));
+  border-color: var(--app-line);
+}
+
+body.app-page .admin-overview strong,
+body.app-page .metrics-board strong,
+body.app-page .profile-metrics strong {
+  color: var(--app-cyan);
+}
+
+body.app-page .admin-action-card {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: var(--app-line);
+  color: var(--app-text);
+}
+
+body.app-page .admin-action-card span {
+  color: var(--app-muted);
+}
+
+body.app-page .admin-action-card.is-active {
+  background: linear-gradient(135deg, var(--app-blue), #2565ff);
+  border-color: transparent;
+}
+
+.lesson-reader-shell {
+  width: min(1920px, 100%);
+  min-height: calc(100vh - 74px);
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr) 340px;
+}
+
+.lesson-center {
+  min-width: 0;
+  padding: 28px clamp(16px, 2.2vw, 28px);
+}
+
+body.app-page .lesson-shell {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.app-page .lesson-page {
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid var(--app-line);
+  border-radius: 20px;
+  box-shadow: var(--app-shadow);
+}
+
+.lesson-reader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, #0a96ff, #02b8ff);
+}
+
+.lesson-reader-header h1 {
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  letter-spacing: 0;
+}
+
+.lesson-reader-tools {
+  display: flex;
+  gap: 8px;
+}
+
+.tool-button {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+body.app-page .lesson-body {
+  margin: 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 0;
+}
+
+body.app-page .pdf-reader {
+  border: 0;
+  border-radius: 0;
+  background: #f9fbff;
+  color: #071064;
+}
+
+body.app-page .pdf-reader-toolbar {
+  background: rgba(3, 8, 58, 0.9);
+  border-color: var(--app-line);
+  color: var(--app-text);
+}
+
+.lesson-module-list {
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-module-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  color: var(--app-muted);
+}
+
+.lesson-module-item.current {
+  background: linear-gradient(135deg, var(--app-blue), #2565ff);
+  color: #fff;
+}
+
+.lesson-module-dot {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.8rem;
+}
+
+.context-card {
+  padding: 18px;
+  border: 1px solid var(--app-line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.context-card h2,
+.context-card h3 {
+  margin-top: 0;
+}
+
+.context-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-dashboard-grid {
+  grid-template-columns: 280px minmax(0, 1fr);
+  align-items: start;
+}
+
+.admin-quick-nav {
+  position: sticky;
+  top: 98px;
+  grid-row: span 8;
+}
+
+.admin-dashboard-grid > .admin-overview,
+.admin-dashboard-grid > .admin-action-board,
+.admin-dashboard-grid > .settings-card {
+  grid-column: 2;
+}
+
+.admin-dashboard-grid .admin-overview {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.admin-dashboard-grid .settings-card,
+.admin-dashboard-grid .admin-action-board {
+  max-width: 100%;
+}
+
+.admin-dashboard-grid .settings-form {
+  max-width: 100%;
+}
+
+.admin-dashboard-grid .admin-action-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.opportunity-filter-bar {
+  justify-content: flex-start;
+}
+
+body.app-page .course-card {
+  background: linear-gradient(180deg, rgba(19, 32, 105, 0.82), rgba(8, 18, 72, 0.86));
+  border-color: var(--app-line);
+  box-shadow: var(--app-shadow);
+}
+
+body.app-page .course-card::before {
+  background: linear-gradient(135deg, rgba(9, 215, 255, 0.22), rgba(37, 101, 255, 0.08));
+}
+
+body.app-page .course-card .course-icon,
+body.app-page .feature-panel > span {
+  background: linear-gradient(135deg, var(--app-blue), #2565ff);
+  color: #fff;
+}
+
+body.app-page .card-kicker,
+body.app-page .course-meta,
+body.app-page .course-card p {
+  color: var(--app-muted);
+}
+
+body.app-page .filter {
+  border-color: var(--app-line);
+  color: var(--app-muted);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.app-page .filter.active {
+  background: linear-gradient(135deg, var(--app-blue), #2565ff);
+  color: #fff;
+}
+
+body.app-page .opportunity-list article {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: var(--app-line);
+  color: var(--app-text);
+}
+
+body.app-page .opportunity-list p {
+  color: var(--app-muted);
+}
+
+body.app-page .tag {
+  background: rgba(9, 215, 255, 0.12);
+  color: var(--app-cyan);
+}
+
+body.app-page .profile-cover {
+  background:
+    linear-gradient(120deg, rgba(10, 150, 255, 0.7), rgba(138, 92, 255, 0.32)),
+    linear-gradient(135deg, #071064, #12227e);
+}
+
+body.app-page dialog {
+  background: #0b1458;
+  color: var(--app-text);
+}
+
+body.app-page dialog::backdrop {
+  background: rgba(0, 4, 30, 0.78);
+}
+
+@media (max-width: 1180px) {
+  .app-shell,
+  .app-shell.with-aside,
+  .lesson-reader-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .app-sidebar,
+  .context-panel {
+    border: 0;
+  }
+
+  .app-sidebar-inner,
+  .context-inner {
+    position: static;
+    max-height: none;
+  }
+
+  .app-sidebar-inner {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .admin-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-quick-nav,
+  .admin-dashboard-grid > .admin-overview,
+  .admin-dashboard-grid > .admin-action-board,
+  .admin-dashboard-grid > .settings-card {
+    grid-column: 1;
+  }
+
+  .admin-quick-nav {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-search {
+    display: none;
+  }
+
+  body.app-page .site-header {
+    gap: 12px;
+  }
+
+  .app-main,
+  .lesson-center {
+    padding: 18px 14px 42px;
+  }
+
+  .lesson-reader-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

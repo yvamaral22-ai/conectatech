@@ -1,4 +1,4 @@
-const CACHE = "conectatech-v11";
+const CACHE = "conectatech-v12";
 const ASSETS = [
   "./",
   "./trilhas.html",

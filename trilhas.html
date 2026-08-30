@@ -3,76 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#173f35" />
-    <meta
-      name="description"
-      content="Trilhas gratuitas de aprendizagem da ConectaTech."
-    />
+    <meta name="theme-color" content="#071064" />
+    <meta name="description" content="Trilhas gratuitas de aprendizagem da ConectaTech." />
     <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/modern.css" />
     <link rel="stylesheet" href="/pages.css" />
-    <title>Trilhas — ConectaTech</title>
+    <link rel="stylesheet" href="/app-ui.css" />
+    <title>Trilhas - ConectaTech</title>
   </head>
   <body class="app-page">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="ConectaTech, página inicial"
-        ><img src="/assets/icon.svg" width="38" height="38" alt="" /><span
-          >Conecta<span>Tech</span></span
-        ></a
-      ><button
-        class="menu-button"
-        type="button"
-        aria-expanded="false"
-        aria-controls="main-nav"
-      >
-        Menu
-      </button>
+      <a class="brand" href="/" aria-label="ConectaTech, página inicial">
+        <img src="/assets/icon.svg" width="38" height="38" alt="" />
+        <span>Conecta<span>Tech</span></span>
+      </a>
       <nav id="main-nav" aria-label="Navegação principal">
-        <a href="/trilhas.html" aria-current="page">Trilhas</a
-        ><a href="/carreira.html">Carreira</a
-        ><a href="/oportunidades.html">Oportunidades</a
-        ><a href="/perfil.html">Perfil</a><a href="/impacto.html">Impacto</a>
+        <a href="/trilhas.html" aria-current="page">Trilhas</a>
+        <a href="/carreira.html">Carreira</a>
+        <a href="/oportunidades.html">Oportunidades</a>
+        <a href="/perfil.html">Perfil</a>
       </nav>
+      <label class="app-search">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Buscar conteúdo, aulas, trilhas..." />
+      </label>
       <div class="header-actions">
         <a class="button button-small" href="/perfil.html">Minha conta</a>
       </div>
     </header>
-    <main id="conteudo" class="account-shell">
-      <header class="page-heading">
-        <div>
-          <p class="eyebrow">Aprenda fazendo</p>
-          <h1>Trilhas de aprendizagem</h1>
-          <p>
-            Escolha um caminho, conclua aulas práticas e acompanhe sua evolução.
-          </p>
+
+    <main class="app-shell with-aside" id="conteudo">
+      <aside class="app-sidebar">
+        <div class="app-sidebar-inner">
+          <section class="app-nav-card">
+            <p class="app-nav-title">Navegação</p>
+            <ul class="app-nav-list">
+              <li><a href="/" >Início</a></li>
+              <li><a href="/trilhas.html" aria-current="page">Trilhas</a></li>
+              <li><a href="/carreira.html">Carreira</a></li>
+              <li><a href="/oportunidades.html">Oportunidades</a></li>
+              <li><a href="/perfil.html">Perfil</a></li>
+            </ul>
+          </section>
+          <section class="app-nav-card">
+            <p class="app-nav-title">Seu progresso</p>
+            <strong>Organize sua jornada</strong>
+            <p>Entre na conta para salvar aulas, acompanhar conclusão e continuar de onde parou.</p>
+            <div class="progress-rail"><span style="width: 0%"></span></div>
+          </section>
         </div>
-        <span class="account-state" id="catalog-status"
-          >Carregando catálogo…</span
-        >
-      </header>
-      <section class="catalog-toolbar" aria-label="Filtros do catálogo">
-        <div class="filters" role="group" aria-label="Filtrar trilhas">
-          <button class="filter active" data-filter="todas" aria-pressed="true">
-            Todas</button
-          ><button class="filter" data-filter="iniciante" aria-pressed="false">
-            Iniciante</button
-          ><button
-            class="filter"
-            data-filter="intermediario"
-            aria-pressed="false"
-          >
-            Intermediário
-          </button>
-        </div>
+      </aside>
+
+      <section class="app-main">
+        <header class="page-heading">
+          <div>
+            <p class="eyebrow">Aprenda fazendo</p>
+            <h1>Trilhas</h1>
+            <p>Escolha um caminho, conclua aulas práticas e avance por conteúdos leves, acessíveis e conectados ao mercado.</p>
+          </div>
+          <span class="account-state" id="catalog-status">Carregando catálogo...</span>
+        </header>
+
+        <section class="catalog-toolbar" aria-label="Filtros do catálogo">
+          <div class="filters" role="group" aria-label="Filtrar trilhas">
+            <button class="filter active" data-filter="todas" aria-pressed="true">Todas</button>
+            <button class="filter" data-filter="iniciante" aria-pressed="false">Iniciante</button>
+            <button class="filter" data-filter="intermediario" aria-pressed="false">Intermediário</button>
+          </div>
+        </section>
+
+        <section aria-labelledby="catalog-title">
+          <h2 class="sr-only" id="catalog-title">Catálogo de trilhas</h2>
+          <div class="course-grid page-course-grid" id="course-grid">
+            <p class="empty-state">Consultando trilhas disponíveis...</p>
+          </div>
+        </section>
       </section>
-      <section aria-labelledby="catalog-title">
-        <h2 class="sr-only" id="catalog-title">Catálogo de trilhas</h2>
-        <div class="course-grid page-course-grid" id="course-grid">
-          <p class="empty-state">Consultando trilhas disponíveis…</p>
+
+      <aside class="context-panel">
+        <div class="context-inner">
+          <section class="context-card">
+            <h2>Sobre as trilhas</h2>
+            <p>Cada trilha reúne aulas, páginas de leitura, vídeos, PDFs e atividades para reduzir barreiras de acesso.</p>
+          </section>
+          <section class="context-card context-stack">
+            <div><strong>Baixo consumo</strong><p>Conteúdo curto e materiais reutilizáveis ajudam quem tem internet limitada.</p></div>
+            <div><strong>Acessível</strong><p>Leitura, contraste, teclado e linguagem simples seguem como prioridade.</p></div>
+            <div><strong>Prático</strong><p>O objetivo é sair da aula com algo aplicável em currículo, portfólio ou vaga.</p></div>
+          </section>
         </div>
-      </section>
+      </aside>
     </main>
     <script type="module" src="/trilhas-page.js"></script>
   </body>
