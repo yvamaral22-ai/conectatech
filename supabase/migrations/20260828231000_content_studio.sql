@@ -183,3 +183,5 @@ for each row execute function public.audit_content_change();
 create trigger audit_materials_changes
 after insert or update or delete on public.materials
 for each row execute function public.audit_content_change();
+
+notify pgrst, 'reload schema';

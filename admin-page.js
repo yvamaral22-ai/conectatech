@@ -187,6 +187,14 @@ async function uploadLessonMedia(kind, file) {
   return path;
 }
 
+function isSchemaCacheMiss(error, columns = []) {
+  const message = `${error?.code || ""} ${error?.message || ""}`;
+  return (
+    message.includes("PGRST204") ||
+    columns.some((column) => message.includes(column))
+  );
+}
+
 function formatBytes(bytes = 0) {
   if (!bytes) return "0 KB";
   const units = ["B", "KB", "MB", "GB"];
@@ -644,8 +652,36 @@ document.querySelector("#pdf-form").addEventListener("submit", async (event) => 
       sort_order: numberValue(form.get("sort_order"), 1),
       status: statusFrom(form),
     };
-    const { error } = await supabase.from("lessons").insert(payload);
-    setPdfMessage(error ? error.message : "PDF publicado como aula.", error ? "error" : "success");
+    let { error } = await supabase.from("lessons").insert(payload);
+    if (
+      error &&
+      isSchemaCacheMiss(error, [
+        "pdf_file_name",
+        "pdf_file_size",
+        "pdf_mime_type",
+      ])
+    ) {
+      const {
+        pdf_file_name: _pdfFileName,
+        pdf_file_size: _pdfFileSize,
+        pdf_mime_type: _pdfMimeType,
+        ...payloadWithoutPdfDetails
+      } = payload;
+      ({ error } = await supabase.from("lessons").insert(payloadWithoutPdfDetails));
+      if (!error) {
+        setPdfMessage(
+          "PDF publicado. Recarregue o schema do Supabase para salvar os detalhes do arquivo nas próximas publicações.",
+          "success",
+        );
+      } else {
+        setPdfMessage(error.message, "error");
+      }
+    } else {
+      setPdfMessage(
+        error ? error.message : "PDF publicado como aula.",
+        error ? "error" : "success",
+      );
+    }
     if (!error) {
       event.currentTarget.reset();
       selectedPdfDetails = null;
