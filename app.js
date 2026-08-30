@@ -80,6 +80,8 @@ const clientId =
   `client-${Date.now()}`;
 localStorage.setItem("conectatech-client-id", clientId);
 const grid = document.querySelector("#course-grid");
+let activeCourseFilter = "todas";
+let courseSearchTerm = "";
 
 async function api(path, options = {}) {
   const response = await fetch(`/api${path}`, {
@@ -99,12 +101,25 @@ async function api(path, options = {}) {
 }
 
 function renderCourses(filter = "todas") {
-  const visible = courses.filter(
-    (course) => filter === "todas" || course.level === filter,
-  );
+  activeCourseFilter = filter;
+  const search = courseSearchTerm.trim().toLowerCase();
+  const visible = courses.filter((course) => {
+    const matchesFilter = filter === "todas" || course.level === filter;
+    const searchableText = [
+      course.title,
+      course.description,
+      course.level,
+      course.time,
+    ]
+      .join(" ")
+      .toLowerCase();
+    return matchesFilter && (!search || searchableText.includes(search));
+  });
   if (!visible.length) {
     grid.innerHTML =
-      '<p class="empty-state">Nenhuma trilha publicada está disponível agora.</p>';
+      search
+        ? '<p class="empty-state">Nenhuma trilha encontrada para essa busca.</p>'
+        : '<p class="empty-state">Nenhuma trilha publicada está disponível agora.</p>';
     return;
   }
   grid.innerHTML = visible
@@ -281,34 +296,58 @@ document.querySelectorAll(".filter").forEach((button) =>
   }),
 );
 
+document.querySelector("#home-search-form")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  document.querySelector("#trilhas")?.scrollIntoView({ behavior: "smooth" });
+});
+
+document.querySelector("#home-search")?.addEventListener("input", (event) => {
+  courseSearchTerm = event.target.value;
+  renderCourses(activeCourseFilter);
+});
+
 grid.addEventListener("click", async (event) => {
   const button = event.target.closest(".course-action");
   if (!button) return;
   const course = courses.find((item) => item.id === button.dataset.course);
-  const { data } = await supabase
+  if (!course) return;
+  if (!supabase) {
+    location.href = "/trilhas.html";
+    return;
+  }
+  const { data, error } = await supabase
     .from("lessons")
     .select("id")
     .eq("track_id", course.trackId)
+    .eq("status", "published")
     .order("sort_order")
     .limit(1)
     .maybeSingle();
-  if (data) location.href = `/aula.html?id=${encodeURIComponent(data.id)}`;
+  if (!error && data) {
+    location.href = `/aula.html?id=${encodeURIComponent(data.id)}`;
+  } else {
+    location.href = "/trilhas.html";
+  }
 });
 
 document
   .querySelector("#continue-button")
-  .addEventListener("click", () =>
-    document.querySelector(".course-action")?.click(),
-  );
+  .addEventListener("click", () => {
+    const nextAction = document.querySelector(".course-action");
+    if (nextAction) nextAction.click();
+    else location.href = "/trilhas.html";
+  });
 document
   .querySelectorAll(".resource-action")
   .forEach((button) =>
-    button.addEventListener("click", () =>
-      openDialog(
-        `Seu ${button.dataset.resource}`,
-        "Este protótipo apresenta o ponto de entrada do recurso. O fluxo completo será conectado ao perfil do usuário.",
-      ),
-    ),
+    button.addEventListener("click", () => {
+      const routes = {
+        currículo: "/curriculo.html",
+        portfólio: "/portfolio.html",
+        orientação: "/carreira.html",
+      };
+      location.href = routes[button.dataset.resource] || "/carreira.html";
+    }),
   );
 document
   .querySelector("#feedback-button")
@@ -512,6 +551,10 @@ accountButton.addEventListener("click", async () => {
 document
   .querySelector("#auth-mode")
   .addEventListener("click", () => setAuthMode(!registerMode));
+document.querySelector("#hero-create-account")?.addEventListener("click", () => {
+  setAuthMode(true);
+  authDialog.showModal();
+});
 document
   .querySelector("#forgot-password")
   .addEventListener("click", async () => {

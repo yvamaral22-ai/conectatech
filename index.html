@@ -38,6 +38,16 @@
         <a href="/perfil.html">Perfil</a>
         <a href="/impacto.html">Impacto</a>
       </nav>
+      <form class="app-search home-search" id="home-search-form" role="search">
+        <span aria-hidden="true">⌕</span>
+        <label class="sr-only" for="home-search">Buscar na página inicial</label>
+        <input
+          id="home-search"
+          type="search"
+          placeholder="Buscar trilhas, carreira, oportunidades..."
+        />
+        <kbd>/</kbd>
+      </form>
       <div class="header-actions">
         <button
           id="text-size"
@@ -85,10 +95,12 @@
             oportunidades.
           </p>
           <div class="button-row">
-            <a class="button" href="#trilhas"
-              >Começar agora <span aria-hidden="true">→</span></a
+            <a class="button" href="/trilhas.html"
+              >Explorar trilhas <span aria-hidden="true">→</span></a
             >
-            <a class="text-link" href="#como-funciona">Como funciona</a>
+            <button class="text-link" id="hero-create-account" type="button">
+              Criar conta gratuita
+            </button>
           </div>
           <ul class="trust-list" aria-label="Benefícios">
             <li>100% gratuito</li>
@@ -100,6 +112,28 @@
           class="hero-art depth-scene reveal"
           aria-label="Ilustração de uma estudante usando a plataforma"
         >
+          <div class="home-preview-grid" aria-hidden="true">
+            <article>
+              <span>01</span>
+              <strong>Escolha uma trilha</strong>
+              <small>Informática, web, segurança e carreira</small>
+            </article>
+            <article>
+              <span>02</span>
+              <strong>Leia, assista ou baixe</strong>
+              <small>Aulas leves com vídeo, PDF e atividades</small>
+            </article>
+            <article>
+              <span>03</span>
+              <strong>Monte seu perfil</strong>
+              <small>Currículo, portfólio e progresso salvos</small>
+            </article>
+            <article>
+              <span>04</span>
+              <strong>Busque oportunidades</strong>
+              <small>Vagas e ações publicadas pela equipe</small>
+            </article>
+          </div>
           <div class="signal" aria-hidden="true">⌁</div>
           <div class="laptop" aria-hidden="true"><span>&lt;/&gt;</span></div>
           <div class="person" aria-hidden="true">

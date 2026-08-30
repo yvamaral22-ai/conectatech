@@ -4,6 +4,7 @@
   --app-panel: rgba(16, 28, 105, 0.78);
   --app-panel-strong: rgba(18, 34, 126, 0.9);
   --app-line: rgba(166, 190, 255, 0.18);
+  --app-border: rgba(166, 190, 255, 0.18);
   --app-line-strong: rgba(0, 194, 255, 0.62);
   --app-text: #f7fbff;
   --app-muted: #b8c6ef;
@@ -102,6 +103,19 @@ body.app-page .text-link {
 
 .app-search input::placeholder {
   color: var(--app-muted);
+}
+
+.app-search kbd {
+  min-width: 26px;
+  min-height: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--app-line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--app-muted);
+  font: inherit;
+  font-size: 0.78rem;
 }
 
 .app-shell {
@@ -646,6 +660,46 @@ body.home-app .hero-art::after {
   color: var(--app-muted);
 }
 
+.home-preview-grid {
+  position: absolute;
+  inset: 116px 36px 106px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.home-preview-grid article {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid var(--app-line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.home-preview-grid span {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--app-blue), #2565ff);
+  color: #fff;
+  font-weight: 900;
+}
+
+.home-preview-grid strong {
+  color: var(--app-text);
+  font-size: 1.02rem;
+}
+
+.home-preview-grid small {
+  color: var(--app-muted);
+  line-height: 1.45;
+}
+
 body.home-app .laptop,
 body.home-app .person,
 body.home-app .signal {
@@ -856,5 +910,35 @@ body.app-page .empty-state {
   .lesson-reader-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  body.home-app .hero {
+    min-height: auto;
+    padding-top: 24px;
+  }
+
+  body.home-app .hero h1 {
+    font-size: clamp(2.6rem, 15vw, 4.5rem);
+  }
+
+  body.home-app .hero-art {
+    min-height: 560px;
+  }
+
+  .home-preview-grid {
+    inset: 112px 18px 96px;
+    grid-template-columns: 1fr;
+  }
+
+  body.home-app .progress-float {
+    left: 18px;
+    right: 18px;
+  }
+
+  body.home-app .badge-float {
+    left: 18px;
+    right: 18px;
+    top: auto;
+    bottom: 24px;
   }
 }
