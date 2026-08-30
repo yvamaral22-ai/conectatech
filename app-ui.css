@@ -546,6 +546,253 @@ body.app-page dialog::backdrop {
   background: rgba(0, 4, 30, 0.78);
 }
 
+body.home-app main {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(0, 178, 255, 0.22), transparent 30rem),
+    radial-gradient(circle at 88% 12%, rgba(124, 58, 237, 0.2), transparent 28rem),
+    var(--app-bg);
+}
+
+body.home-app .hero {
+  min-height: calc(100vh - 92px);
+  padding: 42px clamp(18px, 4vw, 56px) 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+  gap: 28px;
+  align-items: stretch;
+  background: transparent;
+}
+
+body.home-app .hero::before,
+body.home-app .hero-orb {
+  display: none;
+}
+
+body.home-app .hero-copy,
+body.home-app .hero-art {
+  position: relative;
+  z-index: 1;
+}
+
+body.home-app .hero-copy {
+  align-self: center;
+  max-width: 760px;
+}
+
+body.home-app .hero h1 {
+  color: var(--app-text);
+  font-size: clamp(3rem, 8vw, 7.4rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+body.home-app .hero h1 em {
+  color: var(--app-cyan);
+}
+
+body.home-app .lead {
+  color: var(--app-muted);
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+}
+
+body.home-app .trust-list {
+  color: var(--app-text);
+}
+
+body.home-app .trust-list li {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--app-border);
+  box-shadow: none;
+}
+
+body.home-app .hero-art {
+  min-height: 540px;
+  border: 1px solid var(--app-border);
+  border-radius: 24px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(0, 178, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  box-shadow: var(--app-shadow);
+}
+
+body.home-app .hero-art::before {
+  content: "Painel de aprendizagem";
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  height: 66px;
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  background: rgba(5, 12, 61, 0.7);
+  color: var(--app-text);
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  font-weight: 800;
+}
+
+body.home-app .hero-art::after {
+  content: "Trilhas  •  Aulas  •  PDFs  •  Oportunidades";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  padding: 18px 22px;
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  background: rgba(8, 18, 77, 0.82);
+  color: var(--app-muted);
+}
+
+body.home-app .laptop,
+body.home-app .person,
+body.home-app .signal {
+  display: none;
+}
+
+body.home-app .progress-float,
+body.home-app .badge-float {
+  position: absolute;
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  background: rgba(8, 18, 77, 0.86);
+  color: var(--app-text);
+  box-shadow: none;
+}
+
+body.home-app .progress-float {
+  left: 36px;
+  right: 36px;
+  top: 124px;
+  transform: none;
+}
+
+body.home-app .badge-float {
+  right: 36px;
+  top: 270px;
+}
+
+body.home-app .stats,
+body.home-app .section {
+  margin-inline: clamp(16px, 4vw, 56px);
+  border: 1px solid var(--app-border);
+  border-radius: 24px;
+  background: var(--app-panel);
+  color: var(--app-text);
+  box-shadow: var(--app-shadow);
+}
+
+body.home-app .stats {
+  margin-top: 0;
+  transform: none;
+}
+
+body.home-app .stats div {
+  border-color: var(--app-border);
+}
+
+body.home-app .stats strong,
+body.home-app .impact-grid strong {
+  color: var(--app-cyan);
+}
+
+body.home-app .stats span,
+body.home-app .section h2,
+body.home-app .section h3,
+body.home-app .dashboard h2,
+body.home-app .profile-card h3 {
+  color: var(--app-text);
+}
+
+body.home-app .stats small,
+body.home-app .section p,
+body.home-app .steps p,
+body.home-app .profile-copy p,
+body.home-app .impact-grid span {
+  color: var(--app-muted);
+}
+
+body.home-app .course-card,
+body.home-app .steps li,
+body.home-app .progress-card,
+body.home-app .profile-card,
+body.home-app .profile-discovery,
+body.home-app .resource-grid article,
+body.home-app .impact-grid div {
+  border: 1px solid var(--app-border);
+  background: var(--app-panel-strong);
+  color: var(--app-text);
+  box-shadow: none;
+}
+
+body.home-app .career,
+body.home-app .dashboard,
+body.home-app .profile-section,
+body.home-app .opportunities,
+body.home-app .impact {
+  background: var(--app-panel);
+}
+
+body.home-app footer {
+  background: #03072c;
+  color: var(--app-muted);
+}
+
+body.home-app footer a,
+body.home-app footer button {
+  color: var(--app-text);
+}
+
+body.app-page .resume-shell,
+body.app-page .account-shell {
+  background:
+    radial-gradient(circle at top right, rgba(0, 178, 255, 0.14), transparent 28rem),
+    var(--app-bg);
+}
+
+body.app-page .resume-builder,
+body.app-page .portfolio-dashboard,
+body.app-page .metrics-board,
+body.app-page .transparency-grid {
+  color: var(--app-text);
+}
+
+body.app-page .resume-controls,
+body.app-page .resume-preview-wrap,
+body.app-page .portfolio-summary,
+body.app-page .portfolio-grid,
+body.app-page .metrics-board article {
+  border: 1px solid var(--app-border);
+  background: var(--app-panel);
+  color: var(--app-text);
+  box-shadow: var(--app-shadow);
+}
+
+body.app-page .resume-preview {
+  color: #101827;
+}
+
+body.app-page .template-picker,
+body.app-page .resume-actions {
+  background: transparent;
+}
+
+body.app-page .portfolio-summary p,
+body.app-page .page-heading p,
+body.app-page .preview-label {
+  color: var(--app-muted);
+}
+
+body.app-page .metrics-board strong {
+  color: var(--app-cyan);
+}
+
+body.app-page .empty-state {
+  color: var(--app-muted);
+}
+
 @media (max-width: 1180px) {
   .app-shell,
   .app-shell.with-aside,
@@ -581,6 +828,14 @@ body.app-page dialog::backdrop {
 
   .admin-quick-nav {
     position: static;
+  }
+
+  body.home-app .hero {
+    grid-template-columns: 1fr;
+  }
+
+  body.home-app .hero-art {
+    min-height: 380px;
   }
 }
 

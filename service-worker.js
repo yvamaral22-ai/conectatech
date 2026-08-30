@@ -1,6 +1,12 @@
-const CACHE = "conectatech-v12";
+const CACHE = "conectatech-v13";
 const ASSETS = [
   "./",
+  "./styles.css",
+  "./features.css",
+  "./modern.css",
+  "./pages.css",
+  "./app-ui.css",
+  "./assets/icon.svg",
   "./trilhas.html",
   "./carreira.html",
   "./oportunidades.html",

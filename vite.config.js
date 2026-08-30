@@ -2,10 +2,20 @@ import { defineConfig } from "vite";
 import { cpSync, copyFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+const staticFiles = [
+  "styles.css",
+  "features.css",
+  "modern.css",
+  "pages.css",
+  "app-ui.css",
+];
+
 const copyStaticFiles = {
   name: "copy-static-files",
   closeBundle() {
     cpSync("docs", "dist/docs", { recursive: true });
+    cpSync("assets", "dist/assets", { recursive: true });
+    staticFiles.forEach((file) => copyFileSync(file, `dist/${file}`));
     copyFileSync("service-worker.js", "dist/service-worker.js");
   },
 };
