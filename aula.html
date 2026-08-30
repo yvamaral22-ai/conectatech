@@ -30,7 +30,7 @@
       </nav>
       <label class="app-search">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Buscar conteúdo, aulas..." />
+        <input id="lesson-search" type="search" placeholder="Buscar conteúdo, aulas..." />
       </label>
       <div class="header-actions">
         <a class="button button-small account-entry" href="/perfil.html">Minha conta</a>
@@ -77,9 +77,9 @@
               <h1 id="lesson-title">Carregando aula...</h1>
             </div>
             <div class="lesson-reader-tools" aria-label="Ferramentas da aula">
-              <button class="tool-button" type="button" title="Buscar na aula">⌕</button>
-              <button class="tool-button" type="button" title="Salvar aula">♡</button>
-              <button class="tool-button" type="button" title="Baixar material">⇩</button>
+              <button class="tool-button" id="focus-lesson-search" type="button" title="Buscar na aula" aria-label="Buscar na aula">⌕</button>
+              <button class="tool-button" id="quick-save-lesson" type="button" title="Salvar aula" aria-label="Salvar aula">♡</button>
+              <button class="tool-button" id="download-lesson-file" type="button" title="Abrir material" aria-label="Abrir material">⇩</button>
             </div>
           </header>
 

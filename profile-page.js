@@ -280,7 +280,7 @@ async function uploadProfileMedia(file, name) {
 
 document
   .querySelector("#profile-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
     const saveState = document.querySelector("#save-state");
@@ -336,14 +336,14 @@ document
     }
   });
 
-document.querySelector("#profile-public").addEventListener("change", () => {
+document.querySelector("#profile-public")?.addEventListener("change", () => {
   document.querySelector("#save-state").textContent =
     "Salve para aplicar a nova visibilidade.";
 });
 
 document
   .querySelector("#password-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
     const message = document.querySelector("#password-message");
@@ -355,7 +355,7 @@ document
     if (!error) formElement.reset();
   });
 
-document.querySelector("#change-email").addEventListener("click", async () => {
+document.querySelector("#change-email")?.addEventListener("click", async () => {
   const message = document.querySelector("#password-message");
   const email = document.querySelector("#new-email").value.trim();
 
@@ -372,7 +372,7 @@ document.querySelector("#change-email").addEventListener("click", async () => {
 
 document
   .querySelector("#profile-search-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const target = document.querySelector("#profile-search-result");
     const username = document
@@ -406,7 +406,7 @@ document
     )}</p></div></article>`;
   });
 
-document.querySelector("#logout-button").addEventListener("click", async () => {
+document.querySelector("#logout-button")?.addEventListener("click", async () => {
   if (!window.confirm("Deseja sair da sua conta?")) return;
   await supabase.auth.signOut();
   localStorage.removeItem("conectatech-mini-profile");
@@ -414,8 +414,8 @@ document.querySelector("#logout-button").addEventListener("click", async () => {
 });
 
 const menuButton = document.querySelector(".menu-button");
-menuButton.addEventListener("click", () => {
-  const open = document.querySelector("#main-nav").classList.toggle("open");
+menuButton?.addEventListener("click", () => {
+  const open = document.querySelector("#main-nav")?.classList.toggle("open");
   menuButton.setAttribute("aria-expanded", String(open));
 });
 

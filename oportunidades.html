@@ -27,7 +27,7 @@
       </nav>
       <label class="app-search">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Buscar oportunidades, empresas, áreas..." />
+        <input id="opportunity-search" type="search" placeholder="Buscar oportunidades, empresas, áreas..." />
       </label>
       <div class="header-actions">
         <a class="button button-small" href="/perfil.html">Minha conta</a>
@@ -67,10 +67,10 @@
 
         <section class="catalog-toolbar opportunity-filter-bar" aria-label="Filtros de oportunidades">
           <div class="filters">
-            <button class="filter active" type="button">Todas</button>
-            <button class="filter" type="button">Cursos</button>
-            <button class="filter" type="button">Vagas</button>
-            <button class="filter" type="button">Bolsas</button>
+            <button class="filter active" type="button" data-filter="todas" aria-pressed="true">Todas</button>
+            <button class="filter" type="button" data-filter="curso" aria-pressed="false">Cursos</button>
+            <button class="filter" type="button" data-filter="vaga" aria-pressed="false">Vagas</button>
+            <button class="filter" type="button" data-filter="bolsa" aria-pressed="false">Bolsas</button>
           </div>
         </section>
 

@@ -7,6 +7,11 @@ const form = document.querySelector("#project-form");
 let user;
 let projects = [];
 
+function setPageStatus(text) {
+  const status = document.querySelector("#page-status");
+  if (status) status.textContent = text;
+}
+
 function render() {
   document.querySelector("#project-count").textContent = projects.length;
 
@@ -37,6 +42,12 @@ function render() {
 }
 
 async function load() {
+  if (!supabase) {
+    grid.innerHTML =
+      '<p class="empty-state">Conecte o Supabase para acessar o portfólio.</p>';
+    return;
+  }
+
   const auth = await supabase.auth.getUser();
   user = auth.data.user;
 
@@ -62,6 +73,10 @@ async function load() {
 }
 
 function openProject(project) {
+  if (!user) {
+    setPageStatus("Entre na sua conta para adicionar projetos.");
+    return;
+  }
   form.reset();
   form.elements.id.value = project?.id || "";
   form.elements.title.value = project?.title || "";
@@ -76,13 +91,13 @@ function openProject(project) {
 
 document
   .querySelector("#new-project")
-  .addEventListener("click", () => openProject());
+  ?.addEventListener("click", () => openProject());
 
 document
   .querySelector("[data-close]")
-  .addEventListener("click", () => dialog.close());
+  ?.addEventListener("click", () => dialog.close());
 
-grid.addEventListener("click", async (event) => {
+grid?.addEventListener("click", async (event) => {
   if (event.target.closest("[data-create]")) {
     openProject();
     return;
@@ -109,8 +124,12 @@ grid.addEventListener("click", async (event) => {
   }
 });
 
-form.addEventListener("submit", async (event) => {
+form?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (!user) {
+    setPageStatus("Entre na sua conta para salvar projetos.");
+    return;
+  }
   const currentForm = event.currentTarget;
   const message = document.querySelector("#project-message");
   const values = Object.fromEntries(new FormData(currentForm));

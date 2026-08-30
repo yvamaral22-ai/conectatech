@@ -4,9 +4,11 @@ const form = document.querySelector("#resume-form"),
   preview = document.querySelector("#resume-preview"),
   message = document.querySelector("#resume-message");
 function values() {
+  if (!form) return {};
   return Object.fromEntries(new FormData(form));
 }
 function render() {
+  if (!preview) return;
   const data = values();
   Object.entries(data).forEach(([key, value]) => {
     const target = preview.querySelector(`[data-output="${key}"]`);
@@ -26,7 +28,7 @@ function render() {
         }[key];
   });
 }
-form.addEventListener("input", render);
+form?.addEventListener("input", render);
 document.querySelectorAll(".template-choice").forEach((button) =>
   button.addEventListener("click", () => {
     document
@@ -35,7 +37,11 @@ document.querySelectorAll(".template-choice").forEach((button) =>
     preview.className = `resume-preview template-${button.dataset.template}`;
   }),
 );
-document.querySelector("#load-account").addEventListener("click", async () => {
+document.querySelector("#load-account")?.addEventListener("click", async () => {
+  if (!supabase) {
+    message.textContent = "Conecte o Supabase para carregar sua conta.";
+    return;
+  }
   const { data } = await supabase.auth.getUser();
   if (!data.user) {
     message.textContent = "Entre na sua conta para preencher automaticamente.";
@@ -61,7 +67,11 @@ document.querySelector("#load-account").addEventListener("click", async () => {
   render();
   message.textContent = "Informações carregadas da sua conta.";
 });
-document.querySelector("#save-resume").addEventListener("click", async () => {
+document.querySelector("#save-resume")?.addEventListener("click", async () => {
+  if (!supabase) {
+    message.textContent = "Conecte o Supabase para salvar estas informações.";
+    return;
+  }
   const { data } = await supabase.auth.getUser();
   if (!data.user) {
     message.textContent = "Entre na conta para salvar.";
@@ -82,8 +92,8 @@ document.querySelector("#save-resume").addEventListener("click", async () => {
 });
 document
   .querySelector("#print-resume")
-  .addEventListener("click", () => window.print());
-document.querySelector("#download-resume").addEventListener("click", () => {
+  ?.addEventListener("click", () => window.print());
+document.querySelector("#download-resume")?.addEventListener("click", () => {
   const data = values();
   const sections = Object.entries(data)
     .map(

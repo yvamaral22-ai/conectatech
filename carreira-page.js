@@ -2,6 +2,22 @@ import { supabase } from "./data-client.js";
 import "./page-shell.js";
 
 const status = document.querySelector("#page-status");
+const searchInput = document.querySelector("#career-search");
+
+searchInput?.addEventListener("input", (event) => {
+  const search = event.target.value.trim().toLowerCase();
+  document.querySelectorAll(".feature-panel, .career-path").forEach((card) => {
+    const matches = !search || card.textContent.toLowerCase().includes(search);
+    card.hidden = !matches;
+  });
+});
+
+document.querySelectorAll("[data-open]").forEach((button) =>
+  button.addEventListener("click", () => {
+    const dialog = document.querySelector(`#${button.dataset.open}`);
+    dialog?.showModal();
+  }),
+);
 
 document.querySelectorAll(".resource-action").forEach((button) =>
   button.addEventListener("click", () => {
@@ -21,11 +37,14 @@ document
   .querySelectorAll("[data-close]")
   .forEach((button) =>
     button.addEventListener("click", () =>
-      document.querySelector(`#${button.dataset.close}`).close(),
+      document.querySelector(`#${button.dataset.close}`)?.close(),
     ),
   );
 
 async function requireUser() {
+  if (!supabase) {
+    throw new Error("Conecte o Supabase para salvar estas informações.");
+  }
   const { data } = await supabase.auth.getUser();
   if (!data.user) {
     throw new Error("Entre na sua conta para salvar estas informações.");
@@ -35,7 +54,7 @@ async function requireUser() {
 
 document
   .querySelector("#career-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const message = document.querySelector("#career-message");
@@ -57,7 +76,7 @@ document
 
 document
   .querySelector("#portfolio-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const message = document.querySelector("#portfolio-message");

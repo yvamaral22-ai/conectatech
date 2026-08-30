@@ -27,7 +27,7 @@
       </nav>
       <label class="app-search">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Buscar conteúdo, aulas, trilhas..." />
+        <input id="track-search" type="search" placeholder="Buscar conteúdo, aulas, trilhas..." />
       </label>
       <div class="header-actions">
         <a class="button button-small" href="/perfil.html">Minha conta</a>
@@ -79,6 +79,7 @@
           <div class="course-grid page-course-grid" id="course-grid">
             <p class="empty-state">Consultando trilhas disponíveis...</p>
           </div>
+          <p id="track-action-status" class="form-message" role="status"></p>
         </section>
       </section>
 

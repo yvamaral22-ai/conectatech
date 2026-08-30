@@ -7,11 +7,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 const content = document.querySelector("#admin-content");
 const denied = document.querySelector("#admin-denied");
+const adminSearch = document.querySelector("#admin-search");
 let tracks = [];
 let lessons = [];
 let currentRole = "student";
 let activeAdminMode = "track";
 let selectedPdfDetails = null;
+let adminSearchTerm = "";
 
 function allowedAdminMode(mode) {
   return mode !== "users" || currentRole === "admin";
@@ -36,6 +38,39 @@ function showAdminPanel(mode = activeAdminMode) {
         ? "Administração de usuários"
         : "Gestão de conteúdo";
   }
+  applyAdminSearch();
+}
+
+function matchesAdminSearch(text) {
+  return !adminSearchTerm || text.toLowerCase().includes(adminSearchTerm);
+}
+
+function applyAdminSearch() {
+  if (!content || !adminSearchTerm) {
+    document
+      .querySelectorAll("[data-admin-search-hidden]")
+      .forEach((item) => {
+        const mode = item.dataset.adminMode;
+        item.hidden = mode
+          ? item.hasAttribute("data-admin-only") && !allowedAdminMode(mode)
+          : false;
+        item.removeAttribute("data-admin-search-hidden");
+      });
+    return;
+  }
+
+  document
+    .querySelectorAll(".admin-action-card, .admin-list .admin-item")
+    .forEach((item) => {
+      const shouldShow = matchesAdminSearch(item.textContent || "");
+      const isAllowed =
+        !item.dataset.adminMode ||
+        !item.hasAttribute("data-admin-only") ||
+        allowedAdminMode(item.dataset.adminMode);
+      item.hidden = !shouldShow || !isAllowed;
+      if (!shouldShow) item.dataset.adminSearchHidden = "true";
+      else item.removeAttribute("data-admin-search-hidden");
+    });
 }
 
 function escapeHtml(value = "") {
@@ -326,6 +361,7 @@ function auditLabel(action) {
 }
 
 function fillLessonSelect(target, placeholder = "Escolha uma aula") {
+  if (!target) return;
   target.innerHTML =
     `<option value="">${escapeHtml(placeholder)}</option>` +
     lessons
@@ -422,11 +458,12 @@ async function refreshAdminData() {
       : "";
 
   const lessonTrack = document.querySelector("#lesson-track");
-  lessonTrack.innerHTML = tracks
+  const trackOptions = tracks
     .map((track) => `<option value="${track.id}">${escapeHtml(track.title)}</option>`)
     .join("");
+  if (lessonTrack) lessonTrack.innerHTML = trackOptions;
   const pdfTrack = document.querySelector("#pdf-track");
-  pdfTrack.innerHTML = lessonTrack.innerHTML;
+  if (pdfTrack) pdfTrack.innerHTML = trackOptions;
   fillLessonSelect(document.querySelector("#section-lesson"));
   fillLessonSelect(document.querySelector("#material-lesson"));
 
@@ -495,27 +532,34 @@ async function initialize() {
   await refreshAdminData();
 }
 
-document.querySelector("#admin-actions").addEventListener("click", (event) => {
-  const button = event.target.closest("[data-admin-mode]");
-  if (!button) return;
-  showAdminPanel(button.dataset.adminMode);
+adminSearch?.addEventListener("input", (event) => {
+  adminSearchTerm = event.target.value.trim().toLowerCase();
+  applyAdminSearch();
 });
 
-document.querySelector("#admin-side-actions").addEventListener("click", (event) => {
+document.querySelector("#admin-actions")?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-admin-mode]");
   if (!button) return;
   showAdminPanel(button.dataset.adminMode);
 });
 
 document
+  .querySelector("#admin-side-actions")
+  ?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-admin-mode]");
+    if (!button) return;
+    showAdminPanel(button.dataset.adminMode);
+  });
+
+document
   .querySelector('#pdf-form input[name="pdf_file"]')
-  .addEventListener("change", async (event) => {
+  ?.addEventListener("change", async (event) => {
     const file = event.target.files?.[0];
     const pageInput = document.querySelector('#pdf-form input[name="page_count"]');
     const publishButton = document.querySelector("#publish-pdf-button");
     selectedPdfDetails = null;
     renderPdfDetails(null);
-    pageInput.value = 1;
+    if (pageInput) pageInput.value = 1;
 
     if (!file) {
       setPdfMessage("");
@@ -526,11 +570,11 @@ document
       return;
     }
 
-    publishButton.disabled = true;
+    if (publishButton) publishButton.disabled = true;
     setPdfMessage("Lendo detalhes do PDF...");
     try {
       selectedPdfDetails = await readPdfDetails(file);
-      pageInput.value = selectedPdfDetails.pages;
+      if (pageInput) pageInput.value = selectedPdfDetails.pages;
       renderPdfDetails(selectedPdfDetails);
       setPdfMessage(
         `PDF pronto: ${selectedPdfDetails.pages} página(s), ${selectedPdfDetails.sizeLabel}.`,
@@ -541,11 +585,11 @@ document
         "error",
       );
     } finally {
-      publishButton.disabled = false;
+      if (publishButton) publishButton.disabled = false;
     }
   });
 
-document.querySelector("#track-form").addEventListener("submit", async (event) => {
+document.querySelector("#track-form")?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formElement = event.currentTarget;
   const message = document.querySelector("#track-message");
@@ -573,7 +617,7 @@ document.querySelector("#track-form").addEventListener("submit", async (event) =
 
 document
   .querySelector("#lesson-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
     const message = document.querySelector("#lesson-message");
@@ -618,11 +662,11 @@ document
     }
   });
 
-document.querySelector("#pdf-form").addEventListener("submit", async (event) => {
+document.querySelector("#pdf-form")?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formElement = event.currentTarget;
   const button = document.querySelector("#publish-pdf-button");
-  button.disabled = true;
+  if (button) button.disabled = true;
   setPdfMessage("Publicando PDF...");
   try {
     const form = new FormData(formElement);
@@ -630,8 +674,8 @@ document.querySelector("#pdf-form").addEventListener("submit", async (event) => 
     const title = formatTitle(form.get("title"));
     if (pdfFile?.size && !selectedPdfDetails) {
       selectedPdfDetails = await readPdfDetails(pdfFile);
-      document.querySelector('#pdf-form input[name="page_count"]').value =
-        selectedPdfDetails.pages;
+      const pageInput = document.querySelector('#pdf-form input[name="page_count"]');
+      if (pageInput) pageInput.value = selectedPdfDetails.pages;
       renderPdfDetails(selectedPdfDetails);
     }
     const uploadedPdf = await uploadLessonMedia("pdfs", pdfFile);
@@ -706,13 +750,13 @@ document.querySelector("#pdf-form").addEventListener("submit", async (event) => 
   } catch (error) {
     setPdfMessage(error.message, "error");
   } finally {
-    button.disabled = false;
+    if (button) button.disabled = false;
   }
 });
 
 document
   .querySelector("#section-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
     const message = document.querySelector("#section-message");
@@ -732,7 +776,7 @@ document
 
 document
   .querySelector("#material-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
     const message = document.querySelector("#material-message");
@@ -765,7 +809,7 @@ document
 
 document
   .querySelector("#opportunity-form")
-  .addEventListener("submit", async (event) => {
+  ?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
     const message = document.querySelector("#opportunity-message");
@@ -791,13 +835,13 @@ document
     }
   });
 
-document.querySelector("#refresh-admin").addEventListener("click", () => {
+document.querySelector("#refresh-admin")?.addEventListener("click", () => {
   refreshAdminData().catch((error) => {
     document.querySelector("#admin-status").textContent = error.message;
   });
 });
 
-document.querySelector("#admin-content").addEventListener("click", async (event) => {
+document.querySelector("#admin-content")?.addEventListener("click", async (event) => {
   const activeButton = event.target.closest("[data-user-active]");
   if (activeButton) {
     const { error } = await supabase.rpc("admin_set_user_active", {
@@ -844,7 +888,7 @@ document.querySelector("#admin-content").addEventListener("click", async (event)
 
 document
   .querySelector("#admin-content")
-  .addEventListener("change", async (event) => {
+  ?.addEventListener("change", async (event) => {
     const select = event.target.closest("[data-user-role]");
     if (!select) return;
     const { error } = await supabase.rpc("admin_set_user_role", {

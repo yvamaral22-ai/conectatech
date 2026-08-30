@@ -248,7 +248,7 @@ body.app-page .page-heading {
 }
 
 body.app-page .page-heading h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: 2.4rem;
   letter-spacing: 0;
 }
 
@@ -334,6 +334,13 @@ body.app-page .admin-action-card.is-active {
   border-color: transparent;
 }
 
+body.app-page .lesson-section.search-match,
+body.app-page .lesson-panel.search-match {
+  outline: 2px solid rgba(56, 189, 248, 0.72);
+  outline-offset: 4px;
+  background: rgba(56, 189, 248, 0.08);
+}
+
 .lesson-reader-shell {
   width: min(1920px, 100%);
   min-height: calc(100vh - 74px);
@@ -372,7 +379,7 @@ body.app-page .lesson-page {
 
 .lesson-reader-header h1 {
   margin: 0;
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-size: 1.2rem;
   letter-spacing: 0;
 }
 
@@ -595,7 +602,7 @@ body.home-app .hero-copy {
 
 body.home-app .hero h1 {
   color: var(--app-text);
-  font-size: clamp(3rem, 8vw, 7.4rem);
+  font-size: 4.5rem;
   line-height: 0.95;
   letter-spacing: 0;
 }
@@ -606,7 +613,7 @@ body.home-app .hero h1 em {
 
 body.home-app .lead {
   color: var(--app-muted);
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  font-size: 1.1rem;
 }
 
 body.home-app .trust-list {
@@ -918,7 +925,7 @@ body.app-page .empty-state {
   }
 
   body.home-app .hero h1 {
-    font-size: clamp(2.6rem, 15vw, 4.5rem);
+    font-size: 2.7rem;
   }
 
   body.home-app .hero-art {
@@ -940,5 +947,480 @@ body.app-page .empty-state {
     right: 18px;
     top: auto;
     bottom: 24px;
+  }
+}
+
+/* Stability pass: shared product scale, contrast and responsiveness. */
+:root {
+  --app-bg: #081126;
+  --app-bg-2: #0c1733;
+  --app-panel: rgba(15, 26, 58, 0.94);
+  --app-panel-strong: rgba(20, 34, 72, 0.96);
+  --app-line: rgba(203, 213, 225, 0.16);
+  --app-border: rgba(203, 213, 225, 0.16);
+  --app-line-strong: rgba(56, 189, 248, 0.58);
+  --app-text: #f8fafc;
+  --app-muted: #cbd5e1;
+  --app-blue: #2563eb;
+  --app-cyan: #38bdf8;
+  --app-green: #22c55e;
+  --app-violet: #7c3aed;
+  --app-warning: #f59e0b;
+  --app-danger: #ef4444;
+  --app-radius: 14px;
+  --app-shadow: 0 18px 48px rgba(0, 0, 0, 0.26);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body.app-page {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(37, 99, 235, 0.18), transparent 30rem),
+    linear-gradient(135deg, var(--app-bg) 0%, var(--app-bg-2) 56%, #070b1d 100%);
+  color: var(--app-text);
+  font-size: 15.5px;
+}
+
+body.app-page a,
+body.app-page button,
+body.app-page input,
+body.app-page textarea,
+body.app-page select {
+  font: inherit;
+}
+
+body.app-page p,
+body.app-page li,
+body.app-page small,
+body.app-page span {
+  overflow-wrap: anywhere;
+}
+
+body.app-page .site-header {
+  min-height: 64px;
+  height: auto;
+  padding: 10px clamp(14px, 2.5vw, 28px);
+  gap: 18px;
+}
+
+body.app-page .brand {
+  font-size: 1.28rem;
+  min-width: max-content;
+}
+
+body.app-page .brand img {
+  width: 34px;
+  height: 34px;
+}
+
+body.app-page .site-header nav {
+  gap: clamp(10px, 1.6vw, 20px);
+}
+
+body.app-page .site-header nav a {
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+body.app-page .header-actions {
+  gap: 8px;
+}
+
+body.app-page .button,
+body.app-page .text-link,
+body.app-page .icon-button,
+body.app-page .filter,
+body.app-page .tool-button {
+  min-height: 40px;
+  border-radius: 10px;
+  font-weight: 750;
+}
+
+body.app-page .button {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+}
+
+body.app-page .button-secondary,
+body.app-page .icon-button,
+body.app-page .tool-button {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--app-text);
+  border-color: var(--app-line);
+}
+
+.app-search {
+  width: min(420px, 32vw);
+  min-width: 220px;
+  padding: 8px 12px;
+}
+
+body.app-page .page-heading,
+body.app-page .section-heading {
+  gap: 16px;
+}
+
+body.app-page .page-heading h1,
+body.app-page .section-heading h2,
+body.app-page .section h2 {
+  font-size: 2.35rem;
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+body.app-page .page-heading p,
+body.app-page .section-heading p,
+body.app-page .lead,
+body.app-page .lead-small {
+  max-width: 72ch;
+  color: var(--app-muted);
+}
+
+.app-shell,
+.app-shell.with-aside,
+.lesson-reader-shell {
+  width: 100%;
+  max-width: 1680px;
+  margin-inline: auto;
+}
+
+.app-shell {
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+}
+
+.app-shell.with-aside,
+.lesson-reader-shell {
+  grid-template-columns: minmax(220px, 270px) minmax(0, 1fr) minmax(240px, 300px);
+}
+
+.app-main,
+.lesson-center {
+  padding: 24px clamp(16px, 2vw, 28px);
+}
+
+.app-sidebar-inner,
+.context-inner {
+  padding: 18px;
+}
+
+.app-nav-card,
+.app-panel,
+.settings-card,
+.auth-guard,
+.admin-action-board,
+.profile-hero-card,
+.feature-panel,
+.progress-card,
+.portfolio-empty,
+.project-card,
+body.home-app .course-card,
+body.home-app .steps li,
+body.home-app .profile-card,
+body.home-app .profile-discovery,
+body.home-app .resource-grid article,
+body.home-app .impact-grid div,
+body.app-page .resume-controls,
+body.app-page .resume-preview-wrap,
+body.app-page .portfolio-summary,
+body.app-page .portfolio-grid,
+body.app-page .metrics-board article {
+  border-color: var(--app-line);
+  background: var(--app-panel);
+  color: var(--app-text);
+  box-shadow: var(--app-shadow);
+}
+
+body.app-page .course-grid,
+body.app-page .resource-grid,
+body.app-page .metrics-board,
+body.app-page .impact-grid,
+body.app-page .profile-metrics,
+body.app-page .admin-overview,
+body.app-page .admin-action-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+body.app-page .course-card,
+body.app-page .feature-panel,
+body.app-page .project-card,
+body.app-page .admin-action-card {
+  min-height: auto;
+}
+
+body.app-page .course-card h3,
+body.app-page .feature-panel h2,
+body.app-page .settings-card h2,
+body.app-page .profile-card h3,
+body.app-page .context-card h2,
+body.app-page .context-card h3 {
+  font-size: 1.18rem;
+  line-height: 1.18;
+}
+
+body.app-page .course-icon,
+body.app-page .feature-panel > span {
+  width: 48px;
+  height: 48px;
+  font-size: 1.3rem;
+}
+
+body.home-app .hero {
+  min-height: auto;
+  padding: clamp(26px, 4vw, 48px) clamp(16px, 4vw, 48px);
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 0.9fr);
+  gap: clamp(18px, 3vw, 34px);
+}
+
+body.home-app .hero h1 {
+  max-width: 780px;
+  font-size: 4rem;
+  line-height: 1;
+}
+
+body.home-app .lead {
+  font-size: 1.05rem;
+}
+
+body.home-app .hero-art {
+  min-height: 430px;
+  border-color: var(--app-line);
+}
+
+body.home-app .hero-art::before {
+  height: 56px;
+}
+
+body.home-app .hero-art::after {
+  font-size: 0.92rem;
+}
+
+.home-preview-grid {
+  inset: 96px 24px 94px;
+  gap: 12px;
+}
+
+.home-preview-grid article {
+  padding: 14px;
+}
+
+body.home-app .progress-float {
+  left: 24px;
+  right: 24px;
+  top: auto;
+  bottom: 58px;
+}
+
+body.home-app .badge-float {
+  top: 24px;
+  right: 24px;
+}
+
+body.home-app .stats,
+body.home-app .section {
+  width: min(1440px, calc(100% - 32px));
+  margin-inline: auto;
+  padding: clamp(22px, 3vw, 34px);
+  border-radius: 18px;
+}
+
+body.home-app .stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 0;
+}
+
+body.home-app .stats div {
+  min-width: 0;
+  padding: 14px;
+}
+
+body.home-app .stats strong {
+  font-size: 1.75rem;
+}
+
+body.home-app .career,
+body.home-app .dashboard,
+body.home-app .profile-section,
+body.home-app .opportunities,
+body.home-app .impact {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.app-page .resume-shell,
+body.app-page .account-shell {
+  width: min(1440px, calc(100% - 32px));
+  margin-inline: auto;
+  padding: 24px 0 48px;
+}
+
+body.app-page .resume-builder,
+body.app-page .profile-layout,
+body.app-page .transparency-grid,
+body.app-page .portfolio-dashboard {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 18px;
+}
+
+body.app-page .form-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+
+body.app-page input,
+body.app-page textarea,
+body.app-page select {
+  max-width: 100%;
+}
+
+body.app-page dialog {
+  width: min(560px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+  overflow: auto;
+  border: 1px solid var(--app-line);
+}
+
+body.app-page .lesson-page,
+body.app-page .pdf-reader,
+body.app-page .pdf-viewer {
+  max-width: 100%;
+}
+
+body.app-page #resume-preview,
+body.app-page .resume-preview,
+body.app-page .resume-preview-wrap,
+body.app-page .portfolio-grid,
+body.app-page .profile-cover {
+  min-height: auto;
+}
+
+body.app-page .resume-preview {
+  width: 100%;
+}
+
+body.app-page .profile-cover {
+  aspect-ratio: 5 / 1;
+}
+
+body.app-page table,
+body.app-page .admin-list,
+body.app-page .portfolio-grid,
+body.app-page .opportunity-list,
+body.app-page .lesson-content {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+body.app-page canvas,
+body.app-page img,
+body.app-page iframe,
+body.app-page embed,
+body.app-page object {
+  max-width: 100%;
+}
+
+@media (max-width: 1180px) {
+  body.app-page .site-header {
+    align-items: center;
+  }
+
+  .app-search {
+    order: 3;
+    width: 100%;
+  }
+
+  .app-shell,
+  .app-shell.with-aside,
+  .lesson-reader-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .context-panel {
+    border-left: 0;
+  }
+
+  body.home-app .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  body.app-page {
+    font-size: 15px;
+  }
+
+  body.app-page .site-header {
+    padding: 10px 14px;
+  }
+
+  body.app-page .site-header nav {
+    width: 100%;
+  }
+
+  body.app-page .header-actions {
+    margin-left: 0;
+  }
+
+  body.app-page .button,
+  body.app-page .text-link {
+    width: auto;
+  }
+
+  body.home-app .hero {
+    padding: 22px 16px;
+  }
+
+  body.home-app .hero h1 {
+    font-size: 2.35rem;
+  }
+
+  body.home-app .hero-art {
+    min-height: 520px;
+  }
+
+  .home-preview-grid {
+    inset: 92px 16px 116px;
+  }
+
+  body.home-app .progress-float {
+    left: 16px;
+    right: 16px;
+    bottom: 56px;
+  }
+
+  body.home-app .badge-float {
+    left: 16px;
+    right: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  body.app-page .brand {
+    font-size: 1.1rem;
+  }
+
+  body.app-page .site-header nav a {
+    font-size: 0.9rem;
+  }
+
+  .home-preview-grid article {
+    padding: 12px;
+  }
+
+  .home-preview-grid small {
+    display: none;
+  }
+
+  body.home-app .hero-art {
+    min-height: 420px;
   }
 }

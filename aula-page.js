@@ -38,6 +38,14 @@ function isExternalUrl(value) {
   return /^https?:\/\//i.test(value || "");
 }
 
+function isSchemaCacheMiss(error, columns = []) {
+  const message = `${error?.code || ""} ${error?.message || ""}`;
+  return (
+    message.includes("PGRST204") ||
+    columns.some((column) => message.includes(column))
+  );
+}
+
 function formatBytes(bytes = 0) {
   if (!bytes) return "";
 
@@ -59,6 +67,35 @@ async function signedLessonMediaUrl(path) {
     .createSignedUrl(path, 3600);
 
   return error ? null : data.signedUrl;
+}
+
+async function fetchLesson() {
+  const lessonColumns =
+    "id,track_id,title,summary,body,estimated_minutes,source_type,video_provider,video_url,pdf_url,pdf_file_name,pdf_file_size,pdf_mime_type,instructor_name,partner_name,content_format,page_count,learning_objectives,tracks(title,slug)";
+  let result = await supabase
+    .from("lessons")
+    .select(lessonColumns)
+    .eq("id", lessonId)
+    .single();
+
+  if (
+    result.error &&
+    isSchemaCacheMiss(result.error, [
+      "pdf_file_name",
+      "pdf_file_size",
+      "pdf_mime_type",
+    ])
+  ) {
+    result = await supabase
+      .from("lessons")
+      .select(
+        "id,track_id,title,summary,body,estimated_minutes,source_type,video_provider,video_url,pdf_url,instructor_name,partner_name,content_format,page_count,learning_objectives,tracks(title,slug)",
+      )
+      .eq("id", lessonId)
+      .single();
+  }
+
+  return result;
 }
 
 function renderVideo(lesson) {
@@ -308,13 +345,7 @@ async function saveLessonProgress(user, lesson) {
 async function initialize() {
   if (!lessonId || !supabase) throw new Error();
 
-  const { data: lesson, error } = await supabase
-    .from("lessons")
-    .select(
-      "id,track_id,title,summary,body,estimated_minutes,source_type,video_provider,video_url,pdf_url,pdf_file_name,pdf_file_size,pdf_mime_type,instructor_name,partner_name,content_format,page_count,learning_objectives,tracks(title,slug)",
-    )
-    .eq("id", lessonId)
-    .single();
+  const { data: lesson, error } = await fetchLesson();
 
   if (error) throw error;
 
@@ -419,6 +450,28 @@ async function initialize() {
         result.textContent = `Não foi possível salvar: ${error.message}`;
       }
     });
+
+  document.querySelector("#focus-lesson-search")?.addEventListener("click", () => {
+    document.querySelector("#lesson-search")?.focus();
+  });
+
+  document.querySelector("#quick-save-lesson")?.addEventListener("click", () => {
+    document.querySelector("#save-lesson-button")?.click();
+  });
+
+  document.querySelector("#download-lesson-file")?.addEventListener("click", () => {
+    const target = lesson.pdf_display_url || lesson.playback_url || lesson.video_url;
+    if (target) window.open(target, "_blank", "noopener");
+  });
+
+  document.querySelector("#lesson-search")?.addEventListener("input", (event) => {
+    const term = event.target.value.trim().toLowerCase();
+    document.querySelectorAll(".lesson-section, .lesson-panel").forEach((section) => {
+      const matched = term && section.textContent.toLowerCase().includes(term);
+      section.classList.toggle("search-match", Boolean(matched));
+    });
+    if (term) document.querySelector(".search-match")?.scrollIntoView({ block: "center" });
+  });
 
   const exercise = document.querySelector("#exercise-form");
   exercise.innerHTML =

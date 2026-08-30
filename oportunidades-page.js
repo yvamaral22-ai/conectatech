@@ -3,29 +3,34 @@ import { escapeHtml, safeExternalUrl } from "./page-shell.js";
 
 const list = document.querySelector("#opportunity-list");
 const status = document.querySelector("#opportunity-status");
+const searchInput = document.querySelector("#opportunity-search");
 
-async function initialize() {
-  if (!supabase) throw new Error();
+let opportunities = [];
+let activeFilter = "todas";
+let searchTerm = "";
 
-  const { data, error } = await supabase
-    .from("opportunities")
-    .select("id,title,organization,url,description,status,created_at")
-    .eq("status", "published")
-    .order("created_at", { ascending: false });
+function matchesFilter(item) {
+  const text = [item.title, item.organization, item.description]
+    .join(" ")
+    .toLowerCase();
+  const search = searchTerm.trim().toLowerCase();
 
-  if (error) throw error;
+  return (
+    (activeFilter === "todas" || text.includes(activeFilter)) &&
+    (!search || text.includes(search))
+  );
+}
 
-  status.textContent = `${data.length} ${
-    data.length === 1 ? "oportunidade publicada" : "oportunidades publicadas"
-  }`;
+function render() {
+  const visible = opportunities.filter(matchesFilter);
 
-  if (!data.length) {
+  if (!visible.length) {
     list.innerHTML =
-      '<p class="empty-state">Nenhuma oportunidade verificada está publicada agora.</p>';
+      '<p class="empty-state">Nenhuma oportunidade publicada corresponde aos filtros atuais.</p>';
     return;
   }
 
-  list.innerHTML = data
+  list.innerHTML = visible
     .map(
       (item) =>
         `<article><span class="tag">Oportunidade</span><div><h2>${escapeHtml(
@@ -38,6 +43,42 @@ async function initialize() {
     )
     .join("");
 }
+
+async function initialize() {
+  if (!supabase) throw new Error("Serviço indisponível.");
+
+  const { data, error } = await supabase
+    .from("opportunities")
+    .select("id,title,organization,url,description,status,created_at")
+    .eq("status", "published")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  opportunities = data || [];
+  status.textContent = `${opportunities.length} ${
+    opportunities.length === 1
+      ? "oportunidade publicada"
+      : "oportunidades publicadas"
+  }`;
+  render();
+}
+
+document.querySelectorAll(".filter").forEach((button) =>
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".filter").forEach((item) => {
+      item.classList.toggle("active", item === button);
+      item.setAttribute("aria-pressed", String(item === button));
+    });
+    activeFilter = button.dataset.filter || "todas";
+    render();
+  }),
+);
+
+searchInput?.addEventListener("input", (event) => {
+  searchTerm = event.target.value;
+  render();
+});
 
 initialize().catch(() => {
   status.textContent = "Consulta indisponível";

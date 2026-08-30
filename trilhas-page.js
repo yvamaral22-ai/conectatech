@@ -3,17 +3,36 @@ import { escapeHtml } from "./page-shell.js";
 
 const grid = document.querySelector("#course-grid");
 const status = document.querySelector("#catalog-status");
+const actionStatus = document.querySelector("#track-action-status");
+const searchInput = document.querySelector("#track-search");
 let courses = [];
 let completed = [];
+let activeFilter = "todas";
+let searchTerm = "";
+
+function isCourseCompleted(course) {
+  return completed.includes(course.id) || completed.includes(course.slug);
+}
 
 function render(filter = "todas") {
-  const visible = courses.filter(
-    (course) => filter === "todas" || course.level === filter,
-  );
+  activeFilter = filter;
+  const search = searchTerm.trim().toLowerCase();
+  const visible = courses.filter((course) => {
+    const matchesFilter = filter === "todas" || course.level === filter;
+    const searchableText = [
+      course.title,
+      course.description,
+      course.level,
+      course.estimated_minutes,
+    ]
+      .join(" ")
+      .toLowerCase();
+    return matchesFilter && (!search || searchableText.includes(search));
+  });
 
   if (!visible.length) {
     grid.innerHTML =
-      '<p class="empty-state">Nenhuma trilha está disponível neste filtro.</p>';
+      '<p class="empty-state">Nenhuma trilha publicada corresponde aos filtros atuais.</p>';
     return;
   }
 
@@ -31,7 +50,7 @@ function render(filter = "todas") {
         } min</span></div><button class="text-link course-start" data-track="${
           course.id
         }" type="button">${
-          completed.includes(course.slug) ? "Revisar trilha" : "Começar trilha"
+          isCourseCompleted(course) ? "Revisar trilha" : "Começar trilha"
         } →</button></article>`,
     )
     .join("");
@@ -44,8 +63,9 @@ async function initialize() {
     supabase
       .from("tracks")
       .select(
-        "id,slug,icon,title,level,description,estimated_minutes,sort_order",
+        "id,slug,icon,title,level,description,estimated_minutes,sort_order,status",
       )
+      .eq("status", "published")
       .order("sort_order"),
     supabase.auth.getUser(),
   ]);
@@ -75,20 +95,30 @@ document.querySelectorAll(".filter").forEach((button) =>
   }),
 );
 
+searchInput?.addEventListener("input", (event) => {
+  searchTerm = event.target.value;
+  render(activeFilter);
+});
+
 grid.addEventListener("click", async (event) => {
   const button = event.target.closest(".course-start");
   if (!button) return;
 
-  const { data } = await supabase
+  actionStatus.textContent = "Abrindo a primeira aula publicada...";
+  const { data, error } = await supabase
     .from("lessons")
     .select("id")
     .eq("track_id", button.dataset.track)
+    .eq("status", "published")
     .order("sort_order")
     .limit(1)
     .maybeSingle();
 
-  if (data) {
+  if (!error && data) {
     window.location.href = `/aula.html?id=${encodeURIComponent(data.id)}`;
+  } else {
+    actionStatus.textContent =
+      "Esta trilha ainda não possui aula publicada. Tente outra trilha ou volte mais tarde.";
   }
 });
 

@@ -4,7 +4,10 @@ async function initialize() {
   if (!supabase) throw new Error();
   const [{ data, error }, tracks] = await Promise.all([
     supabase.rpc("platform_metrics"),
-    supabase.from("tracks").select("id", { count: "exact", head: true }),
+    supabase
+      .from("tracks")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "published"),
   ]);
   if (error) throw error;
   const metrics = Array.isArray(data) ? data[0] : data;
@@ -17,7 +20,7 @@ async function initialize() {
   document.querySelector("#courses-stat").textContent = Number(
     tracks.count || 0,
   ).toLocaleString("pt-BR");
-  document.querySelector("#completion-stat").textContent = "Em evolução";
+  document.querySelector("#completion-stat").textContent = "Sem dados";
   document.querySelector("#metrics-status").textContent =
     "Indicadores atualizados";
 }

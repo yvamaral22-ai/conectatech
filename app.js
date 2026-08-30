@@ -15,7 +15,7 @@ function authMessage(error) {
     return "O cadastro foi recusado por uma configuração do banco. Rode a migração fix_signup_profile_trigger no SQL Editor do Supabase e tente novamente.";
   }
   if (message.toLowerCase().includes("already registered")) {
-    return "Este e-mail ja possui uma conta. Use Entrar ou recupere a senha.";
+    return "Este e-mail já possui uma conta. Use Entrar ou recupere a senha.";
   }
   return message;
 }
@@ -253,6 +253,7 @@ async function loadOpportunities() {
   const { data, error } = await supabase
     .from("opportunities")
     .select("id,title,organization,url,description,status,created_at")
+    .eq("status", "published")
     .order("created_at", { ascending: false });
   if (error || !data?.length) {
     list.innerHTML =
@@ -765,7 +766,7 @@ async function logoutCurrentUser({ ask = true } = {}) {
   document.querySelector("#profile-visibility").textContent =
     "Entre para criar seu perfil";
   document.querySelector("#offline-status").textContent =
-    "Voce saiu da sua conta.";
+    "Você saiu da sua conta.";
   document.querySelector("#offline-status").style.display = "block";
 }
 
