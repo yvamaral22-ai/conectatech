@@ -1424,3 +1424,428 @@ body.app-page object {
     min-height: 420px;
   }
 }
+
+/* Brand correction: ConectaTech palette, usable header and non-overlapping previews. */
+:root {
+  --app-bg: #f7f1e4;
+  --app-bg-2: #eef3e7;
+  --app-panel: rgba(255, 255, 255, 0.92);
+  --app-panel-strong: rgba(255, 251, 240, 0.96);
+  --app-line: rgba(23, 63, 53, 0.16);
+  --app-border: rgba(23, 63, 53, 0.16);
+  --app-line-strong: rgba(245, 180, 43, 0.72);
+  --app-text: #173f35;
+  --app-muted: #46655d;
+  --app-blue: #17483e;
+  --app-cyan: #f5b42b;
+  --app-green: #1f6a54;
+  --app-violet: #6f5b2f;
+  --app-warning: #d89216;
+  --app-danger: #b42318;
+  --app-shadow: 0 16px 42px rgba(23, 63, 53, 0.14);
+}
+
+html {
+  scrollbar-color: #f5b42b #173f35;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.36), transparent 45%),
+    linear-gradient(180deg, #12392f, #1e5a49);
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 2px 0 8px rgba(0, 0, 0, 0.22);
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 56px;
+  border: 4px solid transparent;
+  border-radius: 999px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.16)) padding-box,
+    linear-gradient(180deg, #ffd66b, #f5b42b 48%, #98640d) border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 4px rgba(80, 48, 0, 0.42),
+    0 4px 10px rgba(23, 63, 53, 0.24);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.22)) padding-box,
+    linear-gradient(180deg, #ffe08a, #f3a91f 48%, #7f5108) border-box;
+}
+
+body.app-page {
+  background:
+    radial-gradient(circle at 18% -12%, rgba(245, 180, 43, 0.22), transparent 28rem),
+    radial-gradient(circle at 92% 12%, rgba(31, 106, 84, 0.12), transparent 24rem),
+    linear-gradient(135deg, var(--app-bg), var(--app-bg-2));
+  color: var(--app-text);
+}
+
+body.app-page .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 10px;
+  background: rgba(255, 251, 240, 0.94);
+  border-bottom: 1px solid rgba(23, 63, 53, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+body.app-page .site-header nav {
+  flex: 1 1 auto;
+  min-width: min(100%, 300px);
+}
+
+body.app-page .header-actions {
+  flex: 0 1 auto;
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+body.app-page .button,
+body.app-page .app-nav-list button.is-active,
+body.app-page .admin-action-card.is-active {
+  background: linear-gradient(135deg, #17483e, #216854);
+  color: #fffdf4;
+  box-shadow: 0 10px 22px rgba(23, 63, 53, 0.22);
+}
+
+body.app-page .button-secondary,
+body.app-page .icon-button,
+body.app-page .tool-button {
+  background: #fffaf0;
+  color: #173f35;
+  border: 1px solid rgba(23, 63, 53, 0.18);
+}
+
+body.app-page .button:hover,
+body.app-page .icon-button:hover,
+body.app-page .tool-button:hover,
+body.app-page .text-link:hover {
+  transform: translateY(-1px);
+}
+
+.app-search {
+  flex: 1 1 280px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 420px);
+  min-width: 240px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid rgba(23, 63, 53, 0.18);
+  border-radius: 12px;
+  background: #fffaf0;
+  color: #173f35;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.app-search input {
+  width: 100%;
+  min-width: 0;
+  color: #173f35;
+  background: transparent;
+}
+
+.app-search input::placeholder {
+  color: #647a73;
+}
+
+.app-search kbd {
+  min-width: 28px;
+  color: #173f35;
+  background: #f2ead9;
+  border: 1px solid rgba(23, 63, 53, 0.14);
+}
+
+body.app-page .app-nav-card,
+body.app-page .app-panel,
+body.app-page .settings-card,
+body.app-page .auth-guard,
+body.app-page .admin-action-board,
+body.app-page .profile-hero-card,
+body.app-page .feature-panel,
+body.app-page .progress-card,
+body.app-page .portfolio-empty,
+body.app-page .project-card,
+body.home-app .course-card,
+body.home-app .steps li,
+body.home-app .profile-card,
+body.home-app .profile-discovery,
+body.home-app .resource-grid article,
+body.home-app .impact-grid div,
+body.app-page .resume-controls,
+body.app-page .resume-preview-wrap,
+body.app-page .portfolio-summary,
+body.app-page .portfolio-grid,
+body.app-page .metrics-board article,
+body.app-page .lesson-panel,
+body.app-page .lesson-section,
+body.app-page .admin-item,
+body.app-page .learning-item {
+  background: var(--app-panel);
+  border: 1px solid var(--app-line);
+  color: var(--app-text);
+}
+
+body.app-page input,
+body.app-page textarea,
+body.app-page select {
+  color: #173f35;
+  background: #fffdf7;
+  border-color: rgba(23, 63, 53, 0.24);
+}
+
+body.app-page input::placeholder,
+body.app-page textarea::placeholder {
+  color: #6a8079;
+}
+
+body.home-app .hero {
+  align-items: start;
+}
+
+body.home-app .hero-art {
+  position: relative;
+  min-height: 480px;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(23, 63, 53, 0.94), rgba(31, 106, 84, 0.9)),
+    radial-gradient(circle at 70% 12%, rgba(245, 180, 43, 0.28), transparent 18rem);
+  border: 1px solid rgba(23, 63, 53, 0.18);
+}
+
+.home-preview-grid {
+  position: absolute;
+  inset: 86px 24px 132px;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+
+.home-preview-grid article {
+  min-width: 0;
+  min-height: 128px;
+  background: rgba(255, 253, 247, 0.1);
+  border: 1px solid rgba(255, 253, 247, 0.18);
+  color: #fffdf4;
+}
+
+.home-preview-grid span {
+  background: #f5b42b;
+  color: #173f35;
+}
+
+.home-preview-grid strong,
+.home-preview-grid small {
+  color: #fffdf4;
+}
+
+body.home-app .progress-float,
+body.home-app .badge-float {
+  z-index: 3;
+  max-width: calc(100% - 48px);
+  color: #173f35;
+  background: #fffaf0;
+  border: 1px solid rgba(23, 63, 53, 0.2);
+}
+
+body.home-app .progress-float {
+  bottom: 22px;
+}
+
+body.home-app .badge-float {
+  top: 22px;
+}
+
+body.home-app .progress-float *,
+body.home-app .badge-float * {
+  color: inherit;
+}
+
+body.home-app .stats {
+  background: #173f35;
+  color: #fffdf4;
+}
+
+body.home-app .stats strong {
+  color: #f5b42b;
+}
+
+body.home-app .stats span,
+body.home-app .stats small {
+  color: #fffdf4;
+}
+
+body.app-page .account-button-profile {
+  max-width: 210px;
+  overflow: hidden;
+}
+
+body.app-page .account-mini-copy {
+  min-width: 0;
+}
+
+body.app-page .account-mini-copy strong,
+body.app-page .account-mini-copy small {
+  display: block;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  body.app-page .site-header {
+    align-items: flex-start;
+  }
+
+  body.app-page .site-header nav {
+    order: 4;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .app-search {
+    order: 3;
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  body.app-page .header-actions {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-search {
+    display: grid;
+    min-width: 0;
+  }
+
+  body.home-app .hero-art {
+    min-height: auto;
+    padding: 76px 16px 16px;
+  }
+
+  .home-preview-grid {
+    position: relative;
+    inset: auto;
+    grid-template-columns: 1fr;
+    margin-bottom: 12px;
+  }
+
+  .home-preview-grid article {
+    min-height: auto;
+  }
+
+  body.home-app .progress-float,
+  body.home-app .badge-float {
+    position: relative;
+    inset: auto;
+    max-width: none;
+    margin-top: 10px;
+  }
+
+  body.home-app .signal,
+  body.home-app .laptop,
+  body.home-app .person {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  body.app-page .site-header {
+    padding: 8px 10px;
+  }
+
+  body.app-page .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  body.app-page .account-button-profile,
+  body.app-page .header-actions .button {
+    max-width: 100%;
+  }
+
+  .app-search {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .app-search kbd {
+    display: none;
+  }
+}
+
+body.app-page .sr-only,
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+body.home-app .hero-orb,
+body.home-app .signal,
+body.home-app .laptop,
+body.home-app .person,
+body.home-app .home-preview-grid,
+body.home-app .progress-float,
+body.home-app .badge-float {
+  pointer-events: none;
+}
+
+body.app-page .admin-overview article,
+body.app-page .metrics-board article,
+body.app-page .profile-metrics div,
+body.app-page .lesson-reader-header,
+body.app-page .pdf-reader-toolbar {
+  background: linear-gradient(135deg, #173f35, #226854);
+  color: #fffdf4;
+}
+
+body.app-page .lesson-reader-header *,
+body.app-page .pdf-reader-toolbar *,
+body.app-page .admin-overview article *,
+body.app-page .metrics-board article *,
+body.app-page .profile-metrics div * {
+  color: inherit;
+}
+
+body.app-page .admin-overview strong,
+body.app-page .metrics-board strong,
+body.app-page .profile-metrics strong {
+  color: #f5b42b;
+}
+
+body.app-page .course-icon,
+body.app-page .feature-panel > span,
+body.app-page .lesson-module-dot,
+.home-preview-grid span {
+  background: linear-gradient(135deg, #f8c64f, #f2a915);
+  color: #173f35;
+}
