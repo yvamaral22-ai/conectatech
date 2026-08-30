@@ -255,10 +255,20 @@ function renderMaterials(materials = []) {
     .join("")}</div></section>`;
 }
 
-function updateLessonChrome(lesson) {
+function lessonFormatIcon(lesson) {
+  return formatLabel(lesson.content_format) === "PDF" ? "PDF" : "▶";
+}
+
+function updateLessonChrome(lesson, moduleLessons = []) {
   const trackTitle = lesson.tracks?.title || "Trilha";
   const format = formatLabel(lesson.content_format);
   const pageCount = Number(lesson.page_count || 1);
+  const currentIndex = moduleLessons.findIndex((item) => item.id === lesson.id);
+  const previousLesson = currentIndex > 0 ? moduleLessons[currentIndex - 1] : null;
+  const nextLesson =
+    currentIndex >= 0 && currentIndex < moduleLessons.length - 1
+      ? moduleLessons[currentIndex + 1]
+      : null;
   const fileText = lesson.pdf_file_name
     ? `${lesson.pdf_file_name}${lesson.pdf_file_size ? ` · ${formatBytes(lesson.pdf_file_size)}` : ""}`
     : lesson.pdf_url
@@ -271,13 +281,43 @@ function updateLessonChrome(lesson) {
   document.querySelector("#lesson-context-time").textContent =
     `${lesson.estimated_minutes || 0} minutos`;
   document.querySelector("#lesson-context-file").textContent = fileText;
-  document.querySelector("#lesson-module-list").innerHTML = `
-    <div class="lesson-module-item current">
-      <span class="lesson-module-dot">${format === "PDF" ? "PDF" : "▶"}</span>
-      <span>${escapeHtml(lesson.title)}</span>
-      <small>${pageCount} ${pageCount === 1 ? "página" : "páginas"}</small>
-    </div>
-  `;
+  document.querySelector("#lesson-module-list").innerHTML = moduleLessons.length
+    ? moduleLessons
+        .map((item, index) => {
+          const pages = Number(item.page_count || 1);
+          const isCurrent = item.id === lesson.id;
+          return `<a class="lesson-module-item ${
+            isCurrent ? "current" : ""
+          }" href="/aula.html?id=${encodeURIComponent(item.id)}" ${
+            isCurrent ? 'aria-current="page"' : ""
+          }><span class="lesson-module-dot">${escapeHtml(
+            lessonFormatIcon(item),
+          )}</span><span><small>Aula ${String(index + 1).padStart(
+            2,
+            "0",
+          )}</small>${escapeHtml(item.title)}</span><small>${pages} ${
+            pages === 1 ? "página" : "páginas"
+          }</small></a>`;
+        })
+        .join("")
+    : `<div class="lesson-module-item current">
+        <span class="lesson-module-dot">${format === "PDF" ? "PDF" : "▶"}</span>
+        <span>${escapeHtml(lesson.title)}</span>
+        <small>${pageCount} ${pageCount === 1 ? "página" : "páginas"}</small>
+      </div>`;
+
+  const nextCard = document.querySelector("#lesson-next-card");
+  if (nextCard) {
+    nextCard.innerHTML = nextLesson
+      ? `<h3>Próxima aula</h3><p>${escapeHtml(
+          nextLesson.title,
+        )}</p><a class="button button-secondary" href="/aula.html?id=${encodeURIComponent(
+          nextLesson.id,
+        )}">Continuar</a>`
+      : "<h3>Trilha concluída</h3><p>Você chegou ao último conteúdo publicado desta trilha.</p>";
+  }
+
+  return { previousLesson, nextLesson };
 }
 
 function originLabel(lesson) {
@@ -349,7 +389,7 @@ async function initialize() {
 
   if (error) throw error;
 
-  const [sectionResult, materialResult] = await Promise.all([
+  const [sectionResult, materialResult, moduleResult] = await Promise.all([
     supabase
       .from("lesson_sections")
       .select("id,title,body,sort_order,estimated_minutes")
@@ -360,6 +400,12 @@ async function initialize() {
       .select("id,title,file_url,file_type,is_downloadable")
       .eq("lesson_id", lesson.id)
       .order("created_at", { ascending: true }),
+    supabase
+      .from("lessons")
+      .select("id,title,sort_order,content_format,page_count,estimated_minutes,status")
+      .eq("track_id", lesson.track_id)
+      .eq("status", "published")
+      .order("sort_order", { ascending: true }),
   ]);
 
   if (lesson.video_provider === "supabase_storage") {
@@ -382,7 +428,8 @@ async function initialize() {
     lesson.tracks?.title || "Trilha";
   document.querySelector("#lesson-title").textContent = lesson.title;
   document.querySelector("#lesson-summary").textContent = lesson.summary;
-  updateLessonChrome(lesson);
+  const moduleLessons = moduleResult.data?.length ? moduleResult.data : [lesson];
+  const { previousLesson, nextLesson } = updateLessonChrome(lesson, moduleLessons);
   document.querySelector("#lesson-content").innerHTML = `
     <div class="lesson-meta">
       <span>${escapeHtml(originLabel(lesson))}</span>
@@ -420,8 +467,26 @@ async function initialize() {
 
   const actions = document.createElement("div");
   actions.className = "lesson-actions";
-  actions.innerHTML =
-    '<button class="button button-secondary" id="save-lesson-button" type="button">Salvar conteúdo</button><p id="save-lesson-result" role="status"></p>';
+  actions.innerHTML = `
+    <div class="lesson-route-actions">
+      ${
+        previousLesson
+          ? `<a class="button button-secondary" href="/aula.html?id=${encodeURIComponent(
+              previousLesson.id,
+            )}">Aula anterior</a>`
+          : '<a class="button button-secondary" href="/trilhas.html">Voltar para trilhas</a>'
+      }
+      ${
+        nextLesson
+          ? `<a class="button" href="/aula.html?id=${encodeURIComponent(
+              nextLesson.id,
+            )}">Próxima aula</a>`
+          : '<span class="lesson-end-state">Última aula publicada</span>'
+      }
+    </div>
+    <button class="button button-secondary" id="save-lesson-button" type="button">Salvar conteúdo</button>
+    <p id="save-lesson-result" role="status"></p>
+  `;
   document.querySelector("#lesson-content").before(actions);
 
   document
